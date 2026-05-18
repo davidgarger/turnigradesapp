@@ -390,7 +390,7 @@ function StudentCard({
           </button>
           <button
             type="button"
-            onClick={() => markAndNext("unexcusedNotParticipating", "nicht entschuldigt")}
+            onClick={() => markAndNext("unexcused", "unexcusedNotParticipating", "nicht entschuldigt")}
             className="inline-flex flex-col items-center justify-center gap-0.5 rounded-xl border-2 border-rose-300 bg-rose-50 px-2 py-2.5 font-bold text-rose-700 transition active:scale-95"
           >
             <X className="h-4 w-4" />
