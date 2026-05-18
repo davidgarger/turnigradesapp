@@ -127,6 +127,36 @@ const LOGO_KEY = "turn-app-school-logo";
 const THEME_KEY = "turn-app-class-themes";
 const VISIBLE_KEY = "turn-app-visible-classes";
 
+type UserPrefs = {
+  logo: string | null;
+  themes: Record<string, ThemeKey>;
+  visible_classes: string[];
+};
+
+async function fetchUserPrefs(userId: string): Promise<UserPrefs | null> {
+  const { data, error } = await supabase
+    .from("user_prefs")
+    .select("logo, themes, visible_classes")
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (error || !data) return null;
+  return {
+    logo: (data.logo as string | null) ?? null,
+    themes: (data.themes as Record<string, ThemeKey>) ?? {},
+    visible_classes: Array.isArray(data.visible_classes)
+      ? (data.visible_classes as string[]).filter((x) => CLASSES.includes(x as (typeof CLASSES)[number]))
+      : ["1", "2", "3", "4"],
+  };
+}
+
+async function saveUserPrefs(userId: string, patch: Partial<UserPrefs>) {
+  const payload: Record<string, unknown> = { user_id: userId };
+  if ("logo" in patch) payload.logo = patch.logo;
+  if ("themes" in patch) payload.themes = patch.themes;
+  if ("visible_classes" in patch) payload.visible_classes = patch.visible_classes;
+  await supabase.from("user_prefs").upsert(payload, { onConflict: "user_id" });
+}
+
 function loadThemes(): Record<string, ThemeKey> {
   try {
     const v = localStorage.getItem(THEME_KEY);
