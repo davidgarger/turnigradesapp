@@ -15,7 +15,7 @@ export const Route = createFileRoute("/")({
   }),
 });
 
-const CLASSES = ["1", "2", "3", "4"] as const;
+const CLASSES = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"] as const;
 
 type ThemeKey =
   | "violet"
@@ -115,6 +115,12 @@ const DEFAULT_THEME: Record<(typeof CLASSES)[number], ThemeKey> = {
   "2": "pink",
   "3": "teal",
   "4": "orange",
+  "5": "blue",
+  "6": "lime",
+  "7": "rose",
+  "8": "sky",
+  "9": "amber",
+  "10": "slate",
 };
 
 const LOGO_KEY = "turn-app-school-logo";
