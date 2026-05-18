@@ -20,6 +20,7 @@ export default function QuickSession({ classId, onClose }: Props) {
   const [animating, setAnimating] = useState<null | "left" | "right">(null);
   const [started, setStarted] = useState(false);
   const [topic, setTopic] = useState("");
+  const [lessonId, setLessonId] = useState<string | null>(null);
   const today = useMemo(
     () =>
       new Date().toLocaleDateString("de-DE", {
