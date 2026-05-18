@@ -220,6 +220,31 @@ export const turnActions = {
       };
     });
   },
+  setSchedule(classId: ClassId, schedule: ClassSchedule | undefined) {
+    setState((s) => ({
+      ...s,
+      classes: { ...s.classes, [classId]: { ...s.classes[classId], schedule } },
+    }));
+  },
+  incrementCancelled(classId: ClassId, delta: number) {
+    setState((s) => {
+      const cls = s.classes[classId];
+      if (!cls.schedule) return s;
+      return {
+        ...s,
+        classes: {
+          ...s.classes,
+          [classId]: {
+            ...cls,
+            schedule: {
+              ...cls.schedule,
+              cancelled: Math.max(0, cls.schedule.cancelled + delta),
+            },
+          },
+        },
+      };
+    });
+  },
   addStudent(classId: ClassId, firstName: string, lastName: string) {
     setState((s) => {
       const cls = s.classes[classId];
