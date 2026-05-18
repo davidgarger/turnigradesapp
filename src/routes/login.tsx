@@ -81,7 +81,7 @@ function LoginPage() {
         <div className="mb-6 flex flex-col items-center text-center">
           <TurniLogo className="h-14 w-14 rounded-2xl shadow-lg shadow-violet-500/30" />
           <h1 className="mt-3 text-2xl font-bold tracking-tight text-foreground">Turni</h1>
-          <p className="text-sm text-muted-foreground">Deine App für den Turnunterricht</p>
+          <p className="text-sm text-muted-foreground">Deine App für den Sportunterricht</p>
         </div>
 
         <div className="rounded-2xl border border-border bg-card p-6 shadow-xl">
