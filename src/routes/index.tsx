@@ -15,7 +15,7 @@ export const Route = createFileRoute("/")({
   }),
 });
 
-const CLASSES = ["1", "2", "3", "4"] as const;
+const CLASSES = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"] as const;
 
 type ThemeKey =
   | "violet"
