@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Settings, Users, ClipboardList, ImagePlus, Trash2, Palette, Check, LogOut, MoreVertical, Pencil, ArrowLeftRight, RotateCcw, Plus, EyeOff } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { turnActions, useTurnState } from "@/lib/turn-store";
+import { TurniLogo } from "@/components/TurniLogo";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -279,9 +280,7 @@ function Index() {
       <header className="border-b border-border bg-background/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-5">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-fuchsia-500 text-white shadow-md shadow-violet-500/20">
-              <ClipboardList className="h-5 w-5" />
-            </div>
+            <TurniLogo className="h-10 w-10 rounded-lg shadow-md shadow-violet-500/20" />
             <div>
               <h1 className="text-xl font-semibold tracking-tight text-foreground">Turni</h1>
               <p className="text-xs text-muted-foreground">Deine App für den Sportunterricht</p>
