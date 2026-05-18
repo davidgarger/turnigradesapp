@@ -23,6 +23,8 @@ export interface Student {
   attended: number; // Anzahl tatsächlich mitgeturnter Stunden
   redPoints: number;   // Disziplin-Minuspunkte (3 = eine Note schlechter im Betragen)
   greenPoints: number; // positive Punkte (heben rote Punkte auf)
+  // Internes Niveau für faire Teamaufteilung: 1 = stark, 2 = mittel, 3 = im Aufbau. undefined = nicht bewertet
+  skillLevel?: 1 | 2 | 3;
 }
 
 export interface ClassSchedule {
