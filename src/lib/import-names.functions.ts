@@ -30,7 +30,7 @@ export const extractStudentNames = createServerFn({ method: "POST" })
     }
 
     const gateway = createLovableAiGatewayProvider(apiKey);
-    const model = gateway("google/gemini-2.5-flash");
+    const model = gateway("google/gemini-2.5-pro");
 
     const buffer = Buffer.from(data.fileBase64, "base64");
 
