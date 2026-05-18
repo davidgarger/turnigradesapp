@@ -161,6 +161,13 @@ function ClassPage() {
     toast.success("Schüler hinzugefügt");
   };
 
+  const handleImportStudents = (list: ParsedStudent[]) => {
+    for (const s of list) {
+      turnActions.addStudent(cls.id, s.firstName, s.lastName);
+    }
+    toast.success(`${list.length} Schüler importiert`);
+  };
+
   const handleAddDiscipline = () => {
     if (!discName.trim()) {
       toast.error("Bitte einen Namen angeben.");
