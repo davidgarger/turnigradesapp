@@ -10,6 +10,13 @@ export interface Discipline {
   weight: number; // relative weight (any positive number; only ratios matter)
 }
 
+export interface Excuse {
+  id: string;
+  date: string; // yyyy-mm-dd
+  note?: string;
+  photoPath?: string; // Pfad im Storage-Bucket "excuses"
+}
+
 export interface Student {
   id: string;
   firstName: string;
@@ -25,6 +32,13 @@ export interface Student {
   greenPoints: number; // positive Punkte (heben rote Punkte auf)
   // Internes Niveau für faire Teamaufteilung: 1 = stark, 2 = mittel, 3 = im Aufbau. undefined = nicht bewertet
   skillLevel?: 1 | 2 | 3;
+  // Entschuldigungen mit optionalem Foto. Wenn vorhanden, ersetzt diese Liste den Zähler oben.
+  excuses?: Excuse[];
+}
+
+export function getExcusedCount(s: Student): number {
+  if (s.excuses && s.excuses.length > 0) return s.excuses.length;
+  return s.excusedNotParticipating;
 }
 
 export interface ClassSchedule {
@@ -629,6 +643,65 @@ export const turnActions = {
         classes: {
           ...s.classes,
           [classId]: { ...cls, students: cls.students.filter((st) => st.id !== studentId) },
+        },
+      };
+    });
+  },
+  addExcuse(classId: ClassId, studentId: string, excuse: Omit<Excuse, "id"> & { id?: string }) {
+    setState((s) => {
+      const cls = s.classes[classId];
+      return {
+        ...s,
+        classes: {
+          ...s.classes,
+          [classId]: {
+            ...cls,
+            students: cls.students.map((st) => {
+              if (st.id !== studentId) return st;
+              const list = st.excuses ?? [];
+              const next: Excuse = { id: excuse.id ?? genId(), date: excuse.date, note: excuse.note, photoPath: excuse.photoPath };
+              const nextList = [...list, next];
+              return { ...st, excuses: nextList, excusedNotParticipating: nextList.length };
+            }),
+          },
+        },
+      };
+    });
+  },
+  updateExcuse(classId: ClassId, studentId: string, excuseId: string, patch: Partial<Excuse>) {
+    setState((s) => {
+      const cls = s.classes[classId];
+      return {
+        ...s,
+        classes: {
+          ...s.classes,
+          [classId]: {
+            ...cls,
+            students: cls.students.map((st) => {
+              if (st.id !== studentId) return st;
+              const list = (st.excuses ?? []).map((e) => (e.id === excuseId ? { ...e, ...patch } : e));
+              return { ...st, excuses: list };
+            }),
+          },
+        },
+      };
+    });
+  },
+  removeExcuse(classId: ClassId, studentId: string, excuseId: string) {
+    setState((s) => {
+      const cls = s.classes[classId];
+      return {
+        ...s,
+        classes: {
+          ...s.classes,
+          [classId]: {
+            ...cls,
+            students: cls.students.map((st) => {
+              if (st.id !== studentId) return st;
+              const list = (st.excuses ?? []).filter((e) => e.id !== excuseId);
+              return { ...st, excuses: list, excusedNotParticipating: list.length };
+            }),
+          },
         },
       };
     });
