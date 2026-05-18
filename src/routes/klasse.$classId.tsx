@@ -972,3 +972,140 @@ function UndoButton() {
     </button>
   );
 }
+
+function StudentHistoryDialog({ student, classId }: { student: Student; classId: ClassId }) {
+  const [open, setOpen] = useState(false);
+  const state = useTurnState();
+  const cls = state.classes[classId];
+  const lessons = useMemo(() => {
+    const list = cls.lessons ?? [];
+    return [...list].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0));
+  }, [cls.lessons]);
+
+  const typeLabel: Record<string, { label: string; cls: string }> = {
+    attended: { label: "Mitgeturnt", cls: "bg-status-success-bg text-status-success" },
+    forgottenKit: { label: "Turnsachen vergessen", cls: "bg-status-danger-bg text-status-danger" },
+    excused: { label: "Entschuldigt", cls: "bg-status-warning-bg text-status-warning" },
+    unexcused: { label: "Unentschuldigt", cls: "bg-status-danger-strong-bg text-status-danger-strong" },
+  };
+
+  const counts = lessons.reduce(
+    (acc, l) => {
+      const e = l.entries.find((x) => x.studentId === student.id);
+      if (!e) acc.missing++;
+      else acc[e.type as keyof typeof acc]++;
+      return acc;
+    },
+    { attended: 0, forgottenKit: 0, excused: 0, unexcused: 0, missing: 0 },
+  );
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <button
+          type="button"
+          className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground"
+          aria-label="Stunden­übersicht"
+          title="Alle Stunden des Schuljahres"
+        >
+          <History className="h-4 w-4" />
+        </button>
+      </DialogTrigger>
+      <DialogContent className="max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>
+            {student.firstName} {student.lastName} – Stunden im Schuljahr
+          </DialogTitle>
+        </DialogHeader>
+
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+          <SummaryTile label="Stunden" value={lessons.length} />
+          <SummaryTile label="Mitgeturnt" value={counts.attended} tone="success" />
+          <SummaryTile label="Vergessen" value={counts.forgottenKit} tone="danger" />
+          <SummaryTile label="Entsch." value={counts.excused} tone="warning" />
+          <SummaryTile label="Unentsch." value={counts.unexcused} tone="danger-strong" />
+        </div>
+
+        <div className="mt-4 max-h-[55vh] overflow-y-auto rounded-md border border-border">
+          {lessons.length === 0 ? (
+            <div className="px-4 py-10 text-center text-sm text-muted-foreground">
+              Noch keine Stunden erfasst.
+            </div>
+          ) : (
+            <table className="w-full text-sm">
+              <thead className="sticky top-0 bg-muted/60 text-xs uppercase text-muted-foreground">
+                <tr>
+                  <th className="px-3 py-2 text-left font-semibold">Datum</th>
+                  <th className="px-3 py-2 text-left font-semibold">Thema</th>
+                  <th className="px-3 py-2 text-left font-semibold">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {lessons.map((l) => {
+                  const entry = l.entries.find((e) => e.studentId === student.id);
+                  const info = entry ? typeLabel[entry.type] : null;
+                  return (
+                    <tr key={l.id} className="border-t border-border">
+                      <td className="px-3 py-2 tabular-nums text-foreground">
+                        {new Date(l.date).toLocaleDateString("de-AT", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                        })}
+                      </td>
+                      <td className="px-3 py-2 text-foreground">
+                        {l.topic || <span className="text-muted-foreground">—</span>}
+                      </td>
+                      <td className="px-3 py-2">
+                        {info ? (
+                          <span className={`inline-flex rounded-md px-2 py-0.5 text-xs font-semibold ${info.cls}`}>
+                            {info.label}
+                          </span>
+                        ) : (
+                          <span className="text-xs text-muted-foreground">nicht erfasst</span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          )}
+        </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setOpen(false)}>
+            Schließen
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function SummaryTile({
+  label,
+  value,
+  tone,
+}: {
+  label: string;
+  value: number;
+  tone?: "success" | "danger" | "warning" | "danger-strong";
+}) {
+  const toneCls =
+    tone === "success"
+      ? "bg-status-success-bg text-status-success"
+      : tone === "danger"
+        ? "bg-status-danger-bg text-status-danger"
+        : tone === "warning"
+          ? "bg-status-warning-bg text-status-warning"
+          : tone === "danger-strong"
+            ? "bg-status-danger-strong-bg text-status-danger-strong"
+            : "bg-muted text-foreground";
+  return (
+    <div className={`rounded-md px-3 py-2 ${toneCls}`}>
+      <div className="text-[10px] font-semibold uppercase tracking-wider opacity-80">{label}</div>
+      <div className="text-lg font-bold tabular-nums">{value}</div>
+    </div>
+  );
+}
