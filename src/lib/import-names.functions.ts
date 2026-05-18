@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { generateText, Output } from "ai";
+import { generateText } from "ai";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { createLovableAiGatewayProvider } from "./ai-gateway";
@@ -40,6 +40,22 @@ function cleanStudentNames(students: z.infer<typeof ResultSchema>["students"]) {
     });
 }
 
+function extractJson(text: string) {
+  const cleaned = text.replace(/```(?:json)?|```/g, "").trim();
+  const start = Math.min(
+    ...[cleaned.indexOf("{"), cleaned.indexOf("[")].filter((index) => index >= 0),
+  );
+  const end = Math.max(cleaned.lastIndexOf("}"), cleaned.lastIndexOf("]"));
+  if (!Number.isFinite(start) || end < start) throw new Error("Keine Namen erkannt");
+  return JSON.parse(cleaned.slice(start, end + 1));
+}
+
+function parseStudentOutput(text: string) {
+  const parsed = extractJson(text);
+  const normalized = Array.isArray(parsed) ? { students: parsed } : parsed;
+  return ResultSchema.parse(normalized);
+}
+
 export const extractStudentNames = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input) => InputSchema.parse(input))
@@ -70,9 +86,8 @@ export const extractStudentNames = createServerFn({ method: "POST" })
       "Gib lieber einen plausiblen Best-Guess-Namen zurück als ihn auszulassen. " +
       "Gib nur tatsächliche Schülernamen zurück.";
 
-    const { output } = await generateText({
+    const { text } = await generateText({
       model,
-      output: Output.object({ schema: ResultSchema }),
       messages: [
         {
           role: "system",
@@ -83,7 +98,7 @@ export const extractStudentNames = createServerFn({ method: "POST" })
           content: [
             {
               type: "text",
-              text: "Extrahiere ALLE Schülernamen aus dieser Datei. Bei Screenshots: lies die sichtbare Liste vollständig von oben nach unten und gib auch unsichere, aber plausible Namen zurück.",
+              text: 'Extrahiere ALLE Schülernamen aus dieser Datei. Bei Screenshots: lies die sichtbare Liste vollständig von oben nach unten. Antworte ausschließlich als JSON im Format {"students":[{"lastName":"...","firstName":"..."}]} – ohne Erklärung, ohne Markdown.',
             },
             filePart,
           ],
@@ -91,5 +106,6 @@ export const extractStudentNames = createServerFn({ method: "POST" })
       ],
     });
 
+    const output = parseStudentOutput(text);
     return { students: cleanStudentNames(output.students) };
   });
