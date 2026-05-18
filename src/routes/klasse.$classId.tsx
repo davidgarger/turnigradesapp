@@ -97,7 +97,10 @@ function ClassPage() {
         s.firstName.toLowerCase().includes(q) || s.lastName.toLowerCase().includes(q)
       );
     });
-    const withGrade = filtered.map((s) => ({ s, g: computeGrade(s, cls.disciplines, settings) }));
+    const withGrade = filtered.map((s) => ({
+      s,
+      g: computeGrade(s, cls.disciplines, settings, cls.totalLessons),
+    }));
     withGrade.sort((a, b) => {
       let cmp = 0;
       switch (sortKey) {
@@ -183,13 +186,42 @@ function ClassPage() {
               </p>
             </div>
           </div>
-          <Link
-            to="/einstellungen"
-            className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
-          >
-            <Settings className="h-4 w-4" />
-            <span className="hidden sm:inline">Einstellungen</span>
-          </Link>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1 rounded-md border border-input bg-background px-2 py-1">
+              <span className="text-xs font-medium text-muted-foreground">Stunden gesamt</span>
+              <button
+                onClick={() => turnActions.incrementTotalLessons(cls.id, -1)}
+                className="h-7 w-6 rounded text-sm text-muted-foreground hover:bg-accent"
+                aria-label="weniger Stunden"
+              >
+                –
+              </button>
+              <input
+                type="number"
+                min={0}
+                value={cls.totalLessons}
+                onChange={(e) => turnActions.setTotalLessons(cls.id, Number(e.target.value))}
+                className="h-7 w-12 rounded border border-input bg-background px-1 text-center text-sm tabular-nums"
+                aria-label="Gehaltene Turnstunden gesamt"
+              />
+              <button
+                onClick={() => turnActions.incrementTotalLessons(cls.id, 1)}
+                className="h-7 w-7 rounded bg-primary text-sm font-bold text-primary-foreground hover:opacity-90"
+                aria-label="Stunde gehalten – Plus"
+                title="Eine Turnstunde gehalten (+1)"
+              >
+                +
+              </button>
+            </div>
+            <Link
+              to="/einstellungen"
+              className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+            >
+              <Settings className="h-4 w-4" />
+              <span className="hidden sm:inline">Einstellungen</span>
+            </Link>
+          </div>
+
         </div>
       </header>
 
@@ -351,9 +383,10 @@ function ClassPage() {
                 <th className="px-2 py-3 text-center font-semibold" title="Nicht entschuldigt">
                   <span className="text-status-danger-strong">NE</span>
                 </th>
-                <th className="px-2 py-3 text-center font-semibold">
-                  Beteiligung
+                <th className="px-2 py-3 text-center font-semibold" title="Mitgeturnte Stunden">
+                  Mitgeturnt
                 </th>
+
                 <th className="px-2 py-3 text-center font-semibold">
                   <button
                     onClick={() => handleSort("total")}
@@ -385,8 +418,16 @@ function ClassPage() {
                 </tr>
               )}
               {rows.map(({ s, g }) => (
-                <StudentRow key={s.id} student={s} grade={g} classId={cls.id} disciplines={cls.disciplines} />
+                <StudentRow
+                  key={s.id}
+                  student={s}
+                  grade={g}
+                  classId={cls.id}
+                  disciplines={cls.disciplines}
+                  totalLessons={cls.totalLessons}
+                />
               ))}
+
             </tbody>
           </table>
         </div>
@@ -396,7 +437,8 @@ function ClassPage() {
           <Legend color="status-danger" label="TV = Turnzeug vergessen" />
           <Legend color="status-warning" label="E = Entschuldigt nicht mitgeturnt" />
           <Legend color="status-danger-strong" label="NE = Nicht entschuldigt" />
-          <Legend color="status-success" label="Beteiligung 4–5 = gut" />
+          <Legend color="status-success" label="Mitgeturnt / Stunden gesamt" />
+
         </div>
       </main>
     </div>
@@ -417,12 +459,15 @@ function StudentRow({
   grade,
   classId,
   disciplines,
+  totalLessons,
 }: {
   student: Student;
   grade: ReturnType<typeof computeGrade>;
   classId: ClassId;
   disciplines: { id: string; name: string; weight: number }[];
+  totalLessons: number;
 }) {
+
   const gradeColor =
     grade.grade <= 2
       ? "bg-status-success-bg text-status-success"
@@ -484,29 +529,39 @@ function StudentRow({
         onChange={(v) => turnActions.updateStudent(classId, student.id, { unexcusedNotParticipating: v })}
       />
       <td className="px-1 py-1 text-center">
-        <div className="flex items-center justify-center gap-0.5">
-          {[1, 2, 3, 4, 5].map((n) => {
-            const active = student.participation >= n;
-            return (
-              <button
-                key={n}
-                onClick={() => turnActions.updateStudent(classId, student.id, { participation: n })}
-                className={`h-6 w-5 rounded-sm transition-colors ${
-                  active
-                    ? n >= 4
-                      ? "bg-status-success"
-                      : n === 3
-                        ? "bg-status-warning"
-                        : "bg-status-danger"
-                    : "bg-muted"
-                }`}
-                aria-label={`Beteiligung ${n}`}
-                title={`Beteiligung ${n}/5`}
-              />
-            );
-          })}
+        <div className="inline-flex items-center gap-1">
+          <button
+            onClick={() =>
+              turnActions.updateStudent(classId, student.id, {
+                attended: Math.max(0, student.attended - 1),
+              })
+            }
+            className="h-7 w-6 rounded-md border border-input text-sm text-muted-foreground hover:bg-accent"
+            aria-label="weniger mitgeturnt"
+          >
+            –
+          </button>
+          <span
+            className="inline-flex h-7 min-w-[3.25rem] items-center justify-center rounded-md border border-status-success/40 bg-status-success-bg px-2 text-sm font-semibold tabular-nums text-status-success"
+            title={`${student.attended} von ${totalLessons} Stunden mitgeturnt`}
+          >
+            {student.attended}/{totalLessons}
+          </span>
+          <button
+            onClick={() =>
+              turnActions.updateStudent(classId, student.id, {
+                attended: student.attended + 1,
+              })
+            }
+            className="h-7 w-7 rounded-md border border-status-success/40 bg-status-success text-sm font-bold text-white hover:opacity-90"
+            aria-label="Stunde mitgeturnt – Plus"
+            title="Heute mitgeturnt (+1)"
+          >
+            +
+          </button>
         </div>
       </td>
+
       <td className="px-2 py-2 text-center font-semibold tabular-nums">{grade.total}</td>
       <td className="px-2 py-2 text-center">
         <span
