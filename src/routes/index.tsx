@@ -1,7 +1,8 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { Settings, Users, ClipboardList, ImagePlus, Trash2, Palette, Check } from "lucide-react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { Settings, Users, ClipboardList, ImagePlus, Trash2, Palette, Check, LogOut } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useTurnState } from "@/lib/turn-store";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/")({
   component: Index,
