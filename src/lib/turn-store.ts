@@ -447,6 +447,9 @@ export function computeGrade(
   const sortedThresholds = [...settings.gradeThresholds].sort((a, b) => b.min - a.min);
   const grade = sortedThresholds.find((t) => total >= t.min)?.grade ?? 5;
 
+  const behaviorNet = Math.max(0, student.redPoints - student.greenPoints);
+  const behaviorGrade = Math.min(5, Math.max(1, 1 + Math.floor(behaviorNet / 3)));
+
   return {
     disciplineAverage,
     attendanceRate,
@@ -455,6 +458,8 @@ export function computeGrade(
     grade,
     measuredCount,
     hasDisciplineData,
+    behaviorNet,
+    behaviorGrade,
   };
 }
 
