@@ -172,8 +172,13 @@ function ClassPage() {
               <ArrowLeft className="h-4 w-4" />
             </button>
             <div>
-              <h1 className="text-lg font-semibold tracking-tight text-foreground">{cls.name}</h1>
-              <p className="text-xs text-muted-foreground">
+              <input
+                value={cls.name}
+                onChange={(e) => turnActions.renameClass(cls.id, e.target.value)}
+                className="w-full max-w-xs rounded-md border border-transparent bg-transparent px-1 py-0.5 text-lg font-semibold tracking-tight text-foreground hover:border-input focus:border-input focus:bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                aria-label="Klassenname bearbeiten"
+              />
+              <p className="px-1 text-xs text-muted-foreground">
                 {cls.students.length} Schüler · {cls.disciplines.length} Disziplinen
               </p>
             </div>
