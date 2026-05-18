@@ -14,9 +14,12 @@ import {
   computeGrade,
   downloadCsv,
   exportClassCsv,
+  getEffectiveTotalLessons,
+  computeScheduledLessons,
   turnActions,
   useTurnState,
   type ClassId,
+  type ClassSchedule,
   type Student,
 } from "@/lib/turn-store";
 import { Button } from "@/components/ui/button";
