@@ -381,6 +381,59 @@ function ClassPage() {
           </table>
         </div>
 
+        {/* Aktionen unterhalb der Tabelle */}
+        <div className="mt-4 flex flex-wrap items-center gap-2">
+          <Dialog open={discOpen} onOpenChange={setDiscOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                <Plus className="h-4 w-4" /> Disziplin
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Disziplin hinzufügen</DialogTitle>
+              </DialogHeader>
+              <div className="grid gap-3">
+                <div className="grid gap-1.5">
+                  <Label htmlFor="dn">Name</Label>
+                  <Input
+                    id="dn"
+                    value={discName}
+                    onChange={(e) => setDiscName(e.target.value)}
+                    placeholder="z. B. Weitsprung"
+                  />
+                </div>
+                <div className="grid gap-1.5">
+                  <Label htmlFor="dw">Gewichtung (%)</Label>
+                  <Input
+                    id="dw"
+                    type="number"
+                    min={0}
+                    max={100}
+                    value={discWeight}
+                    onChange={(e) => setDiscWeight(Number(e.target.value))}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Die Gewichtungen aller Disziplinen werden im Verhältnis zueinander gewertet.
+                  </p>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setDiscOpen(false)}>
+                  Abbrechen
+                </Button>
+                <Button onClick={handleAddDiscipline}>Hinzufügen</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          <Button variant="outline" onClick={handleExport}>
+            <Download className="h-4 w-4" /> Export CSV
+          </Button>
+        </div>
+
+
+
         {/* Legend */}
         <div className="mt-4 flex flex-wrap gap-3 text-xs text-muted-foreground">
           <Legend color="status-danger" label="Turnzeug vergessen" />
