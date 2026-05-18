@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, ChevronLeft, Check, X, Shirt, AlertTriangle, Undo2, Play, UserCheck } from "lucide-react";
+import { ArrowLeft, Check, X, Shirt, AlertTriangle, Undo2 } from "lucide-react";
 import { turnActions, useTurnState, type ClassId, type Student, undo, canUndo } from "@/lib/turn-store";
 import { toast } from "sonner";
 
@@ -13,8 +13,6 @@ export const Route = createFileRoute("/klasse/$classId/quick")({
 
 const SWIPE_THRESHOLD = 90; // px
 
-type AttendanceMark = "present" | "excused" | "unexcused" | "kit";
-
 function QuickEntry() {
   const { classId } = Route.useParams() as { classId: ClassId };
   const navigate = useNavigate();
@@ -23,30 +21,6 @@ function QuickEntry() {
 
   const students = cls?.students ?? [];
 
-  const [phase, setPhase] = useState<"attendance" | "swipe">("attendance");
-  const [marks, setMarks] = useState<Record<string, AttendanceMark>>({});
-
-  // Default alle als anwesend markieren, wenn Schülerliste sich ändert
-  useEffect(() => {
-    setMarks((prev) => {
-      const next = { ...prev };
-      let changed = false;
-      for (const s of students) {
-        if (!next[s.id]) {
-          next[s.id] = "present";
-          changed = true;
-        }
-      }
-      return changed ? next : prev;
-    });
-  }, [students]);
-
-  // Nur anwesende Schüler durchwischen
-  const swipeStudents = useMemo(
-    () => students.filter((s) => marks[s.id] === "present" || !marks[s.id]),
-    [students, marks],
-  );
-
   const [index, setIndex] = useState(0);
   const [dragX, setDragX] = useState(0);
   const [animating, setAnimating] = useState<null | "left" | "right">(null);
@@ -54,13 +28,14 @@ function QuickEntry() {
   const startY = useRef<number | null>(null);
   const lockedAxis = useRef<"x" | "y" | null>(null);
 
-  const student: Student | undefined = swipeStudents[index];
+  const student: Student | undefined = students[index];
+  const done = students.length > 0 && index >= students.length;
 
   useEffect(() => {
-    if (index >= swipeStudents.length && swipeStudents.length > 0) {
-      setIndex(swipeStudents.length - 1);
+    if (index > students.length && students.length > 0) {
+      setIndex(students.length);
     }
-  }, [swipeStudents.length, index]);
+  }, [students.length, index]);
 
   if (!cls) {
     return (
@@ -88,154 +63,24 @@ function QuickEntry() {
     );
   }
 
-  // ===== ATTENDANCE PHASE =====
-  if (phase === "attendance") {
-    const counts = {
-      present: students.filter((s) => (marks[s.id] ?? "present") === "present").length,
-      excused: students.filter((s) => marks[s.id] === "excused").length,
-      unexcused: students.filter((s) => marks[s.id] === "unexcused").length,
-      kit: students.filter((s) => marks[s.id] === "kit").length,
-    };
-
-    const startSwipe = () => {
-      // Markierte Abwesenheiten in den Store schreiben
-      let applied = 0;
-      for (const s of students) {
-        const m = marks[s.id];
-        if (m === "excused") {
-          turnActions.updateStudent(classId, s.id, { excusedNotParticipating: s.excusedNotParticipating + 1 });
-          applied++;
-        } else if (m === "unexcused") {
-          turnActions.updateStudent(classId, s.id, { unexcusedNotParticipating: s.unexcusedNotParticipating + 1 });
-          applied++;
-        } else if (m === "kit") {
-          turnActions.updateStudent(classId, s.id, { forgottenKit: s.forgottenKit + 1 });
-          applied++;
-        }
-      }
-      if (applied > 0) toast.success(`${applied} Abwesenheit${applied === 1 ? "" : "en"} eingetragen`);
-      setIndex(0);
-      setPhase("swipe");
-    };
-
-    const presentCount = counts.present;
-
-    return (
-      <div className="flex min-h-screen flex-col bg-gradient-to-b from-slate-50 to-white">
-        <div className="flex items-center gap-2 border-b border-border bg-background/80 px-3 py-3 backdrop-blur">
-          <button
-            type="button"
-            onClick={() => navigate({ to: "/klasse/$classId", params: { classId } })}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-md text-foreground hover:bg-accent"
-            aria-label="Zurück"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </button>
-          <div className="flex-1">
-            <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              {cls.name} · Anwesenheit
-            </div>
-            <div className="text-sm font-medium text-foreground">
-              {presentCount} anwesend · {students.length - presentCount} fehlen
-            </div>
-          </div>
-        </div>
-
-        <div className="flex-1 overflow-y-auto px-3 py-3">
-          <p className="mx-auto mb-3 max-w-md text-center text-xs text-muted-foreground">
-            Tippe auf einen Status, wenn jemand fehlt. Alle anderen sind anwesend und werden gleich durchgewischt.
-          </p>
-          <ul className="mx-auto flex max-w-md flex-col gap-2">
-            {students.map((s) => {
-              const m: AttendanceMark = marks[s.id] ?? "present";
-              const setMark = (val: AttendanceMark) =>
-                setMarks((prev) => ({ ...prev, [s.id]: prev[s.id] === val ? "present" : val }));
-              return (
-                <li
-                  key={s.id}
-                  className={`rounded-2xl border bg-card p-3 shadow-sm transition ${
-                    m === "present" ? "border-border" : "border-amber-300 bg-amber-50/50"
-                  }`}
-                >
-                  <div className="mb-2 flex items-center gap-2">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-fuchsia-500 text-sm font-bold text-white">
-                      {s.firstName.charAt(0)}
-                      {s.lastName.charAt(0)}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="truncate text-sm font-semibold text-foreground">
-                        {s.firstName} {s.lastName}
-                      </div>
-                      <div className="text-[11px] text-muted-foreground">
-                        {m === "present"
-                          ? "anwesend"
-                          : m === "excused"
-                            ? "entschuldigt"
-                            : m === "unexcused"
-                              ? "nicht entschuldigt"
-                              : "Turnzeug vergessen"}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-3 gap-1.5">
-                    <PillBtn active={m === "excused"} onClick={() => setMark("excused")} tone="amber" icon={<AlertTriangle className="h-3.5 w-3.5" />}>
-                      Entsch.
-                    </PillBtn>
-                    <PillBtn active={m === "unexcused"} onClick={() => setMark("unexcused")} tone="rose" icon={<X className="h-3.5 w-3.5" />}>
-                      Unentsch.
-                    </PillBtn>
-                    <PillBtn active={m === "kit"} onClick={() => setMark("kit")} tone="orange" icon={<Shirt className="h-3.5 w-3.5" />}>
-                      Turnzeug
-                    </PillBtn>
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-
-        <div className="sticky bottom-0 border-t border-border bg-background/95 px-4 py-3 backdrop-blur">
-          <button
-            type="button"
-            onClick={startSwipe}
-            disabled={presentCount === 0}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 px-4 py-3.5 text-base font-bold text-white shadow-lg transition active:scale-[0.98] disabled:opacity-40"
-          >
-            <Play className="h-5 w-5" />
-            {presentCount > 0 ? `${presentCount} Anwesende durchwischen` : "Niemand anwesend"}
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  // ===== SWIPE PHASE =====
-  const next = () => setIndex((i) => Math.min(swipeStudents.length - 1, i + 1));
-  const prev = () => setIndex((i) => Math.max(0, i - 1));
+  const advance = () => setIndex((i) => Math.min(students.length, i + 1));
+  const goBack = () => setIndex((i) => Math.max(0, i - 1));
 
   const markAttended = (st: Student) => {
     turnActions.updateStudent(classId, st.id, { attended: st.attended + 1 });
-    toast.success(`${st.firstName} ${st.lastName}: mitgeturnt`, { duration: 1200 });
+    toast.success(`${st.firstName}: mitgeturnt`, { duration: 900 });
   };
 
   const finishSwipe = (dir: "left" | "right") => {
     if (!student) return;
-    if (dir === "right") {
-      markAttended(student);
-      setAnimating("right");
-      setTimeout(() => {
-        setAnimating(null);
-        setDragX(0);
-        next();
-      }, 180);
-    } else {
-      setAnimating("left");
-      setTimeout(() => {
-        setAnimating(null);
-        setDragX(0);
-        prev();
-      }, 180);
-    }
+    setAnimating(dir);
+    if (dir === "right") markAttended(student);
+    setTimeout(() => {
+      setAnimating(null);
+      setDragX(0);
+      if (dir === "right") advance();
+      else goBack();
+    }, 180);
   };
 
   const onPointerDown = (e: React.PointerEvent) => {
@@ -271,20 +116,22 @@ function QuickEntry() {
     }
   };
 
-  const progress = swipeStudents.length > 0 ? ((index + 1) / swipeStudents.length) * 100 : 0;
+  const progress = (Math.min(index, students.length) / students.length) * 100;
   const rotation = Math.max(-12, Math.min(12, dragX / 14));
   const cardTransform = animating
     ? `translateX(${animating === "right" ? "120vw" : "-120vw"}) rotate(${animating === "right" ? 20 : -20}deg)`
     : `translateX(${dragX}px) rotate(${rotation}deg)`;
+
+  const nextStudent = students[index + 1];
 
   return (
     <div className="flex min-h-screen flex-col bg-gradient-to-b from-slate-50 to-white">
       <div className="flex items-center gap-2 border-b border-border bg-background/80 px-3 py-3 backdrop-blur">
         <button
           type="button"
-          onClick={() => setPhase("attendance")}
+          onClick={() => navigate({ to: "/klasse/$classId", params: { classId } })}
           className="inline-flex h-9 w-9 items-center justify-center rounded-md text-foreground hover:bg-accent"
-          aria-label="Zurück zur Anwesenheit"
+          aria-label="Zurück"
         >
           <ArrowLeft className="h-5 w-5" />
         </button>
@@ -293,21 +140,16 @@ function QuickEntry() {
             {cls.name} · Schnelleingabe
           </div>
           <div className="text-sm font-medium text-foreground">
-            {Math.min(index + 1, swipeStudents.length)} von {swipeStudents.length}
+            {Math.min(index + 1, students.length)} von {students.length}
           </div>
         </div>
         <button
           type="button"
-          onClick={() => setPhase("attendance")}
-          className="inline-flex items-center gap-1.5 rounded-md border border-input bg-background px-2.5 py-1.5 text-xs font-medium text-foreground transition hover:bg-accent"
-        >
-          <UserCheck className="h-3.5 w-3.5" />
-          Anwesenheit
-        </button>
-        <button
-          type="button"
           onClick={() => {
-            if (undo()) toast.success("Letzte Änderung rückgängig gemacht");
+            if (undo()) {
+              toast.success("Letzte Änderung rückgängig gemacht");
+              goBack();
+            }
           }}
           disabled={!canUndo()}
           className="inline-flex items-center gap-1.5 rounded-md border border-input bg-background px-2.5 py-1.5 text-xs font-medium text-foreground transition hover:bg-accent disabled:opacity-40"
@@ -325,81 +167,105 @@ function QuickEntry() {
       </div>
 
       <div className="relative flex flex-1 items-center justify-center px-4 py-6">
-        <div
-          className="pointer-events-none absolute left-6 top-1/2 -translate-y-1/2 rounded-xl border-2 border-rose-400 bg-rose-50 px-3 py-1.5 text-sm font-bold text-rose-600 transition"
-          style={{ opacity: dragX < -20 ? Math.min(1, -dragX / SWIPE_THRESHOLD) : 0 }}
-        >
-          ← zurück
-        </div>
-        <div
-          className="pointer-events-none absolute right-6 top-1/2 -translate-y-1/2 rounded-xl border-2 border-emerald-400 bg-emerald-50 px-3 py-1.5 text-sm font-bold text-emerald-600 transition"
-          style={{ opacity: dragX > 20 ? Math.min(1, dragX / SWIPE_THRESHOLD) : 0 }}
-        >
-          mitgeturnt ✓
-        </div>
-
-        {student ? (
-          <StudentCard
-            key={student.id}
-            student={student}
-            transform={cardTransform}
-            animating={!!animating}
-            onPointerDown={onPointerDown}
-            onPointerMove={onPointerMove}
-            onPointerUp={onPointerUp}
-            onPointerCancel={onPointerUp}
-            classId={classId}
-            onAfterMark={() => {
-              setAnimating("right");
-              setTimeout(() => {
-                setAnimating(null);
-                setDragX(0);
-                next();
-              }, 180);
-            }}
-          />
-        ) : (
-          <div className="text-center text-sm text-muted-foreground">
-            Keine anwesenden Schüler.
+        {done ? (
+          <div className="flex flex-col items-center gap-4 text-center">
+            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+              <Check className="h-10 w-10" />
+            </div>
+            <div className="text-xl font-bold text-foreground">Fertig!</div>
+            <p className="max-w-xs text-sm text-muted-foreground">
+              Alle {students.length} Schüler durchgewischt.
+            </p>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setIndex(0)}
+                className="rounded-xl border border-input bg-background px-4 py-2.5 text-sm font-semibold text-foreground hover:bg-accent"
+              >
+                Nochmal von vorne
+              </button>
+              <button
+                type="button"
+                onClick={() => navigate({ to: "/klasse/$classId", params: { classId } })}
+                className="rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground"
+              >
+                Zur Klasse
+              </button>
+            </div>
           </div>
+        ) : (
+          <>
+            {/* Nächste Karte als Hintergrund (Tinder-Stapel) */}
+            {nextStudent && (
+              <div
+                className="pointer-events-none absolute inset-x-4 top-6"
+                style={{ transform: "scale(0.95) translateY(8px)", opacity: 0.5 }}
+              >
+                <StudentCardBackdrop student={nextStudent} />
+              </div>
+            )}
+
+            {/* Swipe-Hinweise */}
+            <div
+              className="pointer-events-none absolute left-6 top-12 rounded-xl border-2 border-rose-400 bg-rose-50 px-3 py-1.5 text-sm font-bold text-rose-600 transition"
+              style={{ opacity: dragX < -20 ? Math.min(1, -dragX / SWIPE_THRESHOLD) : 0, transform: "rotate(-12deg)" }}
+            >
+              ← zurück
+            </div>
+            <div
+              className="pointer-events-none absolute right-6 top-12 rounded-xl border-2 border-emerald-400 bg-emerald-50 px-3 py-1.5 text-sm font-bold text-emerald-600 transition"
+              style={{ opacity: dragX > 20 ? Math.min(1, dragX / SWIPE_THRESHOLD) : 0, transform: "rotate(12deg)" }}
+            >
+              mitgeturnt ✓
+            </div>
+
+            {student && (
+              <StudentCard
+                key={student.id}
+                student={student}
+                transform={cardTransform}
+                animating={!!animating}
+                onPointerDown={onPointerDown}
+                onPointerMove={onPointerMove}
+                onPointerUp={onPointerUp}
+                onPointerCancel={onPointerUp}
+                classId={classId}
+                onAfterMark={() => {
+                  setAnimating("right");
+                  setTimeout(() => {
+                    setAnimating(null);
+                    setDragX(0);
+                    advance();
+                  }, 180);
+                }}
+              />
+            )}
+          </>
         )}
       </div>
 
-      <div className="border-t border-border bg-background px-4 py-3 text-center text-xs text-muted-foreground">
-        Nach rechts wischen = <span className="font-semibold text-emerald-600">mitgeturnt</span>{" "}
-        · nach links = <span className="font-semibold text-rose-600">zurück</span>
-      </div>
+      {!done && (
+        <div className="border-t border-border bg-background px-4 py-3 text-center text-xs text-muted-foreground">
+          → wischen = <span className="font-semibold text-emerald-600">mitgeturnt</span>{" "}
+          · ← wischen = <span className="font-semibold text-rose-600">zurück</span>
+        </div>
+      )}
     </div>
   );
 }
 
-function PillBtn({
-  active,
-  onClick,
-  tone,
-  icon,
-  children,
-}: {
-  active: boolean;
-  onClick: () => void;
-  tone: "amber" | "rose" | "orange";
-  icon: React.ReactNode;
-  children: React.ReactNode;
-}) {
-  const tones: Record<string, string> = {
-    amber: active ? "bg-amber-500 text-white border-amber-500" : "bg-white text-amber-700 border-amber-200",
-    rose: active ? "bg-rose-500 text-white border-rose-500" : "bg-white text-rose-700 border-rose-200",
-    orange: active ? "bg-orange-500 text-white border-orange-500" : "bg-white text-orange-700 border-orange-200",
-  };
+function StudentCardBackdrop({ student }: { student: Student }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`inline-flex items-center justify-center gap-1 rounded-lg border-2 px-2 py-2 text-[11px] font-bold transition active:scale-95 ${tones[tone]}`}
-    >
-      {icon}
-      {children}
-    </button>
+    <div className="mx-auto w-full max-w-md">
+      <div className="overflow-hidden rounded-3xl border border-border bg-card shadow-lg">
+        <div className="bg-gradient-to-br from-indigo-400 via-violet-400 to-fuchsia-400 p-6 text-white">
+          <div className="text-2xl font-bold">
+            {student.firstName} {student.lastName}
+          </div>
+        </div>
+        <div className="h-32" />
+      </div>
+    </div>
   );
 }
 
@@ -439,13 +305,13 @@ function StudentCard({
     turnActions.updateStudent(classId, student.id, {
       [field]: student[field] + 1,
     } as Partial<Student>);
-    toast.success(`${student.firstName}: ${label}`, { duration: 1200 });
+    toast.success(`${student.firstName}: ${label}`, { duration: 900 });
     onAfterMark();
   };
 
   return (
     <div
-      className="w-full max-w-md select-none touch-none"
+      className="relative z-10 w-full max-w-md select-none touch-none"
       style={{
         transform,
         transition: animating ? "transform 180ms ease-out" : "transform 60ms",
@@ -477,44 +343,45 @@ function StudentCard({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-2 p-4">
+        <div className="grid grid-cols-3 gap-2 p-4">
+          <button
+            type="button"
+            onClick={() => markAndNext("excusedNotParticipating", "entschuldigt")}
+            className="inline-flex flex-col items-center justify-center gap-1 rounded-xl border-2 border-amber-200 bg-amber-50 px-2 py-3 text-xs font-bold text-amber-700 transition active:scale-95"
+          >
+            <AlertTriangle className="h-4 w-4" />
+            Entschuldigt
+          </button>
+          <button
+            type="button"
+            onClick={() => markAndNext("unexcusedNotParticipating", "nicht entschuldigt")}
+            className="inline-flex flex-col items-center justify-center gap-1 rounded-xl border-2 border-rose-200 bg-rose-50 px-2 py-3 text-xs font-bold text-rose-700 transition active:scale-95"
+          >
+            <X className="h-4 w-4" />
+            Nicht entsch.
+          </button>
+          <button
+            type="button"
+            onClick={() => markAndNext("forgottenKit", "Turnzeug vergessen")}
+            className="inline-flex flex-col items-center justify-center gap-1 rounded-xl border-2 border-orange-200 bg-orange-50 px-2 py-3 text-xs font-bold text-orange-700 transition active:scale-95"
+          >
+            <Shirt className="h-4 w-4" />
+            Turnzeug
+          </button>
+        </div>
+
+        <div className="px-4 pb-4">
           <button
             type="button"
             onClick={() => {
               turnActions.updateStudent(classId, student.id, { attended: student.attended + 1 });
-              toast.success(`${student.firstName}: mitgeturnt`, { duration: 1200 });
+              toast.success(`${student.firstName}: mitgeturnt`, { duration: 900 });
               onAfterMark();
             }}
-            className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-500 px-4 py-4 text-base font-bold text-white shadow-md transition active:scale-95"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 px-4 py-4 text-base font-bold text-white shadow-md transition active:scale-95"
           >
-            <Check className="h-5 w-5" /> Mitgeturnt
+            <Check className="h-5 w-5" /> Mitgeturnt → nächster
           </button>
-          <div className="grid grid-cols-3 gap-2">
-            <button
-              type="button"
-              onClick={() => markAndNext("excusedNotParticipating", "entschuldigt")}
-              className="inline-flex flex-col items-center justify-center gap-1 rounded-xl border-2 border-amber-200 bg-amber-50 px-2 py-3 text-xs font-bold text-amber-700 transition active:scale-95"
-            >
-              <AlertTriangle className="h-4 w-4" />
-              Entschuldigt
-            </button>
-            <button
-              type="button"
-              onClick={() => markAndNext("unexcusedNotParticipating", "nicht entschuldigt")}
-              className="inline-flex flex-col items-center justify-center gap-1 rounded-xl border-2 border-rose-200 bg-rose-50 px-2 py-3 text-xs font-bold text-rose-700 transition active:scale-95"
-            >
-              <X className="h-4 w-4" />
-              Nicht entsch.
-            </button>
-            <button
-              type="button"
-              onClick={() => markAndNext("forgottenKit", "Turnzeug vergessen")}
-              className="inline-flex flex-col items-center justify-center gap-1 rounded-xl border-2 border-orange-200 bg-orange-50 px-2 py-3 text-xs font-bold text-orange-700 transition active:scale-95"
-            >
-              <Shirt className="h-4 w-4" />
-              Turnzeug
-            </button>
-          </div>
         </div>
       </div>
     </div>
@@ -531,5 +398,3 @@ function Stat({ label, value }: { label: string; value: number }) {
     </div>
   );
 }
-
-void ChevronLeft;
