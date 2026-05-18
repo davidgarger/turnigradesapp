@@ -126,10 +126,16 @@ export default function QuickSession({ classId, onClose }: Props) {
         </button>
         <div className="flex-1">
           <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            {cls?.name ?? ""} · Stunde läuft
+            {cls?.name ?? ""} · {today}
           </div>
           <div className="text-sm font-medium text-foreground">
-            {students.length > 0 ? `${Math.min(index + 1, students.length)} von ${students.length}` : "Keine Schüler"}
+            {!started
+              ? "Stunde vorbereiten"
+              : topic
+                ? topic
+                : students.length > 0
+                  ? `${Math.min(index + 1, students.length)} von ${students.length}`
+                  : "Keine Schüler"}
           </div>
         </div>
         <button
