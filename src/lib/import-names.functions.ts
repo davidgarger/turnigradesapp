@@ -55,8 +55,8 @@ export const extractStudentNames = createServerFn({ method: "POST" })
     const buffer = Buffer.from(data.fileBase64, "base64");
 
     const filePart = isImageMimeType(data.mimeType)
-      ? ({ type: "image" as const, image: buffer, mediaType: data.mimeType })
-      : ({ type: "file" as const, data: buffer, mediaType: data.mimeType });
+      ? { type: "image" as const, image: buffer, mediaType: data.mimeType }
+      : { type: "file" as const, data: buffer, mediaType: data.mimeType };
 
     const system =
       "Du extrahierst Schülernamen aus Klassenlisten (Fotos, Screenshots, Scans, PDFs). " +
