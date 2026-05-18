@@ -413,9 +413,9 @@ function ClassPage() {
 
         {/* Legend */}
         <div className="mt-4 flex flex-wrap gap-3 text-xs text-muted-foreground">
-          <Legend color="status-danger" label="TV = Turnzeug vergessen" />
-          <Legend color="status-warning" label="E = Entschuldigt nicht mitgeturnt" />
-          <Legend color="status-danger-strong" label="NE = Nicht entschuldigt" />
+          <Legend color="status-danger" label="Turnzeug vergessen" />
+          <Legend color="status-warning" label="Entschuldigt nicht mitgeturnt" />
+          <Legend color="status-danger-strong" label="Nicht entschuldigt" />
           <Legend color="status-success" label="Mitgeturnt / Stunden gesamt" />
           <Legend color="status-danger-strong" label="● Rote Punkte (3 = Betragens-Note ↓)" />
           <Legend color="status-success" label="● Grüne Punkte (heben rote auf)" />
