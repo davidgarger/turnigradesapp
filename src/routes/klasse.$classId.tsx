@@ -439,8 +439,12 @@ function ClassPage() {
 
         </div>
       </main>
+      {sessionOpen && (
+        <QuickSession classId={cls.id} onClose={() => setSessionOpen(false)} />
+      )}
     </div>
   );
+
 }
 
 function Legend({ color, label }: { color: string; label: string }) {
