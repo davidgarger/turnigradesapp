@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 // ---------- Types ----------
 export type ClassId = "1" | "2" | "3" | "4";
