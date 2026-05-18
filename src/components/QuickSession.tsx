@@ -381,7 +381,7 @@ function StudentCard({
           </button>
           <button
             type="button"
-            onClick={() => markAndNext("excusedNotParticipating", "entschuldigt")}
+            onClick={() => markAndNext("excused", "excusedNotParticipating", "entschuldigt")}
             className="inline-flex flex-col items-center justify-center gap-0.5 rounded-xl border-2 border-amber-300 bg-amber-50 px-2 py-2.5 font-bold text-amber-700 transition active:scale-95"
           >
             <AlertTriangle className="h-4 w-4" />
