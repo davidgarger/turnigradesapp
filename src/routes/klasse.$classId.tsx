@@ -101,9 +101,10 @@ function ClassPage() {
         s.firstName.toLowerCase().includes(q) || s.lastName.toLowerCase().includes(q)
       );
     });
+    const effectiveLessons = getEffectiveTotalLessons(cls);
     const withGrade = filtered.map((s) => ({
       s,
-      g: computeGrade(s, cls.disciplines, settings, cls.totalLessons),
+      g: computeGrade(s, cls.disciplines, settings, effectiveLessons),
     }));
     withGrade.sort((a, b) => {
       let cmp = 0;
