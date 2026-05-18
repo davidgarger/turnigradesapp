@@ -405,6 +405,8 @@ export interface GradeResult {
   grade: number;
   measuredCount: number;
   hasDisciplineData: boolean;
+  behaviorNet: number;   // rote − grüne Punkte (mind. 0)
+  behaviorGrade: number; // Betragensnote 1..5 (je 3 Netto-Rotpunkte eine Note schlechter)
 }
 
 export function computeGrade(
