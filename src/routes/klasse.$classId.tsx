@@ -519,6 +519,16 @@ function StudentRow({
         tone="danger-strong"
         onChange={(v) => turnActions.updateStudent(classId, student.id, { unexcusedNotParticipating: v })}
       />
+      <StatusCell
+        value={student.redPoints}
+        tone="danger-strong"
+        onChange={(v) => turnActions.updateStudent(classId, student.id, { redPoints: v })}
+      />
+      <StatusCell
+        value={student.greenPoints}
+        tone="success"
+        onChange={(v) => turnActions.updateStudent(classId, student.id, { greenPoints: v })}
+      />
       <td className="px-1 py-1 text-center">
         <div className="inline-flex items-center gap-1">
           <button
