@@ -630,3 +630,224 @@ function StatusCell({
     </td>
   );
 }
+
+const WEEKDAY_LABELS = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
+
+function defaultSchedule(): ClassSchedule {
+  const now = new Date();
+  const year = now.getMonth() >= 8 ? now.getFullYear() : now.getFullYear() - 1;
+  return {
+    startDate: `${year}-09-01`,
+    endDate: `${year + 1}-06-30`,
+    weekdays: [2], // Dienstag als sinnvoller Default
+    lessonsPerDay: 1,
+    cancelled: 0,
+  };
+}
+
+function SchedulePanel({
+  cls,
+  effectiveLessons,
+}: {
+  cls: { id: ClassId; totalLessons: number; schedule?: ClassSchedule };
+  effectiveLessons: number;
+}) {
+  const [open, setOpen] = useState(false);
+  const hasSchedule = !!cls.schedule;
+  const draftInit: ClassSchedule = cls.schedule ?? defaultSchedule();
+  const [draft, setDraft] = useState<ClassSchedule>(draftInit);
+
+  // Reset draft on open
+  const onOpenChange = (v: boolean) => {
+    if (v) setDraft(cls.schedule ?? defaultSchedule());
+    setOpen(v);
+  };
+
+  const previewPlanned = computeScheduledLessons({ ...draft, cancelled: 0 });
+  const previewEffective = computeScheduledLessons(draft);
+
+  return (
+    <div className="flex items-center gap-2">
+      {hasSchedule ? (
+        <div className="flex items-center gap-1 rounded-md border border-input bg-background px-2 py-1">
+          <CalendarDays className="h-3.5 w-3.5 text-muted-foreground" />
+          <span className="text-xs text-muted-foreground">Stunden</span>
+          <span className="text-sm font-semibold tabular-nums">{effectiveLessons}</span>
+          {cls.schedule!.cancelled > 0 && (
+            <span className="text-[10px] text-status-warning">
+              (−{cls.schedule!.cancelled} entfallen)
+            </span>
+          )}
+          <button
+            onClick={() => turnActions.incrementCancelled(cls.id, 1)}
+            className="ml-1 h-7 rounded border border-status-warning/40 bg-status-warning-bg px-2 text-xs font-semibold text-status-warning hover:opacity-90"
+            title="Eine Stunde ist entfallen"
+          >
+            Entfall +1
+          </button>
+        </div>
+      ) : (
+        <div className="flex items-center gap-1 rounded-md border border-input bg-background px-2 py-1">
+          <span className="text-xs font-medium text-muted-foreground">Stunden gesamt</span>
+          <button
+            onClick={() => turnActions.incrementTotalLessons(cls.id, -1)}
+            className="h-7 w-6 rounded text-sm text-muted-foreground hover:bg-accent"
+            aria-label="weniger Stunden"
+          >
+            –
+          </button>
+          <input
+            type="number"
+            min={0}
+            value={cls.totalLessons}
+            onChange={(e) => turnActions.setTotalLessons(cls.id, Number(e.target.value))}
+            className="h-7 w-12 rounded border border-input bg-background px-1 text-center text-sm tabular-nums"
+            aria-label="Gehaltene Turnstunden gesamt"
+          />
+          <button
+            onClick={() => turnActions.incrementTotalLessons(cls.id, 1)}
+            className="h-7 w-7 rounded bg-primary text-sm font-bold text-primary-foreground hover:opacity-90"
+            title="Eine Turnstunde gehalten (+1)"
+          >
+            +
+          </button>
+        </div>
+      )}
+
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogTrigger asChild>
+          <Button variant="outline" size="sm">
+            <CalendarDays className="h-4 w-4" />
+            <span className="hidden sm:inline">Stundenplan</span>
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Stundenplan & Schuljahr</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="grid gap-1.5">
+                <Label htmlFor="sd">Schuljahresbeginn</Label>
+                <Input
+                  id="sd"
+                  type="date"
+                  value={draft.startDate}
+                  onChange={(e) => setDraft({ ...draft, startDate: e.target.value })}
+                />
+              </div>
+              <div className="grid gap-1.5">
+                <Label htmlFor="ed">Schuljahresende</Label>
+                <Input
+                  id="ed"
+                  type="date"
+                  value={draft.endDate}
+                  onChange={(e) => setDraft({ ...draft, endDate: e.target.value })}
+                />
+              </div>
+            </div>
+
+            <div className="grid gap-1.5">
+              <Label>Turntage (Wochentage)</Label>
+              <div className="flex flex-wrap gap-1.5">
+                {WEEKDAY_LABELS.map((lbl, i) => {
+                  const active = draft.weekdays.includes(i);
+                  return (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() =>
+                        setDraft({
+                          ...draft,
+                          weekdays: active
+                            ? draft.weekdays.filter((w) => w !== i)
+                            : [...draft.weekdays, i].sort(),
+                        })
+                      }
+                      className={`h-9 w-12 rounded-md border text-sm font-medium transition-colors ${
+                        active
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-input bg-background text-foreground hover:bg-accent"
+                      }`}
+                    >
+                      {lbl}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="grid gap-1.5">
+                <Label htmlFor="lpd">Stunden pro Termin</Label>
+                <Input
+                  id="lpd"
+                  type="number"
+                  min={1}
+                  max={6}
+                  value={draft.lessonsPerDay}
+                  onChange={(e) =>
+                    setDraft({ ...draft, lessonsPerDay: Math.max(1, Number(e.target.value)) })
+                  }
+                />
+              </div>
+              <div className="grid gap-1.5">
+                <Label htmlFor="canc">Entfallene Stunden</Label>
+                <Input
+                  id="canc"
+                  type="number"
+                  min={0}
+                  value={draft.cancelled}
+                  onChange={(e) =>
+                    setDraft({ ...draft, cancelled: Math.max(0, Number(e.target.value)) })
+                  }
+                />
+              </div>
+            </div>
+
+            <div className="rounded-md border border-border bg-muted/40 p-3 text-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground">Geplante Stunden im Schuljahr</span>
+                <span className="font-semibold tabular-nums">{previewPlanned}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-muted-foreground">− Entfallen</span>
+                <span className="font-semibold tabular-nums">{draft.cancelled}</span>
+              </div>
+              <div className="mt-1 flex items-center justify-between border-t border-border pt-1">
+                <span className="font-medium">= Tatsächliche Turnstunden</span>
+                <span className="text-base font-bold tabular-nums">{previewEffective}</span>
+              </div>
+            </div>
+          </div>
+          <DialogFooter className="gap-2 sm:gap-2">
+            {hasSchedule && (
+              <Button
+                variant="outline"
+                onClick={() => {
+                  turnActions.setSchedule(cls.id, undefined);
+                  setOpen(false);
+                  toast.success("Stundenplan entfernt – manuelle Zählung aktiv");
+                }}
+              >
+                Stundenplan entfernen
+              </Button>
+            )}
+            <Button variant="outline" onClick={() => setOpen(false)}>
+              Abbrechen
+            </Button>
+            <Button
+              onClick={() => {
+                turnActions.setSchedule(cls.id, draft);
+                setOpen(false);
+                toast.success("Stundenplan gespeichert");
+              }}
+            >
+              Speichern
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
