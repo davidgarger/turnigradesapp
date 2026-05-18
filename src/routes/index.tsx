@@ -497,43 +497,44 @@ function SchoolLogo() {
   const [userId, setUserId] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const storageKey = userId ? `${LOGO_KEY}:${userId}` : null;
-
   useEffect(() => {
     let active = true;
-    supabase.auth.getUser().then(({ data }) => {
-      if (!active) return;
-      const uid = data.user?.id ?? null;
+
+    const apply = async (uid: string | null) => {
       setUserId(uid);
+      // Lokaler Cache zuerst
       try {
         const key = uid ? `${LOGO_KEY}:${uid}` : LOGO_KEY;
-        const v = localStorage.getItem(key);
-        // Migration: legacy global key → user-scoped
-        if (!v && uid) {
-          const legacy = localStorage.getItem(LOGO_KEY);
-          if (legacy) {
-            localStorage.setItem(key, legacy);
-            localStorage.removeItem(LOGO_KEY);
-            setLogo(legacy);
-            return;
-          }
-        }
-        if (v) setLogo(v);
+        const cached = localStorage.getItem(key);
+        if (cached) setLogo(cached);
         else setLogo(null);
-      } catch {
-        /* ignore */
+      } catch { /* ignore */ }
+
+      if (!uid) return;
+
+      // Cloud
+      const remote = await fetchUserPrefs(uid);
+      if (!active) return;
+      if (remote && remote.logo) {
+        setLogo(remote.logo);
+        try { localStorage.setItem(`${LOGO_KEY}:${uid}`, remote.logo); } catch { /* quota */ }
+      } else if (remote && !remote.logo) {
+        // Cloud kennt den User, aber kein Logo → falls lokal eins liegt, hochladen
+        try {
+          const legacy =
+            localStorage.getItem(`${LOGO_KEY}:${uid}`) ||
+            localStorage.getItem(LOGO_KEY);
+          if (legacy) {
+            await saveUserPrefs(uid, { logo: legacy });
+            setLogo(legacy);
+          }
+        } catch { /* ignore */ }
       }
-    });
+    };
+
+    supabase.auth.getUser().then(({ data }) => apply(data.user?.id ?? null));
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
-      const uid = session?.user?.id ?? null;
-      setUserId(uid);
-      try {
-        const key = uid ? `${LOGO_KEY}:${uid}` : LOGO_KEY;
-        const v = localStorage.getItem(key);
-        setLogo(v || null);
-      } catch {
-        setLogo(null);
-      }
+      apply(session?.user?.id ?? null);
     });
     return () => {
       active = false;
@@ -548,9 +549,12 @@ function SchoolLogo() {
       const url = String(reader.result || "");
       setLogo(url);
       try {
-        if (storageKey) localStorage.setItem(storageKey, url);
-      } catch {
-        /* quota */
+        if (userId) localStorage.setItem(`${LOGO_KEY}:${userId}`, url);
+      } catch { /* quota */ }
+      if (userId) {
+        void saveUserPrefs(userId, { logo: url }).then(() =>
+          toast.success("Schullogo gespeichert"),
+        );
       }
     };
     reader.readAsDataURL(file);
@@ -559,10 +563,9 @@ function SchoolLogo() {
   const onRemove = () => {
     setLogo(null);
     try {
-      if (storageKey) localStorage.removeItem(storageKey);
-    } catch {
-      /* ignore */
-    }
+      if (userId) localStorage.removeItem(`${LOGO_KEY}:${userId}`);
+    } catch { /* ignore */ }
+    if (userId) void saveUserPrefs(userId, { logo: null });
     if (fileRef.current) fileRef.current.value = "";
   };
 
