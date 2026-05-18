@@ -120,7 +120,7 @@ const defaultSettings: GradingSettings = {
   ],
 };
 
-const sampleNames: Record<ClassId, [string, string][]> = {
+const sampleNames: Partial<Record<ClassId, [string, string][]>> = {
   "1": [
     ["Anna", "Bauer"],
     ["Leon", "Huber"],
