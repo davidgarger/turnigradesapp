@@ -179,14 +179,14 @@ function ClassPage() {
   return (
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-10 border-b border-border bg-background/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-2 py-4 sm:px-4">
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigate({ to: "/" })}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-input text-foreground transition-colors hover:bg-accent"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-md border border-input text-foreground transition-colors hover:bg-accent"
               aria-label="Zurück"
             >
-              <ArrowLeft className="h-4 w-4" />
+              <ArrowLeft className="h-6 w-6" />
             </button>
             <div className="min-w-0">
               <input
@@ -224,7 +224,7 @@ function ClassPage() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-7xl px-4 py-6">
+      <main className="mx-auto max-w-7xl px-2 py-6 sm:px-4">
         {/* Action bar */}
         <div className="mb-4 flex flex-wrap items-center gap-2">
           <div className="relative flex-1 min-w-[200px]">
