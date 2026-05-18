@@ -57,7 +57,11 @@ export default function QuickSession({ classId, onClose }: Props) {
   const goBack = () => setIndex((i) => Math.max(0, i - 1));
 
   const markAttended = (st: Student) => {
-    turnActions.updateStudent(classId, st.id, { attended: st.attended + 1 });
+    if (lessonId) {
+      turnActions.recordLessonEntry(classId, lessonId, st.id, "attended");
+    } else {
+      turnActions.updateStudent(classId, st.id, { attended: st.attended + 1 });
+    }
     toast.success(`${st.firstName}: mitgeturnt`, { duration: 900 });
   };
 
