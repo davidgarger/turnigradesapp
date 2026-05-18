@@ -401,7 +401,7 @@ function ClassPage() {
 function Legend({ color, label }: { color: string; label: string }) {
   return (
     <span className="inline-flex items-center gap-1.5">
-      <span className={`inline-block h-2.5 w-2.5 rounded-sm bg-${color}`} />
+      <span className="inline-block h-2.5 w-2.5 rounded-sm" style={{ backgroundColor: `var(--${color})` }} />
       {label}
     </span>
   );
