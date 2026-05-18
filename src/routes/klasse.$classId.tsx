@@ -32,6 +32,8 @@ import {
 import QuickSession from "@/components/QuickSession";
 import ImportStudentsDialog, { type ParsedStudent } from "@/components/ImportStudentsDialog";
 import TeamGenerator from "@/components/TeamGenerator";
+import ExcusesDialog from "@/components/ExcusesDialog";
+import { Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
