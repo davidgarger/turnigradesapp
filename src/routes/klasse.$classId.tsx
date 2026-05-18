@@ -31,6 +31,7 @@ import {
 } from "@/lib/turn-store";
 import QuickSession from "@/components/QuickSession";
 import ImportStudentsDialog, { type ParsedStudent } from "@/components/ImportStudentsDialog";
+import TeamGenerator from "@/components/TeamGenerator";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
