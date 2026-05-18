@@ -499,11 +499,14 @@ export function exportClassCsv(cls: ClassData, settings: GradingSettings): strin
         st.forgottenKit,
         st.excusedNotParticipating,
         st.unexcusedNotParticipating,
+        st.redPoints,
+        st.greenPoints,
         st.attended,
         eff,
         Math.round(g.attendanceRate * 100),
         g.total,
         g.grade,
+        g.behaviorGrade,
       ]
         .map(escape)
         .join(";"),
