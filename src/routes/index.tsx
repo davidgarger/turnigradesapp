@@ -162,13 +162,16 @@ function Index() {
               <p className="text-xs text-muted-foreground">Bewertung im Turnunterricht</p>
             </div>
           </div>
-          <Link
-            to="/einstellungen"
-            className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
-          >
-            <Settings className="h-4 w-4" />
-            <span className="hidden sm:inline">Bewertungseinstellungen</span>
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link
+              to="/einstellungen"
+              className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+            >
+              <Settings className="h-4 w-4" />
+              <span className="hidden sm:inline">Einstellungen</span>
+            </Link>
+            <LogoutButton />
+          </div>
         </div>
       </header>
 
