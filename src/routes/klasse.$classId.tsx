@@ -194,32 +194,7 @@ function ClassPage() {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1 rounded-md border border-input bg-background px-2 py-1">
-              <span className="text-xs font-medium text-muted-foreground">Stunden gesamt</span>
-              <button
-                onClick={() => turnActions.incrementTotalLessons(cls.id, -1)}
-                className="h-7 w-6 rounded text-sm text-muted-foreground hover:bg-accent"
-                aria-label="weniger Stunden"
-              >
-                –
-              </button>
-              <input
-                type="number"
-                min={0}
-                value={cls.totalLessons}
-                onChange={(e) => turnActions.setTotalLessons(cls.id, Number(e.target.value))}
-                className="h-7 w-12 rounded border border-input bg-background px-1 text-center text-sm tabular-nums"
-                aria-label="Gehaltene Turnstunden gesamt"
-              />
-              <button
-                onClick={() => turnActions.incrementTotalLessons(cls.id, 1)}
-                className="h-7 w-7 rounded bg-primary text-sm font-bold text-primary-foreground hover:opacity-90"
-                aria-label="Stunde gehalten – Plus"
-                title="Eine Turnstunde gehalten (+1)"
-              >
-                +
-              </button>
-            </div>
+            <SchedulePanel cls={cls} effectiveLessons={effectiveLessons} />
             <Link
               to="/einstellungen"
               className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
