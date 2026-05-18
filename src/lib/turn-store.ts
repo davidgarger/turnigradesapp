@@ -213,7 +213,7 @@ function scheduleCloudSave() {
     if (!currentUserId) return;
     const { data, error } = await supabase
       .from("app_state")
-      .upsert({ user_id: currentUserId, state: state as unknown as Record<string, unknown> })
+      .upsert({ user_id: currentUserId, state: JSON.parse(JSON.stringify(state)) })
       .select("updated_at")
       .single();
     if (!error && data) {
@@ -256,7 +256,7 @@ async function loadFromCloud(userId: string) {
     // Erste Anmeldung – aktuellen lokalen Zustand in die Cloud hochladen
     const { data: inserted, error: insErr } = await supabase
       .from("app_state")
-      .upsert({ user_id: userId, state: state as unknown as Record<string, unknown> })
+      .upsert({ user_id: userId, state: JSON.parse(JSON.stringify(state)) })
       .select("updated_at")
       .single();
     if (!insErr && inserted) lastSavedAt = inserted.updated_at as string;
