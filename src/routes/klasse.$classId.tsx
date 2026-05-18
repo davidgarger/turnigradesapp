@@ -437,7 +437,8 @@ function ClassPage() {
           <Legend color="status-danger" label="TV = Turnzeug vergessen" />
           <Legend color="status-warning" label="E = Entschuldigt nicht mitgeturnt" />
           <Legend color="status-danger-strong" label="NE = Nicht entschuldigt" />
-          <Legend color="status-success" label="Beteiligung 4–5 = gut" />
+          <Legend color="status-success" label="Mitgeturnt / Stunden gesamt" />
+
         </div>
       </main>
     </div>
