@@ -239,7 +239,7 @@ function Index() {
         </div>
 
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {CLASSES.map((id) => {
+          {CLASSES.filter((id) => visible.includes(id)).map((id) => {
             const cls = state.classes[id];
             const themeKey = themes[id] ?? DEFAULT_THEME[id];
             const theme = THEMES[themeKey];
