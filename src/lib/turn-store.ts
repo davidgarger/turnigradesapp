@@ -2,7 +2,7 @@ import { useSyncExternalStore } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
 // ---------- Types ----------
-export type ClassId = "1" | "2" | "3" | "4";
+export type ClassId = "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10";
 
 export interface Discipline {
   id: string;
