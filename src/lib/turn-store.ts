@@ -187,6 +187,12 @@ export const turnActions = {
   reset() {
     setState(() => defaultState());
   },
+  renameClass(classId: ClassId, name: string) {
+    setState((s) => ({
+      ...s,
+      classes: { ...s.classes, [classId]: { ...s.classes[classId], name } },
+    }));
+  },
   addStudent(classId: ClassId, firstName: string, lastName: string) {
     setState((s) => {
       const cls = s.classes[classId];

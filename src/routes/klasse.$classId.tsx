@@ -172,8 +172,13 @@ function ClassPage() {
               <ArrowLeft className="h-4 w-4" />
             </button>
             <div>
-              <h1 className="text-lg font-semibold tracking-tight text-foreground">{cls.name}</h1>
-              <p className="text-xs text-muted-foreground">
+              <input
+                value={cls.name}
+                onChange={(e) => turnActions.renameClass(cls.id, e.target.value)}
+                className="w-full max-w-xs rounded-md border border-transparent bg-transparent px-1 py-0.5 text-lg font-semibold tracking-tight text-foreground hover:border-input focus:border-input focus:bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                aria-label="Klassenname bearbeiten"
+              />
+              <p className="px-1 text-xs text-muted-foreground">
                 {cls.students.length} Schüler · {cls.disciplines.length} Disziplinen
               </p>
             </div>
@@ -429,11 +434,22 @@ function StudentRow({
 
   return (
     <tr className="border-t border-border hover:bg-muted/30">
-      <td className="sticky left-0 z-[1] bg-card px-3 py-2 font-medium text-foreground">
-        <div className="flex flex-col">
-          <span>
-            {student.lastName} {student.firstName}
-          </span>
+      <td className="sticky left-0 z-[1] bg-card px-2 py-2 font-medium text-foreground">
+        <div className="flex gap-1">
+          <input
+            value={student.lastName}
+            onChange={(e) => turnActions.updateStudent(classId, student.id, { lastName: e.target.value })}
+            placeholder="Nachname"
+            className="h-9 w-28 rounded-md border border-transparent bg-transparent px-2 text-sm font-semibold hover:border-input focus:border-input focus:bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+            aria-label="Nachname"
+          />
+          <input
+            value={student.firstName}
+            onChange={(e) => turnActions.updateStudent(classId, student.id, { firstName: e.target.value })}
+            placeholder="Vorname"
+            className="h-9 w-28 rounded-md border border-transparent bg-transparent px-2 text-sm hover:border-input focus:border-input focus:bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+            aria-label="Vorname"
+          />
         </div>
       </td>
       {disciplines.map((d) => (
