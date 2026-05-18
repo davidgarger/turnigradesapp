@@ -27,6 +27,7 @@ import {
   type ClassSchedule,
   type Student,
 } from "@/lib/turn-store";
+import QuickSession from "@/components/QuickSession";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
