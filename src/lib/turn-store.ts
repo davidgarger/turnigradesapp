@@ -33,6 +33,26 @@ export interface ClassSchedule {
   cancelled: number; // entfallene Stunden
 }
 
+export type LessonEntryType =
+  | "attended"
+  | "forgottenKit"
+  | "excused"
+  | "unexcused";
+
+export interface LessonEntry {
+  studentId: string;
+  type: LessonEntryType;
+  at: string; // ISO timestamp
+}
+
+export interface Lesson {
+  id: string;
+  date: string; // ISO yyyy-mm-dd (Datum der Stunde)
+  createdAt: string; // ISO Zeitstempel beim Start
+  topic: string; // optionales Thema
+  entries: LessonEntry[];
+}
+
 export interface ClassData {
   id: ClassId;
   name: string;
@@ -40,6 +60,7 @@ export interface ClassData {
   students: Student[];
   totalLessons: number; // manuelle Gesamtzahl (Fallback falls kein Stundenplan)
   schedule?: ClassSchedule;
+  lessons?: Lesson[]; // Verlauf gehaltener Stunden
 }
 
 export interface GradingSettings {
