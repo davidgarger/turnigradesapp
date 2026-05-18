@@ -373,28 +373,31 @@ function StudentCard({
           <button
             type="button"
             onClick={() => markAndNext("forgottenKit", "forgottenKit", "Turnzeug vergessen")}
-            className="inline-flex flex-col items-center justify-center gap-0.5 rounded-xl border-2 border-orange-300 bg-orange-50 px-2 py-2.5 font-bold text-orange-700 transition active:scale-95"
+            className="inline-flex flex-col items-center justify-center gap-1 rounded-xl border-2 border-orange-300 bg-orange-50 px-2 py-2.5 font-bold text-orange-700 transition active:scale-95"
+            aria-label="Turnzeug vergessen"
           >
-            <Shirt className="h-4 w-4" />
-            <span className="text-base leading-none">TV</span>
+            <span className="relative inline-flex h-7 w-7 items-center justify-center">
+              <Backpack className="h-6 w-6" strokeWidth={2.25} />
+              <Slash className="absolute inset-0 h-7 w-7 text-rose-600" strokeWidth={2.75} />
+            </span>
             <span className="text-[10px] font-medium opacity-70">Turnzeug</span>
           </button>
           <button
             type="button"
             onClick={() => markAndNext("excused", "excusedNotParticipating", "entschuldigt")}
-            className="inline-flex flex-col items-center justify-center gap-0.5 rounded-xl border-2 border-amber-300 bg-amber-50 px-2 py-2.5 font-bold text-amber-700 transition active:scale-95"
+            className="inline-flex flex-col items-center justify-center gap-1 rounded-xl border-2 border-amber-300 bg-amber-50 px-2 py-2.5 font-bold text-amber-700 transition active:scale-95"
+            aria-label="Entschuldigt"
           >
-            <AlertTriangle className="h-4 w-4" />
-            <span className="text-base leading-none">E</span>
+            <FileCheck className="h-6 w-6" strokeWidth={2.25} />
             <span className="text-[10px] font-medium opacity-70">entsch.</span>
           </button>
           <button
             type="button"
             onClick={() => markAndNext("unexcused", "unexcusedNotParticipating", "nicht entschuldigt")}
-            className="inline-flex flex-col items-center justify-center gap-0.5 rounded-xl border-2 border-rose-300 bg-rose-50 px-2 py-2.5 font-bold text-rose-700 transition active:scale-95"
+            className="inline-flex flex-col items-center justify-center gap-1 rounded-xl border-2 border-rose-300 bg-rose-50 px-2 py-2.5 font-bold text-rose-700 transition active:scale-95"
+            aria-label="Nicht entschuldigt"
           >
-            <X className="h-4 w-4" />
-            <span className="text-base leading-none">NE</span>
+            <FileX className="h-6 w-6" strokeWidth={2.25} />
             <span className="text-[10px] font-medium opacity-70">nicht entsch.</span>
           </button>
         </div>
