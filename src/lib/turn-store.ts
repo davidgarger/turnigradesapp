@@ -22,12 +22,21 @@ export interface Student {
   attended: number; // Anzahl tatsächlich mitgeturnter Stunden
 }
 
+export interface ClassSchedule {
+  startDate: string; // ISO yyyy-mm-dd – Schuljahresbeginn
+  endDate: string;   // ISO yyyy-mm-dd – Schuljahresende
+  weekdays: number[]; // 0=So, 1=Mo, ... 6=Sa – Tage mit Turnstunden
+  lessonsPerDay: number; // Anzahl Turnstunden pro Termin (z. B. 1 oder 2)
+  cancelled: number; // entfallene Stunden
+}
+
 export interface ClassData {
   id: ClassId;
   name: string;
   disciplines: Discipline[];
   students: Student[];
-  totalLessons: number; // Gesamtzahl gehaltener Turnstunden in dieser Klasse
+  totalLessons: number; // manuelle Gesamtzahl (Fallback falls kein Stundenplan)
+  schedule?: ClassSchedule;
 }
 
 export interface GradingSettings {
