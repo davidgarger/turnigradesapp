@@ -468,6 +468,17 @@ function StudentRow({
           ? "bg-status-danger-bg text-status-danger"
           : "bg-status-danger-strong-bg text-status-danger-strong";
 
+  const behaviorColor =
+    grade.behaviorGrade <= 1
+      ? "bg-status-success-bg text-status-success"
+      : grade.behaviorGrade === 2
+        ? "bg-status-success-bg text-status-success"
+        : grade.behaviorGrade === 3
+          ? "bg-status-warning-bg text-status-warning"
+          : grade.behaviorGrade === 4
+            ? "bg-status-danger-bg text-status-danger"
+            : "bg-status-danger-strong-bg text-status-danger-strong";
+
   return (
     <tr className="border-t border-border hover:bg-muted/30">
       <td className="sticky left-0 z-[1] bg-card px-2 py-2 font-medium text-foreground">
