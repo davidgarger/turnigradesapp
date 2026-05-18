@@ -28,7 +28,9 @@ import {
   type ClassId,
   type ClassSchedule,
   type Student,
+  type Excuse,
 } from "@/lib/turn-store";
+import { supabase } from "@/integrations/supabase/client";
 import QuickSession from "@/components/QuickSession";
 import ImportStudentsDialog, { type ParsedStudent } from "@/components/ImportStudentsDialog";
 import TeamGenerator from "@/components/TeamGenerator";
