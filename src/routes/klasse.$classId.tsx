@@ -429,12 +429,15 @@ function StudentRow({
   grade,
   classId,
   disciplines,
+  totalLessons,
 }: {
   student: Student;
   grade: ReturnType<typeof computeGrade>;
   classId: ClassId;
   disciplines: { id: string; name: string; weight: number }[];
+  totalLessons: number;
 }) {
+
   const gradeColor =
     grade.grade <= 2
       ? "bg-status-success-bg text-status-success"
