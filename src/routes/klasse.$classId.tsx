@@ -188,7 +188,7 @@ function ClassPage() {
             >
               <ArrowLeft className="h-4 w-4" />
             </button>
-            <div>
+            <div className="min-w-0">
               <input
                 value={cls.name}
                 onChange={(e) => turnActions.renameClass(cls.id, e.target.value)}
@@ -199,20 +199,18 @@ function ClassPage() {
                 {cls.students.length} Schüler · {cls.disciplines.length} Disziplinen
               </p>
             </div>
-          </div>
-          <div className="flex items-center gap-2 sm:gap-3">
-            <SchedulePanel cls={cls} effectiveLessons={effectiveLessons} />
-            <UndoButton />
             <button
               type="button"
               onClick={() => setSessionOpen(true)}
               className="inline-flex items-center gap-2 rounded-md bg-gradient-to-r from-indigo-500 to-fuchsia-500 px-3 py-2 text-sm font-semibold text-white shadow-md shadow-violet-500/30 transition hover:opacity-95"
             >
               <Zap className="h-4 w-4" />
-              <span className="hidden sm:inline">Neue Stunde starten</span>
-              <span className="sm:hidden">Neue Stunde</span>
+              <span className="hidden sm:inline">Neue Stunde</span>
             </button>
-
+          </div>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <SchedulePanel cls={cls} effectiveLessons={effectiveLessons} />
+            <UndoButton />
             <Link
               to="/einstellungen"
               className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
@@ -221,6 +219,7 @@ function ClassPage() {
               <span className="hidden sm:inline">Einstellungen</span>
             </Link>
           </div>
+
 
         </div>
       </header>
@@ -266,55 +265,8 @@ function ClassPage() {
               </DialogFooter>
             </DialogContent>
           </Dialog>
-
-          <Dialog open={discOpen} onOpenChange={setDiscOpen}>
-            <DialogTrigger asChild>
-              <Button variant="outline">
-                <Plus className="h-4 w-4" /> Disziplin
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Disziplin hinzufügen</DialogTitle>
-              </DialogHeader>
-              <div className="grid gap-3">
-                <div className="grid gap-1.5">
-                  <Label htmlFor="dn">Name</Label>
-                  <Input
-                    id="dn"
-                    value={discName}
-                    onChange={(e) => setDiscName(e.target.value)}
-                    placeholder="z. B. Weitsprung"
-                  />
-                </div>
-                <div className="grid gap-1.5">
-                  <Label htmlFor="dw">Gewichtung (%)</Label>
-                  <Input
-                    id="dw"
-                    type="number"
-                    min={0}
-                    max={100}
-                    value={discWeight}
-                    onChange={(e) => setDiscWeight(Number(e.target.value))}
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Die Gewichtungen aller Disziplinen werden im Verhältnis zueinander gewertet.
-                  </p>
-                </div>
-              </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setDiscOpen(false)}>
-                  Abbrechen
-                </Button>
-                <Button onClick={handleAddDiscipline}>Hinzufügen</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-
-          <Button variant="outline" onClick={handleExport}>
-            <Download className="h-4 w-4" /> Export CSV
-          </Button>
         </div>
+
 
         {/* Disciplines overview chip-row (with delete & weight edit) */}
         {cls.disciplines.length > 0 && (
@@ -428,6 +380,59 @@ function ClassPage() {
             </tbody>
           </table>
         </div>
+
+        {/* Aktionen unterhalb der Tabelle */}
+        <div className="mt-4 flex flex-wrap items-center gap-2">
+          <Dialog open={discOpen} onOpenChange={setDiscOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                <Plus className="h-4 w-4" /> Disziplin
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Disziplin hinzufügen</DialogTitle>
+              </DialogHeader>
+              <div className="grid gap-3">
+                <div className="grid gap-1.5">
+                  <Label htmlFor="dn">Name</Label>
+                  <Input
+                    id="dn"
+                    value={discName}
+                    onChange={(e) => setDiscName(e.target.value)}
+                    placeholder="z. B. Weitsprung"
+                  />
+                </div>
+                <div className="grid gap-1.5">
+                  <Label htmlFor="dw">Gewichtung (%)</Label>
+                  <Input
+                    id="dw"
+                    type="number"
+                    min={0}
+                    max={100}
+                    value={discWeight}
+                    onChange={(e) => setDiscWeight(Number(e.target.value))}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Die Gewichtungen aller Disziplinen werden im Verhältnis zueinander gewertet.
+                  </p>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setDiscOpen(false)}>
+                  Abbrechen
+                </Button>
+                <Button onClick={handleAddDiscipline}>Hinzufügen</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          <Button variant="outline" onClick={handleExport}>
+            <Download className="h-4 w-4" /> Export CSV
+          </Button>
+        </div>
+
+
 
         {/* Legend */}
         <div className="mt-4 flex flex-wrap gap-3 text-xs text-muted-foreground">
