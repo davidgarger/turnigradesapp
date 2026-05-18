@@ -389,7 +389,7 @@ function ClassPage() {
               {rows.length === 0 && (
                 <tr>
                   <td
-                    colSpan={cls.disciplines.length + 10}
+                    colSpan={cls.disciplines.length + 8}
                     className="px-3 py-10 text-center text-muted-foreground"
                   >
                     Keine Schüler gefunden.
