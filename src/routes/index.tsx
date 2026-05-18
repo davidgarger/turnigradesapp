@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Settings, Users, ClipboardList, ImagePlus, Trash2, Palette, Check, LogOut, MoreVertical, Pencil, ArrowLeftRight, RotateCcw } from "lucide-react";
+import { Settings, Users, ClipboardList, ImagePlus, Trash2, Palette, Check, LogOut, MoreVertical, Pencil, ArrowLeftRight, RotateCcw, Plus, EyeOff } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { turnActions, useTurnState } from "@/lib/turn-store";
 import { supabase } from "@/integrations/supabase/client";
@@ -125,6 +125,7 @@ const DEFAULT_THEME: Record<(typeof CLASSES)[number], ThemeKey> = {
 
 const LOGO_KEY = "turn-app-school-logo";
 const THEME_KEY = "turn-app-class-themes";
+const VISIBLE_KEY = "turn-app-visible-classes";
 
 function loadThemes(): Record<string, ThemeKey> {
   try {
@@ -136,14 +137,55 @@ function loadThemes(): Record<string, ThemeKey> {
   return {};
 }
 
+function loadVisibleClasses(): string[] {
+  try {
+    const v = localStorage.getItem(VISIBLE_KEY);
+    if (v) {
+      const arr = JSON.parse(v);
+      if (Array.isArray(arr) && arr.length > 0) return arr.filter((x) => CLASSES.includes(x));
+    }
+  } catch {
+    /* ignore */
+  }
+  return ["1", "2", "3", "4"];
+}
+
 function Index() {
   const state = useTurnState();
   const [themes, setThemes] = useState<Record<string, ThemeKey>>({});
   const [openPicker, setOpenPicker] = useState<string | null>(null);
+  const [visible, setVisible] = useState<string[]>(["1", "2", "3", "4"]);
 
   useEffect(() => {
     setThemes(loadThemes());
+    setVisible(loadVisibleClasses());
   }, []);
+
+  const persistVisible = (next: string[]) => {
+    setVisible(next);
+    try {
+      localStorage.setItem(VISIBLE_KEY, JSON.stringify(next));
+    } catch {
+      /* ignore */
+    }
+  };
+
+  const addNextClass = () => {
+    const next = CLASSES.find((c) => !visible.includes(c));
+    if (!next) return;
+    persistVisible([...visible, next]);
+    toast.success(`Klasse ${next} hinzugefügt`);
+  };
+
+  const hideClass = (id: string) => {
+    if (visible.length <= 1) {
+      toast.error("Mindestens eine Klasse muss sichtbar bleiben.");
+      return;
+    }
+    persistVisible(visible.filter((c) => c !== id));
+    setOpenPicker(null);
+    toast.success(`Klasse ${id} ausgeblendet`);
+  };
 
   const setClassTheme = (classId: string, key: ThemeKey) => {
     const next = { ...themes, [classId]: key };
@@ -197,7 +239,7 @@ function Index() {
         </div>
 
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {CLASSES.map((id) => {
+          {CLASSES.filter((id) => visible.includes(id)).map((id) => {
             const cls = state.classes[id];
             const themeKey = themes[id] ?? DEFAULT_THEME[id];
             const theme = THEMES[themeKey];
@@ -324,6 +366,15 @@ function Index() {
 
                       <button
                         type="button"
+                        onClick={() => hideClass(id)}
+                        className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-accent"
+                      >
+                        <EyeOff className="h-4 w-4" />
+                        Klasse ausblenden
+                      </button>
+
+                      <button
+                        type="button"
                         onClick={() => {
                           if (
                             window.confirm(
@@ -346,6 +397,19 @@ function Index() {
               </div>
             );
           })}
+          {visible.length < CLASSES.length && (
+            <button
+              type="button"
+              onClick={addNextClass}
+              className="group flex min-h-[140px] flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-border bg-background/50 p-6 text-muted-foreground transition hover:border-indigo-400 hover:bg-indigo-50/50 hover:text-indigo-600"
+            >
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted group-hover:bg-indigo-100">
+                <Plus className="h-6 w-6" />
+              </div>
+              <span className="text-sm font-semibold">Klasse hinzufügen</span>
+              <span className="text-xs">Nächste freie Schulstufe</span>
+            </button>
+          )}
         </div>
       </main>
     </div>
