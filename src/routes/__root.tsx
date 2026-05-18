@@ -192,11 +192,11 @@ function RootComponent() {
   );
 }
 
-function RedirectToLogin() {
+function RedirectTo({ to }: { to: string }) {
   const router = useRouter();
   useEffect(() => {
-    router.navigate({ to: "/login" });
-  }, [router]);
+    router.navigate({ to });
+  }, [router, to]);
   return (
     <div className="flex min-h-screen items-center justify-center bg-background text-sm text-muted-foreground">
       Weiterleitung…
