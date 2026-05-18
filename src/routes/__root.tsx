@@ -76,18 +76,22 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
       { title: "Turnnoten — Bewertung im Turnunterricht" },
       { name: "description", content: "Verwalte Klassen, Disziplinen und Turnnoten für den Sportunterricht." },
+      { name: "theme-color", content: "#6366f1" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "default" },
+      { name: "apple-mobile-web-app-title", content: "Turnnoten" },
       { property: "og:title", content: "Turnnoten" },
       { property: "og:description", content: "Schnelle Notenverwaltung für den Turnunterricht." },
       { property: "og:type", content: "website" },
     ],
     links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
+      { rel: "stylesheet", href: appCss },
+      { rel: "manifest", href: "/manifest.webmanifest" },
+      { rel: "icon", href: "/icon-512.png", type: "image/png" },
+      { rel: "apple-touch-icon", href: "/icon-512.png" },
     ],
   }),
   shellComponent: RootShell,
