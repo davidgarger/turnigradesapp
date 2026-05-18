@@ -190,6 +190,35 @@ function load(): TurnState {
 let state: TurnState = typeof window === "undefined" ? defaultState() : load();
 const listeners = new Set<() => void>();
 
+// ---------- Undo history ----------
+const HISTORY_LIMIT = 30;
+const history: TurnState[] = [];
+let lastHistoryPush = 0;
+
+function pushHistory(prev: TurnState) {
+  const now = Date.now();
+  // Aufeinanderfolgende schnelle Änderungen (≤ 400 ms) zu einem Schritt zusammenfassen
+  if (now - lastHistoryPush > 400) {
+    history.push(prev);
+    if (history.length > HISTORY_LIMIT) history.shift();
+  }
+  lastHistoryPush = now;
+}
+
+export function canUndo() {
+  return history.length > 0;
+}
+
+export function undo(): boolean {
+  const prev = history.pop();
+  if (!prev) return false;
+  state = prev;
+  persist();
+  scheduleCloudSave();
+  listeners.forEach((l) => l());
+  return true;
+}
+
 // ---------- Cloud sync ----------
 let currentUserId: string | null = null;
 let isApplyingRemote = false;
@@ -225,7 +254,9 @@ function scheduleCloudSave() {
 }
 
 function setState(updater: (s: TurnState) => TurnState) {
+  const prev = state;
   state = updater(state);
+  if (!isApplyingRemote) pushHistory(prev);
   persist();
   scheduleCloudSave();
   listeners.forEach((l) => l());

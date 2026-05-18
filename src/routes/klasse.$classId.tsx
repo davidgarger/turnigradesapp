@@ -9,6 +9,8 @@ import {
   Settings,
   Trash2,
   ArrowUpDown,
+  Zap,
+  Undo2,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -19,6 +21,8 @@ import {
   computeScheduledLessons,
   turnActions,
   useTurnState,
+  undo,
+  canUndo,
   type ClassId,
   type ClassSchedule,
   type Student,
@@ -193,8 +197,17 @@ function ClassPage() {
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <SchedulePanel cls={cls} effectiveLessons={effectiveLessons} />
+            <UndoButton />
+            <Link
+              to="/klasse/$classId/quick"
+              params={{ classId: cls.id }}
+              className="inline-flex items-center gap-2 rounded-md bg-gradient-to-r from-indigo-500 to-fuchsia-500 px-3 py-2 text-sm font-semibold text-white shadow-md shadow-violet-500/30 transition hover:opacity-95"
+            >
+              <Zap className="h-4 w-4" />
+              <span className="hidden sm:inline">Schnelleingabe</span>
+            </Link>
             <Link
               to="/einstellungen"
               className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
@@ -896,5 +909,26 @@ function ScoreInput({
       onBlur={(e) => commit(e.target.value)}
       className="h-9 w-16 rounded-md border border-input bg-background px-2 text-center text-sm focus:outline-none focus:ring-2 focus:ring-ring"
     />
+  );
+}
+
+function UndoButton() {
+  // re-render bei state-Änderungen, damit canUndo() aktuell ist
+  useTurnState();
+  const disabled = !canUndo();
+  return (
+    <button
+      type="button"
+      onClick={() => {
+        if (undo()) toast.success("Rückgängig gemacht");
+      }}
+      disabled={disabled}
+      title="Letzte Änderung rückgängig (Strg+Z)"
+      aria-label="Rückgängig"
+      className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent disabled:opacity-40"
+    >
+      <Undo2 className="h-4 w-4" />
+      <span className="hidden sm:inline">Undo</span>
+    </button>
   );
 }
