@@ -31,6 +31,7 @@ import {
 } from "@/lib/turn-store";
 import QuickSession from "@/components/QuickSession";
 import ImportStudentsDialog, { type ParsedStudent } from "@/components/ImportStudentsDialog";
+import TeamGenerator from "@/components/TeamGenerator";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -281,6 +282,8 @@ function ClassPage() {
             <Upload className="h-4 w-4" />
             <span className="hidden sm:inline">Importieren</span>
           </Button>
+
+          <TeamGenerator cls={cls} />
         </div>
 
         <ImportStudentsDialog
