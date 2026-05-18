@@ -381,6 +381,56 @@ export const turnActions = {
       classes: { ...s.classes, [classId]: { ...s.classes[classId], name } },
     }));
   },
+  resetClass(classId: ClassId) {
+    setState((s) => {
+      const cls = s.classes[classId];
+      return {
+        ...s,
+        classes: {
+          ...s.classes,
+          [classId]: {
+            ...cls,
+            lessons: [],
+            schedule: cls.schedule ? { ...cls.schedule, cancelled: 0 } : cls.schedule,
+            students: cls.students.map((st) => ({
+              ...st,
+              scores: {},
+              forgottenKit: 0,
+              excusedNotParticipating: 0,
+              unexcusedNotParticipating: 0,
+              attended: 0,
+              redPoints: 0,
+              greenPoints: 0,
+            })),
+          },
+        },
+      };
+    });
+  },
+  swapClasses(a: ClassId, b: ClassId) {
+    if (a === b) return;
+    setState((s) => {
+      const ca = s.classes[a];
+      const cb = s.classes[b];
+      // Inhalt tauschen, IDs/Namen der Slots bleiben
+      const swappedA: ClassData = {
+        ...cb,
+        id: ca.id,
+        name: ca.name,
+        students: cb.students.map((st) => ({ ...st, classId: ca.id })),
+      };
+      const swappedB: ClassData = {
+        ...ca,
+        id: cb.id,
+        name: cb.name,
+        students: ca.students.map((st) => ({ ...st, classId: cb.id })),
+      };
+      return {
+        ...s,
+        classes: { ...s.classes, [a]: swappedA, [b]: swappedB },
+      };
+    });
+  },
   setTotalLessons(classId: ClassId, totalLessons: number) {
     setState((s) => ({
       ...s,

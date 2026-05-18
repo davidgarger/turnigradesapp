@@ -1,8 +1,9 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Settings, Users, ClipboardList, ImagePlus, Trash2, Palette, Check, LogOut } from "lucide-react";
+import { Settings, Users, ClipboardList, ImagePlus, Trash2, Palette, Check, LogOut, MoreVertical, Pencil, ArrowLeftRight, RotateCcw } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { useTurnState } from "@/lib/turn-store";
+import { turnActions, useTurnState } from "@/lib/turn-store";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -227,7 +228,7 @@ function Index() {
                   </div>
                 </Link>
 
-                {/* Farb-Picker Button */}
+                {/* Menü-Button */}
                 <button
                   type="button"
                   onClick={(e) => {
@@ -235,10 +236,10 @@ function Index() {
                     e.stopPropagation();
                     setOpenPicker(isOpen ? null : id);
                   }}
-                  aria-label="Farbe ändern"
+                  aria-label="Klassen-Menü"
                   className="absolute right-3 top-3 z-10 inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/25 text-white backdrop-blur-sm transition hover:bg-white/40"
                 >
-                  <Palette className="h-4 w-4" />
+                  <MoreVertical className="h-4 w-4" />
                 </button>
 
                 {isOpen && (
@@ -247,11 +248,51 @@ function Index() {
                       className="fixed inset-0 z-20"
                       onClick={() => setOpenPicker(null)}
                     />
-                    <div className="absolute right-2 top-12 z-30 w-56 rounded-xl border border-border bg-popover p-3 shadow-2xl">
-                      <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                        Farbe wählen
+                    <div className="absolute right-2 top-12 z-30 w-64 rounded-xl border border-border bg-popover p-2 text-popover-foreground shadow-2xl">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const next = window.prompt("Klassenname / Schulstufe", cls.name);
+                          if (next && next.trim()) {
+                            turnActions.renameClass(id, next.trim());
+                            toast.success("Klassenname geändert");
+                          }
+                          setOpenPicker(null);
+                        }}
+                        className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm font-medium hover:bg-accent"
+                      >
+                        <Pencil className="h-4 w-4" />
+                        Schulstufe / Name ändern
+                      </button>
+
+                      <div className="my-1 border-t border-border" />
+
+                      <div className="px-3 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                        <span className="inline-flex items-center gap-1.5"><ArrowLeftRight className="h-3 w-3" /> Klasse verschieben (tauschen)</span>
                       </div>
-                      <div className="grid grid-cols-5 gap-2">
+                      <div className="flex gap-1.5 px-2 pb-2">
+                        {CLASSES.filter((c) => c !== id).map((target) => (
+                          <button
+                            key={target}
+                            type="button"
+                            onClick={() => {
+                              turnActions.swapClasses(id, target);
+                              toast.success(`Mit Klasse ${target} getauscht`);
+                              setOpenPicker(null);
+                            }}
+                            className="flex-1 rounded-md border border-input bg-background px-2 py-1.5 text-xs font-semibold hover:bg-accent"
+                          >
+                            ↔ {target}
+                          </button>
+                        ))}
+                      </div>
+
+                      <div className="my-1 border-t border-border" />
+
+                      <div className="px-3 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                        <span className="inline-flex items-center gap-1.5"><Palette className="h-3 w-3" /> Farbe</span>
+                      </div>
+                      <div className="grid grid-cols-5 gap-2 px-2 pb-2">
                         {(Object.keys(THEMES) as ThemeKey[]).map((k) => {
                           const active = themeKey === k;
                           return (
@@ -261,17 +302,38 @@ function Index() {
                               onClick={() => setClassTheme(id, k)}
                               title={THEMES[k].label}
                               aria-label={THEMES[k].label}
-                              className={`relative h-8 w-8 rounded-full ${THEMES[k].swatch} ring-2 transition ${
-                                active ? "ring-foreground" : "ring-white/60 hover:ring-foreground/50"
+                              className={`relative h-7 w-7 rounded-full ${THEMES[k].swatch} ring-2 transition ${
+                                active ? "ring-foreground" : "ring-border hover:ring-foreground/50"
                               }`}
                             >
                               {active && (
-                                <Check className="absolute inset-0 m-auto h-4 w-4 text-white drop-shadow" />
+                                <Check className="absolute inset-0 m-auto h-3.5 w-3.5 text-white drop-shadow" />
                               )}
                             </button>
                           );
                         })}
                       </div>
+
+                      <div className="my-1 border-t border-border" />
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (
+                            window.confirm(
+                              `„${cls.name}" zurücksetzen?\n\nAlle Mitgeturnt/TV/E/NE-Zähler, Disziplin-Punkte, roten/grünen Punkte und die Stunden-Historie werden auf 0 gesetzt. Schüler und Disziplinen bleiben erhalten.`,
+                            )
+                          ) {
+                            turnActions.resetClass(id);
+                            toast.success("Klasse zurückgesetzt");
+                          }
+                          setOpenPicker(null);
+                        }}
+                        className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-destructive hover:bg-destructive/10"
+                      >
+                        <RotateCcw className="h-4 w-4" />
+                        Klasse zurücksetzen (neues Schuljahr)
+                      </button>
                     </div>
                   </>
                 )}
