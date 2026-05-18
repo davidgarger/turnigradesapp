@@ -28,7 +28,9 @@ import {
   type ClassId,
   type ClassSchedule,
   type Student,
+  type Excuse,
 } from "@/lib/turn-store";
+import { supabase } from "@/integrations/supabase/client";
 import QuickSession from "@/components/QuickSession";
 import ImportStudentsDialog, { type ParsedStudent } from "@/components/ImportStudentsDialog";
 import TeamGenerator from "@/components/TeamGenerator";
@@ -1132,6 +1134,8 @@ function StudentHistoryDialog({ student, classId }: { student: Student; classId:
           )}
         </div>
 
+        <ExcusePhotosSection studentExcuses={student.excuses ?? []} open={open} />
+
         <DialogFooter>
           <Button variant="outline" onClick={() => setOpen(false)}>
             Schließen
@@ -1165,6 +1169,83 @@ function SummaryTile({
     <div className={`rounded-md px-3 py-2 ${toneCls}`}>
       <div className="text-[10px] font-semibold uppercase tracking-wider opacity-80">{label}</div>
       <div className="text-lg font-bold tabular-nums">{value}</div>
+    </div>
+  );
+}
+
+function ExcusePhotosSection({ studentExcuses, open }: { studentExcuses: Excuse[]; open: boolean }) {
+  const [urls, setUrls] = useState<Record<string, string>>({});
+  const [zoom, setZoom] = useState<string | null>(null);
+  const withPhoto = useMemo(
+    () => studentExcuses.filter((e) => e.photoPath).sort((a, b) => b.date.localeCompare(a.date)),
+    [studentExcuses],
+  );
+
+  useEffect(() => {
+    if (!open || withPhoto.length === 0) return;
+    let cancelled = false;
+    (async () => {
+      const out: Record<string, string> = {};
+      await Promise.all(
+        withPhoto.map(async (e) => {
+          const { data } = await supabase.storage
+            .from("excuses")
+            .createSignedUrl(e.photoPath!, 60 * 60);
+          if (data?.signedUrl) out[e.id] = data.signedUrl;
+        }),
+      );
+      if (!cancelled) setUrls(out);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [open, withPhoto]);
+
+  if (withPhoto.length === 0) return null;
+
+  return (
+    <div className="mt-4">
+      <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        Entschuldigungs-Fotos ({withPhoto.length})
+      </div>
+      <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
+        {withPhoto.map((e) => (
+          <button
+            key={e.id}
+            type="button"
+            onClick={() => urls[e.id] && setZoom(urls[e.id])}
+            className="group relative aspect-square overflow-hidden rounded-md border border-border bg-muted"
+            title={`${new Date(e.date + "T00:00:00").toLocaleDateString("de-AT")}${e.note ? " · " + e.note : ""}`}
+          >
+            {urls[e.id] ? (
+              <img
+                src={urls[e.id]}
+                alt="Entschuldigung"
+                className="h-full w-full object-cover transition group-hover:scale-105"
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center text-xs text-muted-foreground">
+                lädt…
+              </div>
+            )}
+            <span className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-1.5 py-1 text-left text-[10px] font-semibold text-white">
+              {new Date(e.date + "T00:00:00").toLocaleDateString("de-AT", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "2-digit",
+              })}
+            </span>
+          </button>
+        ))}
+      </div>
+      {zoom && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+          onClick={() => setZoom(null)}
+        >
+          <img src={zoom} alt="Vergrößert" className="max-h-full max-w-full rounded-md" />
+        </div>
+      )}
     </div>
   );
 }
