@@ -322,6 +322,38 @@ function StudentCard({
       onPointerCancel={onPointerCancel}
     >
       <div className="overflow-hidden rounded-3xl border border-border bg-card shadow-2xl">
+        {/* Aktionen oben: TV / E / NE */}
+        <div className="grid grid-cols-3 gap-2 border-b border-border bg-muted/40 p-3">
+          <button
+            type="button"
+            onClick={() => markAndNext("forgottenKit", "Turnzeug vergessen")}
+            className="inline-flex flex-col items-center justify-center gap-0.5 rounded-xl border-2 border-orange-300 bg-orange-50 px-2 py-2.5 font-bold text-orange-700 transition active:scale-95"
+          >
+            <Shirt className="h-4 w-4" />
+            <span className="text-base leading-none">TV</span>
+            <span className="text-[10px] font-medium opacity-70">Turnzeug</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => markAndNext("excusedNotParticipating", "entschuldigt")}
+            className="inline-flex flex-col items-center justify-center gap-0.5 rounded-xl border-2 border-amber-300 bg-amber-50 px-2 py-2.5 font-bold text-amber-700 transition active:scale-95"
+          >
+            <AlertTriangle className="h-4 w-4" />
+            <span className="text-base leading-none">E</span>
+            <span className="text-[10px] font-medium opacity-70">entsch.</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => markAndNext("unexcusedNotParticipating", "nicht entschuldigt")}
+            className="inline-flex flex-col items-center justify-center gap-0.5 rounded-xl border-2 border-rose-300 bg-rose-50 px-2 py-2.5 font-bold text-rose-700 transition active:scale-95"
+          >
+            <X className="h-4 w-4" />
+            <span className="text-base leading-none">NE</span>
+            <span className="text-[10px] font-medium opacity-70">nicht entsch.</span>
+          </button>
+        </div>
+
+        {/* Schüler-Header */}
         <div className="bg-gradient-to-br from-indigo-500 via-violet-500 to-fuchsia-500 p-6 text-white">
           <div className="flex items-center gap-4">
             <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 text-2xl font-black backdrop-blur-sm">
@@ -343,34 +375,8 @@ function StudentCard({
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-2 p-4">
-          <button
-            type="button"
-            onClick={() => markAndNext("excusedNotParticipating", "entschuldigt")}
-            className="inline-flex flex-col items-center justify-center gap-1 rounded-xl border-2 border-amber-200 bg-amber-50 px-2 py-3 text-xs font-bold text-amber-700 transition active:scale-95"
-          >
-            <AlertTriangle className="h-4 w-4" />
-            Entschuldigt
-          </button>
-          <button
-            type="button"
-            onClick={() => markAndNext("unexcusedNotParticipating", "nicht entschuldigt")}
-            className="inline-flex flex-col items-center justify-center gap-1 rounded-xl border-2 border-rose-200 bg-rose-50 px-2 py-3 text-xs font-bold text-rose-700 transition active:scale-95"
-          >
-            <X className="h-4 w-4" />
-            Nicht entsch.
-          </button>
-          <button
-            type="button"
-            onClick={() => markAndNext("forgottenKit", "Turnzeug vergessen")}
-            className="inline-flex flex-col items-center justify-center gap-1 rounded-xl border-2 border-orange-200 bg-orange-50 px-2 py-3 text-xs font-bold text-orange-700 transition active:scale-95"
-          >
-            <Shirt className="h-4 w-4" />
-            Turnzeug
-          </button>
-        </div>
-
-        <div className="px-4 pb-4">
+        {/* Mitgeturnt-Hauptaktion */}
+        <div className="p-4">
           <button
             type="button"
             onClick={() => {
@@ -378,15 +384,19 @@ function StudentCard({
               toast.success(`${student.firstName}: mitgeturnt`, { duration: 900 });
               onAfterMark();
             }}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 px-4 py-4 text-base font-bold text-white shadow-md transition active:scale-95"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-emerald-500 px-4 py-5 text-base font-bold text-white shadow-md transition active:scale-95"
           >
             <Check className="h-5 w-5" /> Mitgeturnt → nächster
           </button>
+          <p className="mt-2 text-center text-[11px] text-muted-foreground">
+            Tipp: nach rechts wischen = mitgeturnt
+          </p>
         </div>
       </div>
     </div>
   );
 }
+
 
 function Stat({ label, value }: { label: string; value: number }) {
   return (
