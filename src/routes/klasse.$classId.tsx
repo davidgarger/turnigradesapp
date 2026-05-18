@@ -545,11 +545,7 @@ function StudentRow({
         tone="danger"
         onChange={(v) => turnActions.updateStudent(classId, student.id, { forgottenKit: v })}
       />
-      <StatusCell
-        value={student.excusedNotParticipating}
-        tone="warning"
-        onChange={(v) => turnActions.updateStudent(classId, student.id, { excusedNotParticipating: v })}
-      />
+      <ExcusedCell student={student} classId={classId} />
       <StatusCell
         value={student.unexcusedNotParticipating}
         tone="danger-strong"
