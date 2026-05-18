@@ -434,11 +434,22 @@ function StudentRow({
 
   return (
     <tr className="border-t border-border hover:bg-muted/30">
-      <td className="sticky left-0 z-[1] bg-card px-3 py-2 font-medium text-foreground">
-        <div className="flex flex-col">
-          <span>
-            {student.lastName} {student.firstName}
-          </span>
+      <td className="sticky left-0 z-[1] bg-card px-2 py-2 font-medium text-foreground">
+        <div className="flex gap-1">
+          <input
+            value={student.lastName}
+            onChange={(e) => turnActions.updateStudent(classId, student.id, { lastName: e.target.value })}
+            placeholder="Nachname"
+            className="h-9 w-28 rounded-md border border-transparent bg-transparent px-2 text-sm font-semibold hover:border-input focus:border-input focus:bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+            aria-label="Nachname"
+          />
+          <input
+            value={student.firstName}
+            onChange={(e) => turnActions.updateStudent(classId, student.id, { firstName: e.target.value })}
+            placeholder="Vorname"
+            className="h-9 w-28 rounded-md border border-transparent bg-transparent px-2 text-sm hover:border-input focus:border-input focus:bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+            aria-label="Vorname"
+          />
         </div>
       </td>
       {disciplines.map((d) => (
