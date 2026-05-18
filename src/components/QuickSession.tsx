@@ -162,7 +162,47 @@ export default function QuickSession({ classId, onClose }: Props) {
       </div>
 
       <div className="relative flex flex-1 items-center justify-center px-4 py-6">
-        {students.length === 0 ? (
+        {!started ? (
+          <div className="w-full max-w-md">
+            <div className="rounded-3xl border border-border bg-card p-6 shadow-lg">
+              <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Neue Stunde
+              </div>
+              <div className="mt-1 text-2xl font-bold text-foreground">{cls?.name}</div>
+              <div className="mt-1 text-sm text-muted-foreground capitalize">{today}</div>
+
+              <label className="mt-6 block text-sm font-medium text-foreground">
+                Thema der Stunde <span className="text-muted-foreground font-normal">(optional)</span>
+              </label>
+              <input
+                type="text"
+                value={topic}
+                onChange={(e) => setTopic(e.target.value)}
+                placeholder="z. B. Geräteturnen, Ballspiele …"
+                autoFocus
+                className="mt-2 w-full rounded-xl border border-input bg-background px-4 py-3 text-base text-foreground outline-none focus:ring-2 focus:ring-ring"
+              />
+
+              <button
+                type="button"
+                onClick={() => {
+                  if (students.length === 0) {
+                    toast.error("Diese Klasse hat noch keine Schüler.");
+                    return;
+                  }
+                  setStarted(true);
+                }}
+                className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-fuchsia-500 px-4 py-4 text-base font-bold text-white shadow-md transition active:scale-95"
+              >
+                Stunde starten · {students.length} Schüler
+              </button>
+            </div>
+          </div>
+        ) : students.length === 0 ? (
+          <div className="text-center text-sm text-muted-foreground">
+            Diese Klasse hat noch keine Schüler.
+          </div>
+        ) : done ? (
           <div className="text-center text-sm text-muted-foreground">
             Diese Klasse hat noch keine Schüler.
           </div>
