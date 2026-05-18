@@ -503,17 +503,9 @@ function StudentRow({
       </td>
       {disciplines.map((d) => (
         <td key={d.id} className="px-1 py-1 text-center">
-          <input
-            type="number"
-            min={0}
-            max={100}
-            value={student.scores[d.id] ?? ""}
-            placeholder="–"
-            onChange={(e) => {
-              const v = e.target.value === "" ? undefined : Math.max(0, Math.min(100, Number(e.target.value)));
-              turnActions.setScore(classId, student.id, d.id, v);
-            }}
-            className="h-9 w-16 rounded-md border border-input bg-background px-2 text-center text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+          <ScoreInput
+            value={student.scores[d.id]}
+            onChange={(v) => turnActions.setScore(classId, student.id, d.id, v)}
           />
         </td>
       ))}
