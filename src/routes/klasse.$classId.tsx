@@ -389,8 +389,16 @@ function ClassPage() {
                 </tr>
               )}
               {rows.map(({ s, g }) => (
-                <StudentRow key={s.id} student={s} grade={g} classId={cls.id} disciplines={cls.disciplines} />
+                <StudentRow
+                  key={s.id}
+                  student={s}
+                  grade={g}
+                  classId={cls.id}
+                  disciplines={cls.disciplines}
+                  totalLessons={cls.totalLessons}
+                />
               ))}
+
             </tbody>
           </table>
         </div>
