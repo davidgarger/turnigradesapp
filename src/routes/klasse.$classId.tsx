@@ -603,35 +603,38 @@ function StudentRow({
         </span>
       </td>
       <td className="px-2 py-2 text-center">
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <button
-              className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-              aria-label="Schüler löschen"
-            >
-              <Trash2 className="h-4 w-4" />
-            </button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Schüler löschen?</AlertDialogTitle>
-              <AlertDialogDescription>
-                {student.firstName} {student.lastName} wird mit allen Werten endgültig entfernt.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Abbrechen</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={() => {
-                  turnActions.deleteStudent(classId, student.id);
-                  toast.success("Schüler gelöscht");
-                }}
+        <div className="inline-flex items-center gap-1">
+          <StudentHistoryDialog student={student} classId={classId} />
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <button
+                className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                aria-label="Schüler löschen"
               >
-                Löschen
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Schüler löschen?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  {student.firstName} {student.lastName} wird mit allen Werten endgültig entfernt.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Abbrechen</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => {
+                    turnActions.deleteStudent(classId, student.id);
+                    toast.success("Schüler gelöscht");
+                  }}
+                >
+                  Löschen
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
       </td>
     </tr>
   );
