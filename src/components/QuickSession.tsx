@@ -313,6 +313,7 @@ function StudentCardBackdrop({ student }: { student: Student }) {
 interface StudentCardProps {
   student: Student;
   classId: ClassId;
+  lessonId: string | null;
   transform: string;
   animating: boolean;
   onPointerDown: (e: React.PointerEvent) => void;
@@ -325,6 +326,7 @@ interface StudentCardProps {
 function StudentCard({
   student,
   classId,
+  lessonId,
   transform,
   animating,
   onPointerDown,
@@ -339,12 +341,17 @@ function StudentCard({
   );
 
   const markAndNext = (
-    field: "excusedNotParticipating" | "unexcusedNotParticipating" | "forgottenKit",
+    type: "forgottenKit" | "excused" | "unexcused",
+    fallbackField: "forgottenKit" | "excusedNotParticipating" | "unexcusedNotParticipating",
     label: string,
   ) => {
-    turnActions.updateStudent(classId, student.id, {
-      [field]: student[field] + 1,
-    } as Partial<Student>);
+    if (lessonId) {
+      turnActions.recordLessonEntry(classId, lessonId, student.id, type);
+    } else {
+      turnActions.updateStudent(classId, student.id, {
+        [fallbackField]: student[fallbackField] + 1,
+      } as Partial<Student>);
+    }
     toast.success(`${student.firstName}: ${label}`, { duration: 900 });
     onAfterMark();
   };
