@@ -1,7 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ClipboardList, LogIn, UserPlus, Users } from "lucide-react";
+import { LogIn, UserPlus, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { TurniLogo } from "@/components/TurniLogo";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/login")({
