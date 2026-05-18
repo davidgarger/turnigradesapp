@@ -9,6 +9,8 @@ import {
   Settings,
   Trash2,
   ArrowUpDown,
+  Zap,
+  Undo2,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
