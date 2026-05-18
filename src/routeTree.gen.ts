@@ -13,6 +13,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as EinstellungenRouteImport } from './routes/einstellungen'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as KlasseClassIdRouteImport } from './routes/klasse.$classId'
+import { Route as KlasseClassIdQuickRouteImport } from './routes/klasse.$classId.quick'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -34,39 +35,63 @@ const KlasseClassIdRoute = KlasseClassIdRouteImport.update({
   path: '/klasse/$classId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const KlasseClassIdQuickRoute = KlasseClassIdQuickRouteImport.update({
+  id: '/quick',
+  path: '/quick',
+  getParentRoute: () => KlasseClassIdRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/einstellungen': typeof EinstellungenRoute
   '/login': typeof LoginRoute
-  '/klasse/$classId': typeof KlasseClassIdRoute
+  '/klasse/$classId': typeof KlasseClassIdRouteWithChildren
+  '/klasse/$classId/quick': typeof KlasseClassIdQuickRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/einstellungen': typeof EinstellungenRoute
   '/login': typeof LoginRoute
-  '/klasse/$classId': typeof KlasseClassIdRoute
+  '/klasse/$classId': typeof KlasseClassIdRouteWithChildren
+  '/klasse/$classId/quick': typeof KlasseClassIdQuickRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/einstellungen': typeof EinstellungenRoute
   '/login': typeof LoginRoute
-  '/klasse/$classId': typeof KlasseClassIdRoute
+  '/klasse/$classId': typeof KlasseClassIdRouteWithChildren
+  '/klasse/$classId/quick': typeof KlasseClassIdQuickRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/einstellungen' | '/login' | '/klasse/$classId'
+  fullPaths:
+    | '/'
+    | '/einstellungen'
+    | '/login'
+    | '/klasse/$classId'
+    | '/klasse/$classId/quick'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/einstellungen' | '/login' | '/klasse/$classId'
-  id: '__root__' | '/' | '/einstellungen' | '/login' | '/klasse/$classId'
+  to:
+    | '/'
+    | '/einstellungen'
+    | '/login'
+    | '/klasse/$classId'
+    | '/klasse/$classId/quick'
+  id:
+    | '__root__'
+    | '/'
+    | '/einstellungen'
+    | '/login'
+    | '/klasse/$classId'
+    | '/klasse/$classId/quick'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   EinstellungenRoute: typeof EinstellungenRoute
   LoginRoute: typeof LoginRoute
-  KlasseClassIdRoute: typeof KlasseClassIdRoute
+  KlasseClassIdRoute: typeof KlasseClassIdRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -99,15 +124,44 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof KlasseClassIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/klasse/$classId/quick': {
+      id: '/klasse/$classId/quick'
+      path: '/quick'
+      fullPath: '/klasse/$classId/quick'
+      preLoaderRoute: typeof KlasseClassIdQuickRouteImport
+      parentRoute: typeof KlasseClassIdRoute
+    }
   }
 }
+
+interface KlasseClassIdRouteChildren {
+  KlasseClassIdQuickRoute: typeof KlasseClassIdQuickRoute
+}
+
+const KlasseClassIdRouteChildren: KlasseClassIdRouteChildren = {
+  KlasseClassIdQuickRoute: KlasseClassIdQuickRoute,
+}
+
+const KlasseClassIdRouteWithChildren = KlasseClassIdRoute._addFileChildren(
+  KlasseClassIdRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   EinstellungenRoute: EinstellungenRoute,
   LoginRoute: LoginRoute,
-  KlasseClassIdRoute: KlasseClassIdRoute,
+  KlasseClassIdRoute: KlasseClassIdRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
