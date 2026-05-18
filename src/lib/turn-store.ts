@@ -179,8 +179,8 @@ function defaultState(): TurnState {
   const mk = (id: ClassId, name: string): ClassData => ({
     id,
     name,
-    disciplines: defaultDisciplines(),
-    students: seedStudents(id),
+    disciplines: [],
+    students: [],
     totalLessons: DEFAULT_TOTAL_LESSONS,
   });
   const classes = {} as Record<ClassId, ClassData>;
