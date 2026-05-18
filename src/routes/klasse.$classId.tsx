@@ -275,7 +275,19 @@ function ClassPage() {
               </DialogFooter>
             </DialogContent>
           </Dialog>
+
+          <Button variant="outline" onClick={() => setImportOpen(true)} title="Aus Datei oder Foto importieren">
+            <Upload className="h-4 w-4" />
+            <span className="hidden sm:inline">Importieren</span>
+          </Button>
         </div>
+
+        <ImportStudentsDialog
+          open={importOpen}
+          onOpenChange={setImportOpen}
+          onConfirm={handleImportStudents}
+        />
+
 
 
         {/* Disciplines overview chip-row (with delete & weight edit) */}
