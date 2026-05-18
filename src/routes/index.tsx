@@ -283,8 +283,8 @@ function Index() {
               <ClipboardList className="h-5 w-5" />
             </div>
             <div>
-              <h1 className="text-xl font-semibold tracking-tight text-foreground">Turnnoten</h1>
-              <p className="text-xs text-muted-foreground">Bewertung im Turnunterricht</p>
+              <h1 className="text-xl font-semibold tracking-tight text-foreground">Turni</h1>
+              <p className="text-xs text-muted-foreground">Deine App für den Sportunterricht</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
