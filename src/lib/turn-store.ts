@@ -6,7 +6,7 @@ export type ClassId = "1" | "2" | "3" | "4";
 export interface Discipline {
   id: string;
   name: string;
-  weight: number; // percent weight (0-100)
+  weight: number; // relative weight (any positive number; only ratios matter)
 }
 
 export interface Student {
@@ -14,12 +14,12 @@ export interface Student {
   firstName: string;
   lastName: string;
   classId: ClassId;
-  // discipline scores: id -> points 0-100 (or undefined if not measured)
+  // discipline scores: id -> points 0-100 (undefined = nicht gemessen, wird nicht gewertet)
   scores: Record<string, number | undefined>;
   forgottenKit: number;
   excusedNotParticipating: number;
   unexcusedNotParticipating: number;
-  participation: number; // 1..5 (5 = sehr gut)
+  attended: number; // Anzahl tatsächlich mitgeturnter Stunden
 }
 
 export interface ClassData {
@@ -27,12 +27,10 @@ export interface ClassData {
   name: string;
   disciplines: Discipline[];
   students: Student[];
+  totalLessons: number; // Gesamtzahl gehaltener Turnstunden in dieser Klasse
 }
 
 export interface GradingSettings {
-  participationBonusPerLevel: number; // points added per level above 1, so (p-1)*x added on top of base
-  participationBaseLevel: number; // level considered neutral (no bonus, no malus)
-  participationMalusPerLevel: number; // points subtracted per level below base
   forgottenKitPenalty: number;
   excusedPenalty: number;
   unexcusedPenalty: number;
@@ -47,14 +45,11 @@ export interface TurnState {
 
 // ---------- Defaults ----------
 const defaultDisciplines = (): Discipline[] => [
-  { id: "shuttle", name: "Shuttle Run", weight: 40 },
-  { id: "cooper", name: "Cooper-Test", weight: 40 },
+  { id: "shuttle", name: "Shuttle Run", weight: 1 },
+  { id: "cooper", name: "Cooper-Test", weight: 1 },
 ];
 
 const defaultSettings: GradingSettings = {
-  participationBonusPerLevel: 4,
-  participationBaseLevel: 3,
-  participationMalusPerLevel: 5,
   forgottenKitPenalty: 3,
   excusedPenalty: 0,
   unexcusedPenalty: 8,
@@ -99,6 +94,8 @@ function genId() {
   return Math.random().toString(36).slice(2, 10);
 }
 
+const DEFAULT_TOTAL_LESSONS = 10;
+
 function seedStudents(classId: ClassId): Student[] {
   return sampleNames[classId].map(([fn, ln], i) => ({
     id: genId(),
@@ -112,7 +109,7 @@ function seedStudents(classId: ClassId): Student[] {
     forgottenKit: i % 3 === 0 ? 1 : 0,
     excusedNotParticipating: i % 4 === 0 ? 1 : 0,
     unexcusedNotParticipating: i === 1 ? 1 : 0,
-    participation: 3 + ((i % 3) - 1),
+    attended: Math.max(0, DEFAULT_TOTAL_LESSONS - (i % 4)),
   }));
 }
 
@@ -122,6 +119,7 @@ function defaultState(): TurnState {
     name,
     disciplines: defaultDisciplines(),
     students: seedStudents(id),
+    totalLessons: DEFAULT_TOTAL_LESSONS,
   });
   return {
     classes: {
@@ -135,7 +133,7 @@ function defaultState(): TurnState {
 }
 
 // ---------- Store ----------
-const STORAGE_KEY = "turn-app-state-v1";
+const STORAGE_KEY = "turn-app-state-v2";
 
 function load(): TurnState {
   if (typeof window === "undefined") return defaultState();
@@ -143,7 +141,6 @@ function load(): TurnState {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return defaultState();
     const parsed = JSON.parse(raw) as TurnState;
-    // basic shape guard
     if (!parsed.classes || !parsed.settings) return defaultState();
     return parsed;
   } catch {
@@ -193,6 +190,27 @@ export const turnActions = {
       classes: { ...s.classes, [classId]: { ...s.classes[classId], name } },
     }));
   },
+  setTotalLessons(classId: ClassId, totalLessons: number) {
+    setState((s) => ({
+      ...s,
+      classes: {
+        ...s.classes,
+        [classId]: { ...s.classes[classId], totalLessons: Math.max(0, Math.round(totalLessons)) },
+      },
+    }));
+  },
+  incrementTotalLessons(classId: ClassId, delta: number) {
+    setState((s) => {
+      const cls = s.classes[classId];
+      return {
+        ...s,
+        classes: {
+          ...s.classes,
+          [classId]: { ...cls, totalLessons: Math.max(0, (cls.totalLessons ?? 0) + delta) },
+        },
+      };
+    });
+  },
   addStudent(classId: ClassId, firstName: string, lastName: string) {
     setState((s) => {
       const cls = s.classes[classId];
@@ -205,7 +223,7 @@ export const turnActions = {
         forgottenKit: 0,
         excusedNotParticipating: 0,
         unexcusedNotParticipating: 0,
-        participation: 3,
+        attended: 0,
       };
       return {
         ...s,
@@ -257,7 +275,7 @@ export const turnActions = {
       };
     });
   },
-  addDiscipline(classId: ClassId, name: string, weight = 10) {
+  addDiscipline(classId: ClassId, name: string, weight = 1) {
     setState((s) => {
       const cls = s.classes[classId];
       return {
@@ -315,15 +333,21 @@ export const turnActions = {
 
 // ---------- Grading logic ----------
 export interface GradeResult {
-  disciplineAverage: number; // weighted avg of disciplines (0-100), or 0 if no data
-  participationDelta: number;
+  disciplineAverage: number; // weighted avg of entered disciplines (0-100); 100 if none entered
+  attendanceRate: number; // 0..1
   penalties: number;
   total: number; // clamped 0..100
   grade: number;
   measuredCount: number;
+  hasDisciplineData: boolean;
 }
 
-export function computeGrade(student: Student, disciplines: Discipline[], settings: GradingSettings): GradeResult {
+export function computeGrade(
+  student: Student,
+  disciplines: Discipline[],
+  settings: GradingSettings,
+  totalLessons: number,
+): GradeResult {
   let weightedSum = 0;
   let weightTotal = 0;
   let measuredCount = 0;
@@ -335,25 +359,34 @@ export function computeGrade(student: Student, disciplines: Discipline[], settin
       measuredCount++;
     }
   }
-  const disciplineAverage = weightTotal > 0 ? weightedSum / weightTotal : 0;
+  const hasDisciplineData = weightTotal > 0;
+  const disciplineAverage = hasDisciplineData ? weightedSum / weightTotal : 100;
 
-  const participationDelta =
-    (student.participation - settings.participationBaseLevel) *
-    (student.participation >= settings.participationBaseLevel
-      ? settings.participationBonusPerLevel
-      : settings.participationMalusPerLevel);
+  const attendanceRate =
+    totalLessons > 0 ? Math.max(0, Math.min(1, student.attended / totalLessons)) : 1;
 
   const penalties =
     student.forgottenKit * settings.forgottenKitPenalty +
     student.excusedNotParticipating * settings.excusedPenalty +
     student.unexcusedNotParticipating * settings.unexcusedPenalty;
 
-  const total = Math.max(0, Math.min(100, Math.round(disciplineAverage + participationDelta - penalties)));
+  const total = Math.max(
+    0,
+    Math.min(100, Math.round(disciplineAverage * attendanceRate - penalties)),
+  );
 
   const sortedThresholds = [...settings.gradeThresholds].sort((a, b) => b.min - a.min);
   const grade = sortedThresholds.find((t) => total >= t.min)?.grade ?? 5;
 
-  return { disciplineAverage, participationDelta, penalties, total, grade, measuredCount };
+  return {
+    disciplineAverage,
+    attendanceRate,
+    penalties,
+    total,
+    grade,
+    measuredCount,
+    hasDisciplineData,
+  };
 }
 
 // ---------- CSV Export ----------
@@ -366,7 +399,9 @@ export function exportClassCsv(cls: ClassData, settings: GradingSettings): strin
     "Turnzeug vergessen",
     "Entschuldigt n. mitgeturnt",
     "Nicht entschuldigt",
-    "Turnbeteiligung (1-5)",
+    "Mitgeturnt",
+    "Stunden gesamt",
+    "Teilnahme %",
     "Gesamtpunkte",
     "Note",
   ];
@@ -376,7 +411,7 @@ export function exportClassCsv(cls: ClassData, settings: GradingSettings): strin
   };
   const lines = [headers.join(";")];
   for (const st of cls.students) {
-    const g = computeGrade(st, cls.disciplines, settings);
+    const g = computeGrade(st, cls.disciplines, settings, cls.totalLessons);
     lines.push(
       [
         st.firstName,
@@ -386,7 +421,9 @@ export function exportClassCsv(cls: ClassData, settings: GradingSettings): strin
         st.forgottenKit,
         st.excusedNotParticipating,
         st.unexcusedNotParticipating,
-        st.participation,
+        st.attended,
+        cls.totalLessons,
+        Math.round(g.attendanceRate * 100),
         g.total,
         g.grade,
       ]
