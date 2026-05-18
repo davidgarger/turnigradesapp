@@ -157,10 +157,15 @@ export default function TeamGenerator({ cls }: { cls: ClassData }) {
                   <Input
                     id="tc"
                     type="number"
+                    inputMode="numeric"
                     min={2}
                     max={Math.max(2, active.length)}
-                    value={teamCount}
-                    onChange={(e) => setTeamCount(Math.max(2, Number(e.target.value) || 2))}
+                    value={teamCount === 0 ? "" : teamCount}
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      setTeamCount(v === "" ? 0 : Math.max(0, Number(v)));
+                    }}
+                    onBlur={() => setTeamCount((c) => Math.max(2, c || 2))}
                   />
                 </div>
               ) : (
@@ -169,9 +174,14 @@ export default function TeamGenerator({ cls }: { cls: ClassData }) {
                   <Input
                     id="ts"
                     type="number"
+                    inputMode="numeric"
                     min={2}
-                    value={teamSize}
-                    onChange={(e) => setTeamSize(Math.max(2, Number(e.target.value) || 2))}
+                    value={teamSize === 0 ? "" : teamSize}
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      setTeamSize(v === "" ? 0 : Math.max(0, Number(v)));
+                    }}
+                    onBlur={() => setTeamSize((c) => Math.max(2, c || 2))}
                   />
                 </div>
               )}
