@@ -911,3 +911,24 @@ function ScoreInput({
     />
   );
 }
+
+function UndoButton() {
+  // re-render bei state-Änderungen, damit canUndo() aktuell ist
+  useTurnState();
+  const disabled = !canUndo();
+  return (
+    <button
+      type="button"
+      onClick={() => {
+        if (undo()) toast.success("Rückgängig gemacht");
+      }}
+      disabled={disabled}
+      title="Letzte Änderung rückgängig (Strg+Z)"
+      aria-label="Rückgängig"
+      className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent disabled:opacity-40"
+    >
+      <Undo2 className="h-4 w-4" />
+      <span className="hidden sm:inline">Undo</span>
+    </button>
+  );
+}
