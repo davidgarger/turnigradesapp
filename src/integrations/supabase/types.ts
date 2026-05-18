@@ -32,6 +32,30 @@ export type Database = {
         }
         Relationships: []
       }
+      user_prefs: {
+        Row: {
+          logo: string | null
+          themes: Json
+          updated_at: string
+          user_id: string
+          visible_classes: Json
+        }
+        Insert: {
+          logo?: string | null
+          themes?: Json
+          updated_at?: string
+          user_id: string
+          visible_classes?: Json
+        }
+        Update: {
+          logo?: string | null
+          themes?: Json
+          updated_at?: string
+          user_id?: string
+          visible_classes?: Json
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

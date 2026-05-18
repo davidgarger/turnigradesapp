@@ -127,6 +127,36 @@ const LOGO_KEY = "turn-app-school-logo";
 const THEME_KEY = "turn-app-class-themes";
 const VISIBLE_KEY = "turn-app-visible-classes";
 
+type UserPrefs = {
+  logo: string | null;
+  themes: Record<string, ThemeKey>;
+  visible_classes: string[];
+};
+
+async function fetchUserPrefs(userId: string): Promise<UserPrefs | null> {
+  const { data, error } = await supabase
+    .from("user_prefs")
+    .select("logo, themes, visible_classes")
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (error || !data) return null;
+  return {
+    logo: (data.logo as string | null) ?? null,
+    themes: (data.themes as Record<string, ThemeKey>) ?? {},
+    visible_classes: Array.isArray(data.visible_classes)
+      ? (data.visible_classes as string[]).filter((x) => CLASSES.includes(x as (typeof CLASSES)[number]))
+      : ["1", "2", "3", "4"],
+  };
+}
+
+async function saveUserPrefs(userId: string, patch: Partial<UserPrefs>) {
+  const payload: { user_id: string; logo?: string | null; themes?: Record<string, ThemeKey>; visible_classes?: string[] } = { user_id: userId };
+  if ("logo" in patch) payload.logo = patch.logo ?? null;
+  if ("themes" in patch) payload.themes = patch.themes;
+  if ("visible_classes" in patch) payload.visible_classes = patch.visible_classes;
+  await supabase.from("user_prefs").upsert(payload, { onConflict: "user_id" });
+}
+
 function loadThemes(): Record<string, ThemeKey> {
   try {
     const v = localStorage.getItem(THEME_KEY);
@@ -155,10 +185,54 @@ function Index() {
   const [themes, setThemes] = useState<Record<string, ThemeKey>>({});
   const [openPicker, setOpenPicker] = useState<string | null>(null);
   const [visible, setVisible] = useState<string[]>(["1", "2", "3", "4"]);
+  const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
+    // Sofort lokalen Cache anzeigen, dann Cloud-Werte nachladen
     setThemes(loadThemes());
     setVisible(loadVisibleClasses());
+
+    let active = true;
+    const apply = async (uid: string | null) => {
+      setUserId(uid);
+      if (!uid) return;
+      const remote = await fetchUserPrefs(uid);
+      if (!active) return;
+      if (remote) {
+        setThemes(remote.themes);
+        setVisible(remote.visible_classes);
+        try {
+          localStorage.setItem(THEME_KEY, JSON.stringify(remote.themes));
+          localStorage.setItem(VISIBLE_KEY, JSON.stringify(remote.visible_classes));
+        } catch { /* ignore */ }
+      } else {
+        // Erstmalige Migration: lokale Werte in die Cloud schreiben
+        const localThemes = loadThemes();
+        const localVisible = loadVisibleClasses();
+        const localLogo = (() => {
+          try {
+            return (
+              localStorage.getItem(`${LOGO_KEY}:${uid}`) ||
+              localStorage.getItem(LOGO_KEY)
+            );
+          } catch { return null; }
+        })();
+        await saveUserPrefs(uid, {
+          themes: localThemes,
+          visible_classes: localVisible,
+          logo: localLogo,
+        });
+      }
+    };
+
+    supabase.auth.getUser().then(({ data }) => apply(data.user?.id ?? null));
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      apply(session?.user?.id ?? null);
+    });
+    return () => {
+      active = false;
+      sub.subscription.unsubscribe();
+    };
   }, []);
 
   const persistVisible = (next: string[]) => {
@@ -168,6 +242,7 @@ function Index() {
     } catch {
       /* ignore */
     }
+    if (userId) void saveUserPrefs(userId, { visible_classes: next });
   };
 
   const addNextClass = () => {
@@ -195,6 +270,7 @@ function Index() {
     } catch {
       /* ignore */
     }
+    if (userId) void saveUserPrefs(userId, { themes: next });
     setOpenPicker(null);
   };
 
@@ -207,8 +283,8 @@ function Index() {
               <ClipboardList className="h-5 w-5" />
             </div>
             <div>
-              <h1 className="text-xl font-semibold tracking-tight text-foreground">Turnnoten</h1>
-              <p className="text-xs text-muted-foreground">Bewertung im Turnunterricht</p>
+              <h1 className="text-xl font-semibold tracking-tight text-foreground">Turni</h1>
+              <p className="text-xs text-muted-foreground">Deine App für den Sportunterricht</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -421,43 +497,44 @@ function SchoolLogo() {
   const [userId, setUserId] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
-  const storageKey = userId ? `${LOGO_KEY}:${userId}` : null;
-
   useEffect(() => {
     let active = true;
-    supabase.auth.getUser().then(({ data }) => {
-      if (!active) return;
-      const uid = data.user?.id ?? null;
+
+    const apply = async (uid: string | null) => {
       setUserId(uid);
+      // Lokaler Cache zuerst
       try {
         const key = uid ? `${LOGO_KEY}:${uid}` : LOGO_KEY;
-        const v = localStorage.getItem(key);
-        // Migration: legacy global key → user-scoped
-        if (!v && uid) {
-          const legacy = localStorage.getItem(LOGO_KEY);
-          if (legacy) {
-            localStorage.setItem(key, legacy);
-            localStorage.removeItem(LOGO_KEY);
-            setLogo(legacy);
-            return;
-          }
-        }
-        if (v) setLogo(v);
+        const cached = localStorage.getItem(key);
+        if (cached) setLogo(cached);
         else setLogo(null);
-      } catch {
-        /* ignore */
+      } catch { /* ignore */ }
+
+      if (!uid) return;
+
+      // Cloud
+      const remote = await fetchUserPrefs(uid);
+      if (!active) return;
+      if (remote && remote.logo) {
+        setLogo(remote.logo);
+        try { localStorage.setItem(`${LOGO_KEY}:${uid}`, remote.logo); } catch { /* quota */ }
+      } else if (remote && !remote.logo) {
+        // Cloud kennt den User, aber kein Logo → falls lokal eins liegt, hochladen
+        try {
+          const legacy =
+            localStorage.getItem(`${LOGO_KEY}:${uid}`) ||
+            localStorage.getItem(LOGO_KEY);
+          if (legacy) {
+            await saveUserPrefs(uid, { logo: legacy });
+            setLogo(legacy);
+          }
+        } catch { /* ignore */ }
       }
-    });
+    };
+
+    supabase.auth.getUser().then(({ data }) => apply(data.user?.id ?? null));
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
-      const uid = session?.user?.id ?? null;
-      setUserId(uid);
-      try {
-        const key = uid ? `${LOGO_KEY}:${uid}` : LOGO_KEY;
-        const v = localStorage.getItem(key);
-        setLogo(v || null);
-      } catch {
-        setLogo(null);
-      }
+      apply(session?.user?.id ?? null);
     });
     return () => {
       active = false;
@@ -472,9 +549,12 @@ function SchoolLogo() {
       const url = String(reader.result || "");
       setLogo(url);
       try {
-        if (storageKey) localStorage.setItem(storageKey, url);
-      } catch {
-        /* quota */
+        if (userId) localStorage.setItem(`${LOGO_KEY}:${userId}`, url);
+      } catch { /* quota */ }
+      if (userId) {
+        void saveUserPrefs(userId, { logo: url }).then(() =>
+          toast.success("Schullogo gespeichert"),
+        );
       }
     };
     reader.readAsDataURL(file);
@@ -483,10 +563,9 @@ function SchoolLogo() {
   const onRemove = () => {
     setLogo(null);
     try {
-      if (storageKey) localStorage.removeItem(storageKey);
-    } catch {
-      /* ignore */
-    }
+      if (userId) localStorage.removeItem(`${LOGO_KEY}:${userId}`);
+    } catch { /* ignore */ }
+    if (userId) void saveUserPrefs(userId, { logo: null });
     if (fileRef.current) fileRef.current.value = "";
   };
 
