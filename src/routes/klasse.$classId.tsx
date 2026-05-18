@@ -374,18 +374,6 @@ function ClassPage() {
                 <th className="px-2 py-3 text-center font-semibold" title="Mitgeturnte Stunden">
                   Mitgeturnt
                 </th>
-                <th className="px-2 py-3 text-center font-semibold" title="Betragensnote (1 + ⌊(rot − grün)/3⌋)">
-                  Betragen
-                </th>
-
-                <th className="px-2 py-3 text-center font-semibold">
-                  <button
-                    onClick={() => handleSort("total")}
-                    className="inline-flex items-center gap-1 hover:text-primary"
-                  >
-                    Punkte <ArrowUpDown className="h-3 w-3" />
-                  </button>
-                </th>
                 <th className="px-2 py-3 text-center font-semibold">
                   <button
                     onClick={() => handleSort("grade")}
