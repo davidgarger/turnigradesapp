@@ -11,6 +11,7 @@ import {
   ArrowUpDown,
   Zap,
   Undo2,
+  Upload,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -28,6 +29,7 @@ import {
   type Student,
 } from "@/lib/turn-store";
 import QuickSession from "@/components/QuickSession";
+import ImportStudentsDialog, { type ParsedStudent } from "@/components/ImportStudentsDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -95,6 +97,7 @@ function ClassPage() {
   const [newFirst, setNewFirst] = useState("");
   const [newLast, setNewLast] = useState("");
   const [studentOpen, setStudentOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
 
   const [discName, setDiscName] = useState("");
   const [discWeight, setDiscWeight] = useState(10);
@@ -156,6 +159,13 @@ function ClassPage() {
     setNewLast("");
     setStudentOpen(false);
     toast.success("Schüler hinzugefügt");
+  };
+
+  const handleImportStudents = (list: ParsedStudent[]) => {
+    for (const s of list) {
+      turnActions.addStudent(cls.id, s.firstName, s.lastName);
+    }
+    toast.success(`${list.length} Schüler importiert`);
   };
 
   const handleAddDiscipline = () => {
@@ -265,7 +275,19 @@ function ClassPage() {
               </DialogFooter>
             </DialogContent>
           </Dialog>
+
+          <Button variant="outline" onClick={() => setImportOpen(true)} title="Aus Datei oder Foto importieren">
+            <Upload className="h-4 w-4" />
+            <span className="hidden sm:inline">Importieren</span>
+          </Button>
         </div>
+
+        <ImportStudentsDialog
+          open={importOpen}
+          onOpenChange={setImportOpen}
+          onConfirm={handleImportStudents}
+        />
+
 
 
         {/* Disciplines overview chip-row (with delete & weight edit) */}
