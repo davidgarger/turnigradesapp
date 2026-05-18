@@ -206,7 +206,8 @@ function ClassPage() {
               className="inline-flex items-center gap-2 rounded-md bg-gradient-to-r from-indigo-500 to-fuchsia-500 px-3 py-2 text-sm font-semibold text-white shadow-md shadow-violet-500/30 transition hover:opacity-95"
             >
               <Zap className="h-4 w-4" />
-              <span className="hidden sm:inline">Schnelleingabe</span>
+              <span className="hidden sm:inline">Neue Stunde starten</span>
+              <span className="sm:hidden">Neue Stunde</span>
             </Link>
             <Link
               to="/einstellungen"
