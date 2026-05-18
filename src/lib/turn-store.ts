@@ -473,11 +473,14 @@ export function exportClassCsv(cls: ClassData, settings: GradingSettings): strin
     "Turnzeug vergessen",
     "Entschuldigt n. mitgeturnt",
     "Nicht entschuldigt",
+    "Rote Punkte",
+    "Grüne Punkte",
     "Mitgeturnt",
     "Stunden gesamt",
     "Teilnahme %",
     "Gesamtpunkte",
     "Note",
+    "Betragensnote",
   ];
   const escape = (v: unknown) => {
     const s = String(v ?? "");
