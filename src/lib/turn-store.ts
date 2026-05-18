@@ -472,7 +472,8 @@ export function exportClassCsv(cls: ClassData, settings: GradingSettings): strin
   };
   const lines = [headers.join(";")];
   for (const st of cls.students) {
-    const g = computeGrade(st, cls.disciplines, settings, cls.totalLessons);
+    const eff = getEffectiveTotalLessons(cls);
+    const g = computeGrade(st, cls.disciplines, settings, eff);
     lines.push(
       [
         st.firstName,
