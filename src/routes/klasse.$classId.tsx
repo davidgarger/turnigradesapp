@@ -97,6 +97,7 @@ function ClassPage() {
   const [newFirst, setNewFirst] = useState("");
   const [newLast, setNewLast] = useState("");
   const [studentOpen, setStudentOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
 
   const [discName, setDiscName] = useState("");
   const [discWeight, setDiscWeight] = useState(10);
