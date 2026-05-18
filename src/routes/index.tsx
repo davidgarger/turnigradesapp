@@ -125,6 +125,7 @@ const DEFAULT_THEME: Record<(typeof CLASSES)[number], ThemeKey> = {
 
 const LOGO_KEY = "turn-app-school-logo";
 const THEME_KEY = "turn-app-class-themes";
+const VISIBLE_KEY = "turn-app-visible-classes";
 
 function loadThemes(): Record<string, ThemeKey> {
   try {
@@ -134,6 +135,19 @@ function loadThemes(): Record<string, ThemeKey> {
     /* ignore */
   }
   return {};
+}
+
+function loadVisibleClasses(): string[] {
+  try {
+    const v = localStorage.getItem(VISIBLE_KEY);
+    if (v) {
+      const arr = JSON.parse(v);
+      if (Array.isArray(arr) && arr.length > 0) return arr.filter((x) => CLASSES.includes(x));
+    }
+  } catch {
+    /* ignore */
+  }
+  return ["1", "2", "3", "4"];
 }
 
 function Index() {
