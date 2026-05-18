@@ -612,7 +612,7 @@ function StatusCell({
   onChange,
 }: {
   value: number;
-  tone: "danger" | "warning" | "danger-strong";
+  tone: "danger" | "warning" | "danger-strong" | "success";
   onChange: (v: number) => void;
 }) {
   const toneClass =
@@ -622,7 +622,9 @@ function StatusCell({
         ? "border-status-danger/40 bg-status-danger-bg text-status-danger"
         : tone === "warning"
           ? "border-status-warning/40 bg-status-warning-bg text-status-warning"
-          : "border-status-danger-strong/40 bg-status-danger-strong-bg text-status-danger-strong";
+          : tone === "success"
+            ? "border-status-success/40 bg-status-success-bg text-status-success"
+            : "border-status-danger-strong/40 bg-status-danger-strong-bg text-status-danger-strong";
   return (
     <td className="px-1 py-1 text-center">
       <div className="inline-flex items-center gap-1">
