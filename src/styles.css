@@ -69,8 +69,17 @@
   --card-foreground: oklch(0.129 0.042 264.695);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.208 0.042 265.755);
-  --primary-foreground: oklch(0.984 0.003 247.858);
+  --primary: oklch(0.50 0.18 250);
+  --primary-foreground: oklch(0.99 0.005 250);
+  /* Status tokens for Turnunterricht */
+  --status-success: oklch(0.72 0.17 145);
+  --status-success-bg: oklch(0.95 0.06 145);
+  --status-warning: oklch(0.78 0.16 75);
+  --status-warning-bg: oklch(0.96 0.07 80);
+  --status-danger: oklch(0.62 0.22 25);
+  --status-danger-bg: oklch(0.95 0.06 25);
+  --status-danger-strong: oklch(0.45 0.22 25);
+  --status-danger-strong-bg: oklch(0.92 0.08 25);
   --secondary: oklch(0.968 0.007 247.896);
   --secondary-foreground: oklch(0.208 0.042 265.755);
   --muted: oklch(0.968 0.007 247.896);
