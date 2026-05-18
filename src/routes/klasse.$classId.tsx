@@ -127,7 +127,9 @@ function ClassPage() {
       return sortAsc ? cmp : -cmp;
     });
     return withGrade;
-  }, [cls.students, cls.disciplines, settings, query, sortKey, sortAsc]);
+  }, [cls.students, cls.disciplines, cls.totalLessons, cls.schedule, settings, query, sortKey, sortAsc]);
+
+  const effectiveLessons = getEffectiveTotalLessons(cls);
 
   const handleSort = (k: SortKey) => {
     if (sortKey === k) setSortAsc((v) => !v);
