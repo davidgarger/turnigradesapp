@@ -488,29 +488,39 @@ function StudentRow({
         onChange={(v) => turnActions.updateStudent(classId, student.id, { unexcusedNotParticipating: v })}
       />
       <td className="px-1 py-1 text-center">
-        <div className="flex items-center justify-center gap-0.5">
-          {[1, 2, 3, 4, 5].map((n) => {
-            const active = student.participation >= n;
-            return (
-              <button
-                key={n}
-                onClick={() => turnActions.updateStudent(classId, student.id, { participation: n })}
-                className={`h-6 w-5 rounded-sm transition-colors ${
-                  active
-                    ? n >= 4
-                      ? "bg-status-success"
-                      : n === 3
-                        ? "bg-status-warning"
-                        : "bg-status-danger"
-                    : "bg-muted"
-                }`}
-                aria-label={`Beteiligung ${n}`}
-                title={`Beteiligung ${n}/5`}
-              />
-            );
-          })}
+        <div className="inline-flex items-center gap-1">
+          <button
+            onClick={() =>
+              turnActions.updateStudent(classId, student.id, {
+                attended: Math.max(0, student.attended - 1),
+              })
+            }
+            className="h-7 w-6 rounded-md border border-input text-sm text-muted-foreground hover:bg-accent"
+            aria-label="weniger mitgeturnt"
+          >
+            –
+          </button>
+          <span
+            className="inline-flex h-7 min-w-[3.25rem] items-center justify-center rounded-md border border-status-success/40 bg-status-success-bg px-2 text-sm font-semibold tabular-nums text-status-success"
+            title={`${student.attended} von ${totalLessons} Stunden mitgeturnt`}
+          >
+            {student.attended}/{totalLessons}
+          </span>
+          <button
+            onClick={() =>
+              turnActions.updateStudent(classId, student.id, {
+                attended: student.attended + 1,
+              })
+            }
+            className="h-7 w-7 rounded-md border border-status-success/40 bg-status-success text-sm font-bold text-white hover:opacity-90"
+            aria-label="Stunde mitgeturnt – Plus"
+            title="Heute mitgeturnt (+1)"
+          >
+            +
+          </button>
         </div>
       </td>
+
       <td className="px-2 py-2 text-center font-semibold tabular-nums">{grade.total}</td>
       <td className="px-2 py-2 text-center">
         <span
