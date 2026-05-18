@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { Loader2, Upload, FileText, Image as ImageIcon, FileSpreadsheet } from "lucide-react";
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
-import * as XLSX from "xlsx";
+import readXlsxFile from "read-excel-file/browser";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -61,10 +61,7 @@ function parseCsv(text: string): ParsedStudent[] {
 }
 
 async function parseXlsx(file: File): Promise<ParsedStudent[]> {
-  const buf = await file.arrayBuffer();
-  const wb = XLSX.read(buf, { type: "array" });
-  const sheet = wb.Sheets[wb.SheetNames[0]];
-  const rows: unknown[][] = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
+  const rows = await readXlsxFile(file);
   const out: ParsedStudent[] = [];
   for (const row of rows) {
     if (!Array.isArray(row) || row.length === 0) continue;
