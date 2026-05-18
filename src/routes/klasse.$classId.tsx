@@ -429,6 +429,8 @@ function ClassPage() {
           <Legend color="status-warning" label="E = Entschuldigt nicht mitgeturnt" />
           <Legend color="status-danger-strong" label="NE = Nicht entschuldigt" />
           <Legend color="status-success" label="Mitgeturnt / Stunden gesamt" />
+          <Legend color="status-danger-strong" label="● Rote Punkte (3 = Betragens-Note ↓)" />
+          <Legend color="status-success" label="● Grüne Punkte (heben rote auf)" />
 
         </div>
       </main>
