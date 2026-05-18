@@ -687,6 +687,64 @@ function StatusCell({
   );
 }
 
+function ExcusedCell({ student, classId }: { student: Student; classId: ClassId }) {
+  const [open, setOpen] = useState(false);
+  const count = student.excuses?.length ?? student.excusedNotParticipating;
+  const hasPhoto = (student.excuses ?? []).some((e) => e.photoPath);
+  const toneClass =
+    count === 0
+      ? "border-input bg-background text-muted-foreground"
+      : "border-status-warning/40 bg-status-warning-bg text-status-warning";
+  return (
+    <td className="px-1 py-1 text-center">
+      <div className="inline-flex items-center gap-1">
+        <button
+          onClick={() => {
+            const list = student.excuses ?? [];
+            if (list.length > 0) {
+              // Letzten Eintrag entfernen (Foto bleibt im Storage, kann im Dialog gezielt gelöscht werden)
+              turnActions.removeExcuse(classId, student.id, list[list.length - 1].id);
+            } else {
+              turnActions.updateStudent(classId, student.id, {
+                excusedNotParticipating: Math.max(0, student.excusedNotParticipating - 1),
+              });
+            }
+          }}
+          className="h-7 w-6 rounded-md border border-input text-sm text-muted-foreground hover:bg-accent"
+          aria-label="weniger"
+        >
+          –
+        </button>
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          className={`relative inline-flex h-7 min-w-7 items-center justify-center rounded-md border px-2 text-sm font-semibold tabular-nums ${toneClass}`}
+          title="Entschuldigungen mit Foto verwalten"
+        >
+          {count}
+          {hasPhoto && (
+            <span
+              className="absolute -right-1 -top-1 inline-flex h-3 w-3 items-center justify-center rounded-full bg-status-warning text-white"
+              aria-hidden
+            >
+              <Camera className="h-2 w-2" />
+            </span>
+          )}
+        </button>
+        <button
+          onClick={() => setOpen(true)}
+          className="h-7 w-7 rounded-md border border-status-warning/40 bg-status-warning text-white hover:opacity-90"
+          aria-label="Entschuldigung mit Foto hinzufügen"
+          title="Entschuldigung hinzufügen (mit Foto)"
+        >
+          <Camera className="mx-auto h-3.5 w-3.5" />
+        </button>
+      </div>
+      <ExcusesDialog open={open} onOpenChange={setOpen} student={student} classId={classId} />
+    </td>
+  );
+}
+
 const WEEKDAY_LABELS = ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"];
 
 function defaultSchedule(): ClassSchedule {
