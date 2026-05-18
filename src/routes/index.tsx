@@ -185,10 +185,54 @@ function Index() {
   const [themes, setThemes] = useState<Record<string, ThemeKey>>({});
   const [openPicker, setOpenPicker] = useState<string | null>(null);
   const [visible, setVisible] = useState<string[]>(["1", "2", "3", "4"]);
+  const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
+    // Sofort lokalen Cache anzeigen, dann Cloud-Werte nachladen
     setThemes(loadThemes());
     setVisible(loadVisibleClasses());
+
+    let active = true;
+    const apply = async (uid: string | null) => {
+      setUserId(uid);
+      if (!uid) return;
+      const remote = await fetchUserPrefs(uid);
+      if (!active) return;
+      if (remote) {
+        setThemes(remote.themes);
+        setVisible(remote.visible_classes);
+        try {
+          localStorage.setItem(THEME_KEY, JSON.stringify(remote.themes));
+          localStorage.setItem(VISIBLE_KEY, JSON.stringify(remote.visible_classes));
+        } catch { /* ignore */ }
+      } else {
+        // Erstmalige Migration: lokale Werte in die Cloud schreiben
+        const localThemes = loadThemes();
+        const localVisible = loadVisibleClasses();
+        const localLogo = (() => {
+          try {
+            return (
+              localStorage.getItem(`${LOGO_KEY}:${uid}`) ||
+              localStorage.getItem(LOGO_KEY)
+            );
+          } catch { return null; }
+        })();
+        await saveUserPrefs(uid, {
+          themes: localThemes,
+          visible_classes: localVisible,
+          logo: localLogo,
+        });
+      }
+    };
+
+    supabase.auth.getUser().then(({ data }) => apply(data.user?.id ?? null));
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      apply(session?.user?.id ?? null);
+    });
+    return () => {
+      active = false;
+      sub.subscription.unsubscribe();
+    };
   }, []);
 
   const persistVisible = (next: string[]) => {
@@ -198,6 +242,7 @@ function Index() {
     } catch {
       /* ignore */
     }
+    if (userId) void saveUserPrefs(userId, { visible_classes: next });
   };
 
   const addNextClass = () => {
@@ -225,6 +270,7 @@ function Index() {
     } catch {
       /* ignore */
     }
+    if (userId) void saveUserPrefs(userId, { themes: next });
     setOpenPicker(null);
   };
 
