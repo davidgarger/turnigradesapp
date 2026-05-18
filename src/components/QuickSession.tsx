@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, Check, X, Shirt, AlertTriangle, Undo2 } from "lucide-react";
+import { ArrowLeft, Check, X, Backpack, Slash, FileCheck, FileX, Undo2 } from "lucide-react";
 import { turnActions, useTurnState, type ClassId, type Student, undo, canUndo } from "@/lib/turn-store";
 import { toast } from "sonner";
 
