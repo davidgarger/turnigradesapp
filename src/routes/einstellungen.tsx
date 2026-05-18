@@ -90,41 +90,16 @@ function SettingsPage() {
       </header>
 
       <main className="mx-auto max-w-4xl space-y-6 px-4 py-8">
-        <Section title="Turnbeteiligung" description="Skala 1 (sehr gering) bis 5 (sehr gut).">
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <Field label="Neutrales Niveau">
-              <Input
-                type="number"
-                min={1}
-                max={5}
-                value={settings.participationBaseLevel}
-                onChange={(e) =>
-                  turnActions.updateSettings({ participationBaseLevel: Number(e.target.value) })
-                }
-              />
-            </Field>
-            <Field label="Bonus pro Stufe darüber">
-              <Input
-                type="number"
-                min={0}
-                value={settings.participationBonusPerLevel}
-                onChange={(e) =>
-                  turnActions.updateSettings({ participationBonusPerLevel: Number(e.target.value) })
-                }
-              />
-            </Field>
-            <Field label="Abzug pro Stufe darunter">
-              <Input
-                type="number"
-                min={0}
-                value={settings.participationMalusPerLevel}
-                onChange={(e) =>
-                  turnActions.updateSettings({ participationMalusPerLevel: Number(e.target.value) })
-                }
-              />
-            </Field>
-          </div>
+        <Section
+          title="Benotungs-Logik"
+          description="Punkte = Disziplin-Schnitt × Teilnahmequote − Abzüge. Disziplinen, die nicht eingetragen sind, zählen nicht mit. Wenn keine Disziplin eingetragen ist, gilt der Disziplin-Schnitt als 100 (= Note hängt nur an Anwesenheit und Abzügen)."
+        >
+          <p className="text-sm text-muted-foreground">
+            Die Anzahl der gehaltenen Turnstunden pro Klasse wird direkt in der Klassenansicht
+            eingestellt. Pro Schüler wird über den „+"-Button gezählt, wie oft er mitgeturnt hat.
+          </p>
         </Section>
+
 
         <Section title="Abzüge" description="Punkteabzüge pro Vorfall (jeweils einmalig multipliziert).">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
