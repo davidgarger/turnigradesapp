@@ -388,6 +388,19 @@ function Index() {
               </div>
             );
           })}
+          {visible.length < CLASSES.length && (
+            <button
+              type="button"
+              onClick={addNextClass}
+              className="group flex min-h-[140px] flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-border bg-background/50 p-6 text-muted-foreground transition hover:border-indigo-400 hover:bg-indigo-50/50 hover:text-indigo-600"
+            >
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted group-hover:bg-indigo-100">
+                <Plus className="h-6 w-6" />
+              </div>
+              <span className="text-sm font-semibold">Klasse hinzufügen</span>
+              <span className="text-xs">Nächste freie Schulstufe</span>
+            </button>
+          )}
         </div>
       </main>
     </div>
