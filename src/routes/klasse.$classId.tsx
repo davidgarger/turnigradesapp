@@ -557,16 +557,6 @@ function StudentRow({
       </td>
       <td className="px-2 py-2 text-center">
         <span
-          className={`inline-flex h-8 w-8 items-center justify-center rounded-md text-base font-bold ${behaviorColor}`}
-          title={`Rote: ${student.redPoints} · Grüne: ${student.greenPoints} · Netto: ${grade.behaviorNet}`}
-        >
-          {grade.behaviorGrade}
-        </span>
-      </td>
-
-      <td className="px-2 py-2 text-center font-semibold tabular-nums">{grade.total}</td>
-      <td className="px-2 py-2 text-center">
-        <span
           className={`inline-flex h-8 w-8 items-center justify-center rounded-md text-base font-bold ${gradeColor}`}
         >
           {grade.grade}
