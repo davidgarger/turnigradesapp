@@ -319,7 +319,7 @@ function Index() {
                         <span className="inline-flex items-center gap-1.5"><ArrowLeftRight className="h-3 w-3" /> Klasse verschieben (tauschen)</span>
                       </div>
                       <div className="flex gap-1.5 px-2 pb-2">
-                        {CLASSES.filter((c) => c !== id).map((target) => (
+                        {(visible as typeof CLASSES[number][]).filter((c) => c !== id).map((target) => (
                           <button
                             key={target}
                             type="button"
