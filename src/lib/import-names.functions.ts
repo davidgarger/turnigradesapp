@@ -30,7 +30,7 @@ export const extractStudentNames = createServerFn({ method: "POST" })
     }
 
     const gateway = createLovableAiGatewayProvider(apiKey);
-    const model = gateway("google/gemini-2.5-flash");
+    const model = gateway("google/gemini-2.5-pro");
 
     const buffer = Buffer.from(data.fileBase64, "base64");
 
@@ -41,10 +41,13 @@ export const extractStudentNames = createServerFn({ method: "POST" })
         {
           role: "system",
           content:
-            "Du extrahierst Schülernamen aus Klassenlisten (Bilder oder PDFs). " +
-            "Erkenne jeden Schüler. Trenne Vor- und Nachname so wie üblich im deutschen/österreichischen Schulsystem. " +
+            "Du extrahierst Schülernamen aus Klassenlisten (Fotos, Screenshots, Scans, PDFs). " +
+            "Lies SEHR sorgfältig – auch bei schlechter Bildqualität, kleiner Schrift, Handschrift, schräg fotografierten oder leicht unscharfen Bildern. " +
+            "Erkenne jeden Schüler. Trenne Vor- und Nachname so wie üblich im deutschen/österreichischen/schweizerischen Schulsystem. " +
+            "Achte auf Umlaute (ä, ö, ü), ß, Bindestriche und Apostrophe in Namen (z. B. O'Brien, Müller-Schmidt). " +
             "Wenn nur 'Nachname Vorname' geschrieben ist, ordne korrekt zu. " +
-            "Ignoriere Spaltenüberschriften, Klassenbezeichnungen, Lehrernamen, Noten und Zahlen. " +
+            "Ignoriere Spaltenüberschriften, Klassenbezeichnungen, Lehrernamen, Noten, Geburtsdaten und reine Zahlen. " +
+            "Gib lieber einen Namen mit best-guess zurück als ihn auszulassen. " +
             "Gib nur tatsächliche Schülernamen zurück.",
         },
         {
@@ -52,7 +55,7 @@ export const extractStudentNames = createServerFn({ method: "POST" })
           content: [
             {
               type: "text",
-              text: "Extrahiere alle Schülernamen aus dieser Datei.",
+              text: "Extrahiere ALLE Schülernamen aus dieser Datei – auch wenn sie schwer lesbar sind. Lass keinen Namen aus.",
             },
             {
               type: "file",
