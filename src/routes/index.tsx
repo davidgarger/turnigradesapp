@@ -154,10 +154,38 @@ function Index() {
   const state = useTurnState();
   const [themes, setThemes] = useState<Record<string, ThemeKey>>({});
   const [openPicker, setOpenPicker] = useState<string | null>(null);
+  const [visible, setVisible] = useState<string[]>(["1", "2", "3", "4"]);
 
   useEffect(() => {
     setThemes(loadThemes());
+    setVisible(loadVisibleClasses());
   }, []);
+
+  const persistVisible = (next: string[]) => {
+    setVisible(next);
+    try {
+      localStorage.setItem(VISIBLE_KEY, JSON.stringify(next));
+    } catch {
+      /* ignore */
+    }
+  };
+
+  const addNextClass = () => {
+    const next = CLASSES.find((c) => !visible.includes(c));
+    if (!next) return;
+    persistVisible([...visible, next]);
+    toast.success(`Klasse ${next} hinzugefügt`);
+  };
+
+  const hideClass = (id: string) => {
+    if (visible.length <= 1) {
+      toast.error("Mindestens eine Klasse muss sichtbar bleiben.");
+      return;
+    }
+    persistVisible(visible.filter((c) => c !== id));
+    setOpenPicker(null);
+    toast.success(`Klasse ${id} ausgeblendet`);
+  };
 
   const setClassTheme = (classId: string, key: ThemeKey) => {
     const next = { ...themes, [classId]: key };
