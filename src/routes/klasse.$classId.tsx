@@ -354,9 +354,10 @@ function ClassPage() {
                 <th className="px-2 py-3 text-center font-semibold" title="Nicht entschuldigt">
                   <span className="text-status-danger-strong">NE</span>
                 </th>
-                <th className="px-2 py-3 text-center font-semibold">
-                  Beteiligung
+                <th className="px-2 py-3 text-center font-semibold" title="Mitgeturnte Stunden">
+                  Mitgeturnt
                 </th>
+
                 <th className="px-2 py-3 text-center font-semibold">
                   <button
                     onClick={() => handleSort("total")}
