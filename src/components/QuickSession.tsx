@@ -195,6 +195,8 @@ export default function QuickSession({ classId, onClose }: Props) {
                     toast.error("Diese Klasse hat noch keine Schüler.");
                     return;
                   }
+                  const id = turnActions.startLesson(classId, topic);
+                  setLessonId(id);
                   setStarted(true);
                 }}
                 className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-fuchsia-500 px-4 py-4 text-base font-bold text-white shadow-md transition active:scale-95"
