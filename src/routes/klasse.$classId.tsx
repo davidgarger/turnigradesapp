@@ -1132,6 +1132,8 @@ function StudentHistoryDialog({ student, classId }: { student: Student; classId:
           )}
         </div>
 
+        <ExcusePhotosSection studentExcuses={student.excuses ?? []} open={open} />
+
         <DialogFooter>
           <Button variant="outline" onClick={() => setOpen(false)}>
             Schließen
