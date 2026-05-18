@@ -282,6 +282,8 @@ function ClassPage() {
             <Upload className="h-4 w-4" />
             <span className="hidden sm:inline">Importieren</span>
           </Button>
+
+          <TeamGenerator cls={cls} />
         </div>
 
         <ImportStudentsDialog
