@@ -21,6 +21,8 @@ import {
   computeScheduledLessons,
   turnActions,
   useTurnState,
+  undo,
+  canUndo,
   type ClassId,
   type ClassSchedule,
   type Student,
