@@ -20,6 +20,8 @@ export interface Student {
   excusedNotParticipating: number;
   unexcusedNotParticipating: number;
   attended: number; // Anzahl tatsächlich mitgeturnter Stunden
+  redPoints: number;   // Disziplin-Minuspunkte (3 = eine Note schlechter im Betragen)
+  greenPoints: number; // positive Punkte (heben rote Punkte auf)
 }
 
 export interface ClassSchedule {
