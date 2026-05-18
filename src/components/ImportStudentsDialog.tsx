@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { Loader2, Upload, FileText, Image as ImageIcon, FileSpreadsheet } from "lucide-react";
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
-import readXlsxFile from "read-excel-file";
+import readXlsxFile from "read-excel-file/browser";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
