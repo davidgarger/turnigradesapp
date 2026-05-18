@@ -33,6 +33,26 @@ export interface ClassSchedule {
   cancelled: number; // entfallene Stunden
 }
 
+export type LessonEntryType =
+  | "attended"
+  | "forgottenKit"
+  | "excused"
+  | "unexcused";
+
+export interface LessonEntry {
+  studentId: string;
+  type: LessonEntryType;
+  at: string; // ISO timestamp
+}
+
+export interface Lesson {
+  id: string;
+  date: string; // ISO yyyy-mm-dd (Datum der Stunde)
+  createdAt: string; // ISO Zeitstempel beim Start
+  topic: string; // optionales Thema
+  entries: LessonEntry[];
+}
+
 export interface ClassData {
   id: ClassId;
   name: string;
@@ -40,6 +60,7 @@ export interface ClassData {
   students: Student[];
   totalLessons: number; // manuelle Gesamtzahl (Fallback falls kein Stundenplan)
   schedule?: ClassSchedule;
+  lessons?: Lesson[]; // Verlauf gehaltener Stunden
 }
 
 export interface GradingSettings {
@@ -425,6 +446,86 @@ export const turnActions = {
       return {
         ...s,
         classes: { ...s.classes, [classId]: { ...cls, students: [...cls.students, student] } },
+      };
+    });
+  },
+  startLesson(classId: ClassId, topic: string): string {
+    const id = genId();
+    const now = new Date();
+    const dateIso = now.toISOString().slice(0, 10);
+    setState((s) => {
+      const cls = s.classes[classId];
+      const lesson: Lesson = {
+        id,
+        date: dateIso,
+        createdAt: now.toISOString(),
+        topic: topic.trim(),
+        entries: [],
+      };
+      return {
+        ...s,
+        classes: {
+          ...s.classes,
+          [classId]: { ...cls, lessons: [...(cls.lessons ?? []), lesson] },
+        },
+      };
+    });
+    return id;
+  },
+  updateLessonTopic(classId: ClassId, lessonId: string, topic: string) {
+    setState((s) => {
+      const cls = s.classes[classId];
+      return {
+        ...s,
+        classes: {
+          ...s.classes,
+          [classId]: {
+            ...cls,
+            lessons: (cls.lessons ?? []).map((l) =>
+              l.id === lessonId ? { ...l, topic: topic.trim() } : l,
+            ),
+          },
+        },
+      };
+    });
+  },
+  recordLessonEntry(
+    classId: ClassId,
+    lessonId: string,
+    studentId: string,
+    type: LessonEntryType,
+  ) {
+    setState((s) => {
+      const cls = s.classes[classId];
+      const lessons = cls.lessons ?? [];
+      const nextLessons = lessons.map((l) =>
+        l.id === lessonId
+          ? {
+              ...l,
+              entries: [
+                ...l.entries.filter((e) => e.studentId !== studentId),
+                { studentId, type, at: new Date().toISOString() },
+              ],
+            }
+          : l,
+      );
+      const students = cls.students.map((st) => {
+        if (st.id !== studentId) return st;
+        const next = { ...st };
+        if (type === "attended") next.attended = st.attended + 1;
+        else if (type === "forgottenKit") next.forgottenKit = st.forgottenKit + 1;
+        else if (type === "excused")
+          next.excusedNotParticipating = st.excusedNotParticipating + 1;
+        else if (type === "unexcused")
+          next.unexcusedNotParticipating = st.unexcusedNotParticipating + 1;
+        return next;
+      });
+      return {
+        ...s,
+        classes: {
+          ...s.classes,
+          [classId]: { ...cls, lessons: nextLessons, students },
+        },
       };
     });
   },

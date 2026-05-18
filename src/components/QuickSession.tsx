@@ -20,6 +20,7 @@ export default function QuickSession({ classId, onClose }: Props) {
   const [animating, setAnimating] = useState<null | "left" | "right">(null);
   const [started, setStarted] = useState(false);
   const [topic, setTopic] = useState("");
+  const [lessonId, setLessonId] = useState<string | null>(null);
   const today = useMemo(
     () =>
       new Date().toLocaleDateString("de-DE", {
@@ -56,7 +57,11 @@ export default function QuickSession({ classId, onClose }: Props) {
   const goBack = () => setIndex((i) => Math.max(0, i - 1));
 
   const markAttended = (st: Student) => {
-    turnActions.updateStudent(classId, st.id, { attended: st.attended + 1 });
+    if (lessonId) {
+      turnActions.recordLessonEntry(classId, lessonId, st.id, "attended");
+    } else {
+      turnActions.updateStudent(classId, st.id, { attended: st.attended + 1 });
+    }
     toast.success(`${st.firstName}: mitgeturnt`, { duration: 900 });
   };
 
@@ -190,6 +195,8 @@ export default function QuickSession({ classId, onClose }: Props) {
                     toast.error("Diese Klasse hat noch keine Schüler.");
                     return;
                   }
+                  const id = turnActions.startLesson(classId, topic);
+                  setLessonId(id);
                   setStarted(true);
                 }}
                 className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-500 to-fuchsia-500 px-4 py-4 text-base font-bold text-white shadow-md transition active:scale-95"
@@ -263,6 +270,7 @@ export default function QuickSession({ classId, onClose }: Props) {
                 onPointerUp={onPointerUp}
                 onPointerCancel={onPointerUp}
                 classId={classId}
+                lessonId={lessonId}
                 onAfterMark={() => {
                   setAnimating("right");
                   setTimeout(() => {
@@ -305,6 +313,7 @@ function StudentCardBackdrop({ student }: { student: Student }) {
 interface StudentCardProps {
   student: Student;
   classId: ClassId;
+  lessonId: string | null;
   transform: string;
   animating: boolean;
   onPointerDown: (e: React.PointerEvent) => void;
@@ -317,6 +326,7 @@ interface StudentCardProps {
 function StudentCard({
   student,
   classId,
+  lessonId,
   transform,
   animating,
   onPointerDown,
@@ -331,12 +341,17 @@ function StudentCard({
   );
 
   const markAndNext = (
-    field: "excusedNotParticipating" | "unexcusedNotParticipating" | "forgottenKit",
+    type: "forgottenKit" | "excused" | "unexcused",
+    fallbackField: "forgottenKit" | "excusedNotParticipating" | "unexcusedNotParticipating",
     label: string,
   ) => {
-    turnActions.updateStudent(classId, student.id, {
-      [field]: student[field] + 1,
-    } as Partial<Student>);
+    if (lessonId) {
+      turnActions.recordLessonEntry(classId, lessonId, student.id, type);
+    } else {
+      turnActions.updateStudent(classId, student.id, {
+        [fallbackField]: student[fallbackField] + 1,
+      } as Partial<Student>);
+    }
     toast.success(`${student.firstName}: ${label}`, { duration: 900 });
     onAfterMark();
   };
@@ -357,7 +372,7 @@ function StudentCard({
         <div className="grid grid-cols-3 gap-2 border-b border-border bg-muted/40 p-3">
           <button
             type="button"
-            onClick={() => markAndNext("forgottenKit", "Turnzeug vergessen")}
+            onClick={() => markAndNext("forgottenKit", "forgottenKit", "Turnzeug vergessen")}
             className="inline-flex flex-col items-center justify-center gap-0.5 rounded-xl border-2 border-orange-300 bg-orange-50 px-2 py-2.5 font-bold text-orange-700 transition active:scale-95"
           >
             <Shirt className="h-4 w-4" />
@@ -366,7 +381,7 @@ function StudentCard({
           </button>
           <button
             type="button"
-            onClick={() => markAndNext("excusedNotParticipating", "entschuldigt")}
+            onClick={() => markAndNext("excused", "excusedNotParticipating", "entschuldigt")}
             className="inline-flex flex-col items-center justify-center gap-0.5 rounded-xl border-2 border-amber-300 bg-amber-50 px-2 py-2.5 font-bold text-amber-700 transition active:scale-95"
           >
             <AlertTriangle className="h-4 w-4" />
@@ -375,7 +390,7 @@ function StudentCard({
           </button>
           <button
             type="button"
-            onClick={() => markAndNext("unexcusedNotParticipating", "nicht entschuldigt")}
+            onClick={() => markAndNext("unexcused", "unexcusedNotParticipating", "nicht entschuldigt")}
             className="inline-flex flex-col items-center justify-center gap-0.5 rounded-xl border-2 border-rose-300 bg-rose-50 px-2 py-2.5 font-bold text-rose-700 transition active:scale-95"
           >
             <X className="h-4 w-4" />
@@ -405,7 +420,11 @@ function StudentCard({
           <button
             type="button"
             onClick={() => {
-              turnActions.updateStudent(classId, student.id, { attended: student.attended + 1 });
+              if (lessonId) {
+                turnActions.recordLessonEntry(classId, lessonId, student.id, "attended");
+              } else {
+                turnActions.updateStudent(classId, student.id, { attended: student.attended + 1 });
+              }
               toast.success(`${student.firstName}: mitgeturnt`, { duration: 900 });
               onAfterMark();
             }}
