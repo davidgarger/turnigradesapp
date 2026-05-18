@@ -270,6 +270,7 @@ export default function QuickSession({ classId, onClose }: Props) {
                 onPointerUp={onPointerUp}
                 onPointerCancel={onPointerUp}
                 classId={classId}
+                lessonId={lessonId}
                 onAfterMark={() => {
                   setAnimating("right");
                   setTimeout(() => {
