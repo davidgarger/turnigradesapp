@@ -356,14 +356,14 @@ function ClassPage() {
                     <div className="text-[10px] font-normal text-muted-foreground">{d.weight}%</div>
                   </th>
                 ))}
-                <th className="px-2 py-3 text-center font-semibold" title="Turnzeug vergessen">
-                  <span className="text-status-danger">TV</span>
+                <th className="px-2 py-3 text-center text-xs font-semibold">
+                  <span className="text-status-danger">Turnzeug vergessen</span>
                 </th>
-                <th className="px-2 py-3 text-center font-semibold" title="Entschuldigt nicht mitgeturnt">
-                  <span className="text-status-warning">E</span>
+                <th className="px-2 py-3 text-center text-xs font-semibold">
+                  <span className="text-status-warning">Entschuldigt</span>
                 </th>
-                <th className="px-2 py-3 text-center font-semibold" title="Nicht entschuldigt">
-                  <span className="text-status-danger-strong">NE</span>
+                <th className="px-2 py-3 text-center text-xs font-semibold">
+                  <span className="text-status-danger-strong">Nicht entschuldigt</span>
                 </th>
                 <th className="px-2 py-3 text-center font-semibold" title="Rote Disziplin-Punkte (3 = eine Betragens-Note schlechter)">
                   <span className="text-status-danger-strong">●</span>
