@@ -12,6 +12,7 @@ import {
   Zap,
   Undo2,
   Upload,
+  History,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
