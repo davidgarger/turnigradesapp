@@ -320,9 +320,16 @@ export const turnActions = {
           ...s.classes,
           [classId]: {
             ...cls,
-            students: cls.students.map((st) =>
-              st.id === studentId ? { ...st, scores: { ...st.scores, [disciplineId]: value } } : st,
-            ),
+            students: cls.students.map((st) => {
+              if (st.id !== studentId) return st;
+              const nextScores = { ...st.scores };
+              if (value === undefined || Number.isNaN(value)) {
+                delete nextScores[disciplineId];
+              } else {
+                nextScores[disciplineId] = value;
+              }
+              return { ...st, scores: nextScores };
+            }),
           },
         },
       };

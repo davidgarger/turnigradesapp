@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ArrowLeft,
   CalendarDays,
@@ -503,17 +503,9 @@ function StudentRow({
       </td>
       {disciplines.map((d) => (
         <td key={d.id} className="px-1 py-1 text-center">
-          <input
-            type="number"
-            min={0}
-            max={100}
-            value={student.scores[d.id] ?? ""}
-            placeholder="–"
-            onChange={(e) => {
-              const v = e.target.value === "" ? undefined : Math.max(0, Math.min(100, Number(e.target.value)));
-              turnActions.setScore(classId, student.id, d.id, v);
-            }}
-            className="h-9 w-16 rounded-md border border-input bg-background px-2 text-center text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+          <ScoreInput
+            value={student.scores[d.id]}
+            onChange={(v) => turnActions.setScore(classId, student.id, d.id, v)}
           />
         </td>
       ))}
@@ -891,5 +883,50 @@ function SchedulePanel({
         </DialogContent>
       </Dialog>
     </div>
+  );
+}
+
+function ScoreInput({
+  value,
+  onChange,
+}: {
+  value: number | undefined;
+  onChange: (v: number | undefined) => void;
+}) {
+  const [text, setText] = useState<string>(value === undefined ? "" : String(value));
+
+  // Externe Änderungen (z. B. Reset, Import) übernehmen, solange das Feld nicht editiert wird.
+  useEffect(() => {
+    setText(value === undefined ? "" : String(value));
+  }, [value]);
+
+  const commit = (raw: string) => {
+    const trimmed = raw.trim();
+    if (trimmed === "") {
+      onChange(undefined);
+      return;
+    }
+    const n = Number(trimmed);
+    if (Number.isNaN(n)) {
+      onChange(undefined);
+      return;
+    }
+    onChange(Math.max(0, Math.min(100, Math.round(n))));
+  };
+
+  return (
+    <input
+      type="text"
+      inputMode="numeric"
+      value={text}
+      placeholder="–"
+      onChange={(e) => {
+        const v = e.target.value.replace(/[^\d]/g, "").slice(0, 3);
+        setText(v);
+        commit(v);
+      }}
+      onBlur={(e) => commit(e.target.value)}
+      className="h-9 w-16 rounded-md border border-input bg-background px-2 text-center text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+    />
   );
 }
