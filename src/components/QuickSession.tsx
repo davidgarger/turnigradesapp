@@ -420,7 +420,11 @@ function StudentCard({
           <button
             type="button"
             onClick={() => {
-              turnActions.updateStudent(classId, student.id, { attended: student.attended + 1 });
+              if (lessonId) {
+                turnActions.recordLessonEntry(classId, lessonId, student.id, "attended");
+              } else {
+                turnActions.updateStudent(classId, student.id, { attended: student.attended + 1 });
+              }
               toast.success(`${student.firstName}: mitgeturnt`, { duration: 900 });
               onAfterMark();
             }}
