@@ -250,7 +250,7 @@ async function loadFromCloud(userId: string) {
     console.error("Cloud-Sync (Laden) fehlgeschlagen:", error.message);
     return;
   }
-  if (data && data.state && typeof data.state === "object" && (data.state as TurnState).classes) {
+  if (data && data.state && typeof data.state === "object" && (data.state as unknown as TurnState).classes) {
     applyRemoteState(data.state as unknown as TurnState, data.updated_at as string);
   } else {
     // Erste Anmeldung – aktuellen lokalen Zustand in die Cloud hochladen
