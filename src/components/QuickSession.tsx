@@ -203,10 +203,6 @@ export default function QuickSession({ classId, onClose }: Props) {
             Diese Klasse hat noch keine Schüler.
           </div>
         ) : done ? (
-          <div className="text-center text-sm text-muted-foreground">
-            Diese Klasse hat noch keine Schüler.
-          </div>
-        ) : done ? (
           <div className="flex flex-col items-center gap-4 text-center">
             <div className="flex h-20 w-20 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
               <Check className="h-10 w-10" />
