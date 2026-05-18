@@ -418,15 +418,51 @@ function Index() {
 
 function SchoolLogo() {
   const [logo, setLogo] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
+  const storageKey = userId ? `${LOGO_KEY}:${userId}` : null;
+
   useEffect(() => {
-    try {
-      const v = localStorage.getItem(LOGO_KEY);
-      if (v) setLogo(v);
-    } catch {
-      /* ignore */
-    }
+    let active = true;
+    supabase.auth.getUser().then(({ data }) => {
+      if (!active) return;
+      const uid = data.user?.id ?? null;
+      setUserId(uid);
+      try {
+        const key = uid ? `${LOGO_KEY}:${uid}` : LOGO_KEY;
+        const v = localStorage.getItem(key);
+        // Migration: legacy global key → user-scoped
+        if (!v && uid) {
+          const legacy = localStorage.getItem(LOGO_KEY);
+          if (legacy) {
+            localStorage.setItem(key, legacy);
+            localStorage.removeItem(LOGO_KEY);
+            setLogo(legacy);
+            return;
+          }
+        }
+        if (v) setLogo(v);
+        else setLogo(null);
+      } catch {
+        /* ignore */
+      }
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      const uid = session?.user?.id ?? null;
+      setUserId(uid);
+      try {
+        const key = uid ? `${LOGO_KEY}:${uid}` : LOGO_KEY;
+        const v = localStorage.getItem(key);
+        setLogo(v || null);
+      } catch {
+        setLogo(null);
+      }
+    });
+    return () => {
+      active = false;
+      sub.subscription.unsubscribe();
+    };
   }, []);
 
   const onPick = (file: File) => {
@@ -436,7 +472,7 @@ function SchoolLogo() {
       const url = String(reader.result || "");
       setLogo(url);
       try {
-        localStorage.setItem(LOGO_KEY, url);
+        if (storageKey) localStorage.setItem(storageKey, url);
       } catch {
         /* quota */
       }
@@ -447,7 +483,7 @@ function SchoolLogo() {
   const onRemove = () => {
     setLogo(null);
     try {
-      localStorage.removeItem(LOGO_KEY);
+      if (storageKey) localStorage.removeItem(storageKey);
     } catch {
       /* ignore */
     }
