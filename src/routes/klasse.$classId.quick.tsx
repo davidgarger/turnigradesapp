@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, ChevronLeft, Check, X, Shirt, AlertTriangle, Undo2 } from "lucide-react";
+import { ArrowLeft, ChevronLeft, Check, X, Shirt, AlertTriangle, Undo2, Play, UserCheck } from "lucide-react";
 import { turnActions, useTurnState, type ClassId, type Student, undo, canUndo } from "@/lib/turn-store";
 import { toast } from "sonner";
 
@@ -13,11 +13,39 @@ export const Route = createFileRoute("/klasse/$classId/quick")({
 
 const SWIPE_THRESHOLD = 90; // px
 
+type AttendanceMark = "present" | "excused" | "unexcused" | "kit";
+
 function QuickEntry() {
   const { classId } = Route.useParams() as { classId: ClassId };
   const navigate = useNavigate();
   const state = useTurnState();
   const cls = state.classes[classId];
+
+  const students = cls?.students ?? [];
+
+  const [phase, setPhase] = useState<"attendance" | "swipe">("attendance");
+  const [marks, setMarks] = useState<Record<string, AttendanceMark>>({});
+
+  // Default alle als anwesend markieren, wenn Schülerliste sich ändert
+  useEffect(() => {
+    setMarks((prev) => {
+      const next = { ...prev };
+      let changed = false;
+      for (const s of students) {
+        if (!next[s.id]) {
+          next[s.id] = "present";
+          changed = true;
+        }
+      }
+      return changed ? next : prev;
+    });
+  }, [students]);
+
+  // Nur anwesende Schüler durchwischen
+  const swipeStudents = useMemo(
+    () => students.filter((s) => marks[s.id] === "present" || !marks[s.id]),
+    [students, marks],
+  );
 
   const [index, setIndex] = useState(0);
   const [dragX, setDragX] = useState(0);
@@ -26,15 +54,163 @@ function QuickEntry() {
   const startY = useRef<number | null>(null);
   const lockedAxis = useRef<"x" | "y" | null>(null);
 
-  const students = cls?.students ?? [];
-  const student: Student | undefined = students[index];
+  const student: Student | undefined = swipeStudents[index];
 
-  // Reset Index, falls Schülerliste schrumpft
   useEffect(() => {
-    if (index >= students.length && students.length > 0) setIndex(students.length - 1);
-  }, [students.length, index]);
+    if (index >= swipeStudents.length && swipeStudents.length > 0) {
+      setIndex(swipeStudents.length - 1);
+    }
+  }, [swipeStudents.length, index]);
 
-  const next = () => setIndex((i) => Math.min(students.length - 1, i + 1));
+  if (!cls) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background px-4 text-sm text-muted-foreground">
+        Klasse nicht gefunden.{" "}
+        <Link to="/" className="ml-2 underline">
+          Zurück
+        </Link>
+      </div>
+    );
+  }
+
+  if (students.length === 0) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-background px-4 text-center">
+        <p className="text-sm text-muted-foreground">Diese Klasse hat noch keine Schüler.</p>
+        <Link
+          to="/klasse/$classId"
+          params={{ classId }}
+          className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
+        >
+          Zur Klasse
+        </Link>
+      </div>
+    );
+  }
+
+  // ===== ATTENDANCE PHASE =====
+  if (phase === "attendance") {
+    const counts = {
+      present: students.filter((s) => (marks[s.id] ?? "present") === "present").length,
+      excused: students.filter((s) => marks[s.id] === "excused").length,
+      unexcused: students.filter((s) => marks[s.id] === "unexcused").length,
+      kit: students.filter((s) => marks[s.id] === "kit").length,
+    };
+
+    const startSwipe = () => {
+      // Markierte Abwesenheiten in den Store schreiben
+      let applied = 0;
+      for (const s of students) {
+        const m = marks[s.id];
+        if (m === "excused") {
+          turnActions.updateStudent(classId, s.id, { excusedNotParticipating: s.excusedNotParticipating + 1 });
+          applied++;
+        } else if (m === "unexcused") {
+          turnActions.updateStudent(classId, s.id, { unexcusedNotParticipating: s.unexcusedNotParticipating + 1 });
+          applied++;
+        } else if (m === "kit") {
+          turnActions.updateStudent(classId, s.id, { forgottenKit: s.forgottenKit + 1 });
+          applied++;
+        }
+      }
+      if (applied > 0) toast.success(`${applied} Abwesenheit${applied === 1 ? "" : "en"} eingetragen`);
+      setIndex(0);
+      setPhase("swipe");
+    };
+
+    const presentCount = counts.present;
+
+    return (
+      <div className="flex min-h-screen flex-col bg-gradient-to-b from-slate-50 to-white">
+        <div className="flex items-center gap-2 border-b border-border bg-background/80 px-3 py-3 backdrop-blur">
+          <button
+            type="button"
+            onClick={() => navigate({ to: "/klasse/$classId", params: { classId } })}
+            className="inline-flex h-9 w-9 items-center justify-center rounded-md text-foreground hover:bg-accent"
+            aria-label="Zurück"
+          >
+            <ArrowLeft className="h-5 w-5" />
+          </button>
+          <div className="flex-1">
+            <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              {cls.name} · Anwesenheit
+            </div>
+            <div className="text-sm font-medium text-foreground">
+              {presentCount} anwesend · {students.length - presentCount} fehlen
+            </div>
+          </div>
+        </div>
+
+        <div className="flex-1 overflow-y-auto px-3 py-3">
+          <p className="mx-auto mb-3 max-w-md text-center text-xs text-muted-foreground">
+            Tippe auf einen Status, wenn jemand fehlt. Alle anderen sind anwesend und werden gleich durchgewischt.
+          </p>
+          <ul className="mx-auto flex max-w-md flex-col gap-2">
+            {students.map((s) => {
+              const m: AttendanceMark = marks[s.id] ?? "present";
+              const setMark = (val: AttendanceMark) =>
+                setMarks((prev) => ({ ...prev, [s.id]: prev[s.id] === val ? "present" : val }));
+              return (
+                <li
+                  key={s.id}
+                  className={`rounded-2xl border bg-card p-3 shadow-sm transition ${
+                    m === "present" ? "border-border" : "border-amber-300 bg-amber-50/50"
+                  }`}
+                >
+                  <div className="mb-2 flex items-center gap-2">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-fuchsia-500 text-sm font-bold text-white">
+                      {s.firstName.charAt(0)}
+                      {s.lastName.charAt(0)}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="truncate text-sm font-semibold text-foreground">
+                        {s.firstName} {s.lastName}
+                      </div>
+                      <div className="text-[11px] text-muted-foreground">
+                        {m === "present"
+                          ? "anwesend"
+                          : m === "excused"
+                            ? "entschuldigt"
+                            : m === "unexcused"
+                              ? "nicht entschuldigt"
+                              : "Turnzeug vergessen"}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-3 gap-1.5">
+                    <PillBtn active={m === "excused"} onClick={() => setMark("excused")} tone="amber" icon={<AlertTriangle className="h-3.5 w-3.5" />}>
+                      Entsch.
+                    </PillBtn>
+                    <PillBtn active={m === "unexcused"} onClick={() => setMark("unexcused")} tone="rose" icon={<X className="h-3.5 w-3.5" />}>
+                      Unentsch.
+                    </PillBtn>
+                    <PillBtn active={m === "kit"} onClick={() => setMark("kit")} tone="orange" icon={<Shirt className="h-3.5 w-3.5" />}>
+                      Turnzeug
+                    </PillBtn>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+
+        <div className="sticky bottom-0 border-t border-border bg-background/95 px-4 py-3 backdrop-blur">
+          <button
+            type="button"
+            onClick={startSwipe}
+            disabled={presentCount === 0}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 px-4 py-3.5 text-base font-bold text-white shadow-lg transition active:scale-[0.98] disabled:opacity-40"
+          >
+            <Play className="h-5 w-5" />
+            {presentCount > 0 ? `${presentCount} Anwesende durchwischen` : "Niemand anwesend"}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ===== SWIPE PHASE =====
+  const next = () => setIndex((i) => Math.min(swipeStudents.length - 1, i + 1));
   const prev = () => setIndex((i) => Math.max(0, i - 1));
 
   const markAttended = (st: Student) => {
@@ -62,7 +238,6 @@ function QuickEntry() {
     }
   };
 
-  // Pointer-Handler (Touch + Maus)
   const onPointerDown = (e: React.PointerEvent) => {
     if (animating) return;
     startX.current = e.clientX;
@@ -96,33 +271,7 @@ function QuickEntry() {
     }
   };
 
-  if (!cls) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background px-4 text-sm text-muted-foreground">
-        Klasse nicht gefunden.{" "}
-        <Link to="/" className="ml-2 underline">
-          Zurück
-        </Link>
-      </div>
-    );
-  }
-
-  if (students.length === 0) {
-    return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-background px-4 text-center">
-        <p className="text-sm text-muted-foreground">Diese Klasse hat noch keine Schüler.</p>
-        <Link
-          to="/klasse/$classId"
-          params={{ classId }}
-          className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
-        >
-          Zur Klasse
-        </Link>
-      </div>
-    );
-  }
-
-  const progress = ((index + 1) / students.length) * 100;
+  const progress = swipeStudents.length > 0 ? ((index + 1) / swipeStudents.length) * 100 : 0;
   const rotation = Math.max(-12, Math.min(12, dragX / 14));
   const cardTransform = animating
     ? `translateX(${animating === "right" ? "120vw" : "-120vw"}) rotate(${animating === "right" ? 20 : -20}deg)`
@@ -130,13 +279,12 @@ function QuickEntry() {
 
   return (
     <div className="flex min-h-screen flex-col bg-gradient-to-b from-slate-50 to-white">
-      {/* Header */}
       <div className="flex items-center gap-2 border-b border-border bg-background/80 px-3 py-3 backdrop-blur">
         <button
           type="button"
-          onClick={() => navigate({ to: "/klasse/$classId", params: { classId } })}
+          onClick={() => setPhase("attendance")}
           className="inline-flex h-9 w-9 items-center justify-center rounded-md text-foreground hover:bg-accent"
-          aria-label="Zurück"
+          aria-label="Zurück zur Anwesenheit"
         >
           <ArrowLeft className="h-5 w-5" />
         </button>
@@ -145,9 +293,17 @@ function QuickEntry() {
             {cls.name} · Schnelleingabe
           </div>
           <div className="text-sm font-medium text-foreground">
-            {index + 1} von {students.length}
+            {Math.min(index + 1, swipeStudents.length)} von {swipeStudents.length}
           </div>
         </div>
+        <button
+          type="button"
+          onClick={() => setPhase("attendance")}
+          className="inline-flex items-center gap-1.5 rounded-md border border-input bg-background px-2.5 py-1.5 text-xs font-medium text-foreground transition hover:bg-accent"
+        >
+          <UserCheck className="h-3.5 w-3.5" />
+          Anwesenheit
+        </button>
         <button
           type="button"
           onClick={() => {
@@ -161,7 +317,6 @@ function QuickEntry() {
         </button>
       </div>
 
-      {/* Progress */}
       <div className="h-1 w-full bg-muted">
         <div
           className="h-full bg-gradient-to-r from-indigo-500 to-fuchsia-500 transition-all"
@@ -169,9 +324,7 @@ function QuickEntry() {
         />
       </div>
 
-      {/* Card */}
       <div className="relative flex flex-1 items-center justify-center px-4 py-6">
-        {/* Swipe-Hinweise */}
         <div
           className="pointer-events-none absolute left-6 top-1/2 -translate-y-1/2 rounded-xl border-2 border-rose-400 bg-rose-50 px-3 py-1.5 text-sm font-bold text-rose-600 transition"
           style={{ opacity: dragX < -20 ? Math.min(1, -dragX / SWIPE_THRESHOLD) : 0 }}
@@ -185,7 +338,7 @@ function QuickEntry() {
           mitgeturnt ✓
         </div>
 
-        {student && (
+        {student ? (
           <StudentCard
             key={student.id}
             student={student}
@@ -205,15 +358,48 @@ function QuickEntry() {
               }, 180);
             }}
           />
+        ) : (
+          <div className="text-center text-sm text-muted-foreground">
+            Keine anwesenden Schüler.
+          </div>
         )}
       </div>
 
-      {/* Footer-Hinweis */}
       <div className="border-t border-border bg-background px-4 py-3 text-center text-xs text-muted-foreground">
         Nach rechts wischen = <span className="font-semibold text-emerald-600">mitgeturnt</span>{" "}
         · nach links = <span className="font-semibold text-rose-600">zurück</span>
       </div>
     </div>
+  );
+}
+
+function PillBtn({
+  active,
+  onClick,
+  tone,
+  icon,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  tone: "amber" | "rose" | "orange";
+  icon: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  const tones: Record<string, string> = {
+    amber: active ? "bg-amber-500 text-white border-amber-500" : "bg-white text-amber-700 border-amber-200",
+    rose: active ? "bg-rose-500 text-white border-rose-500" : "bg-white text-rose-700 border-rose-200",
+    orange: active ? "bg-orange-500 text-white border-orange-500" : "bg-white text-orange-700 border-orange-200",
+  };
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`inline-flex items-center justify-center gap-1 rounded-lg border-2 px-2 py-2 text-[11px] font-bold transition active:scale-95 ${tones[tone]}`}
+    >
+      {icon}
+      {children}
+    </button>
   );
 }
 
@@ -346,5 +532,4 @@ function Stat({ label, value }: { label: string; value: number }) {
   );
 }
 
-// Vermeidet ungenutzten Import (für eventuellen späteren Einsatz)
 void ChevronLeft;
