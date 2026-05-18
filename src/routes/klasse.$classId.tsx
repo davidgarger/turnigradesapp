@@ -27,6 +27,7 @@ import {
   type ClassSchedule,
   type Student,
 } from "@/lib/turn-store";
+import QuickSession from "@/components/QuickSession";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -68,6 +69,8 @@ function ClassPage() {
   const { classId } = Route.useParams();
   const navigate = useNavigate();
   const state = useTurnState();
+  const [sessionOpen, setSessionOpen] = useState(false);
+
 
   if (!VALID.includes(classId as ClassId)) {
     return (
@@ -200,15 +203,16 @@ function ClassPage() {
           <div className="flex items-center gap-2 sm:gap-3">
             <SchedulePanel cls={cls} effectiveLessons={effectiveLessons} />
             <UndoButton />
-            <Link
-              to="/klasse/$classId/quick"
-              params={{ classId: cls.id }}
+            <button
+              type="button"
+              onClick={() => setSessionOpen(true)}
               className="inline-flex items-center gap-2 rounded-md bg-gradient-to-r from-indigo-500 to-fuchsia-500 px-3 py-2 text-sm font-semibold text-white shadow-md shadow-violet-500/30 transition hover:opacity-95"
             >
               <Zap className="h-4 w-4" />
               <span className="hidden sm:inline">Neue Stunde starten</span>
               <span className="sm:hidden">Neue Stunde</span>
-            </Link>
+            </button>
+
             <Link
               to="/einstellungen"
               className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
@@ -436,8 +440,12 @@ function ClassPage() {
 
         </div>
       </main>
+      {sessionOpen && (
+        <QuickSession classId={cls.id} onClose={() => setSessionOpen(false)} />
+      )}
     </div>
   );
+
 }
 
 function Legend({ color, label }: { color: string; label: string }) {
