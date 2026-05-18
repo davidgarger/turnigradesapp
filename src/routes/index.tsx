@@ -150,8 +150,8 @@ async function fetchUserPrefs(userId: string): Promise<UserPrefs | null> {
 }
 
 async function saveUserPrefs(userId: string, patch: Partial<UserPrefs>) {
-  const payload: Record<string, unknown> = { user_id: userId };
-  if ("logo" in patch) payload.logo = patch.logo;
+  const payload: { user_id: string; logo?: string | null; themes?: Record<string, ThemeKey>; visible_classes?: string[] } = { user_id: userId };
+  if ("logo" in patch) payload.logo = patch.logo ?? null;
   if ("themes" in patch) payload.themes = patch.themes;
   if ("visible_classes" in patch) payload.visible_classes = patch.visible_classes;
   await supabase.from("user_prefs").upsert(payload, { onConflict: "user_id" });
