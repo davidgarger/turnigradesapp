@@ -356,14 +356,14 @@ function ClassPage() {
                     <div className="text-[10px] font-normal text-muted-foreground">{d.weight}%</div>
                   </th>
                 ))}
-                <th className="px-2 py-3 text-center font-semibold" title="Turnzeug vergessen">
-                  <span className="text-status-danger">TV</span>
+                <th className="px-2 py-3 text-center text-xs font-semibold">
+                  <span className="text-status-danger">Turnzeug vergessen</span>
                 </th>
-                <th className="px-2 py-3 text-center font-semibold" title="Entschuldigt nicht mitgeturnt">
-                  <span className="text-status-warning">E</span>
+                <th className="px-2 py-3 text-center text-xs font-semibold">
+                  <span className="text-status-warning">Entschuldigt</span>
                 </th>
-                <th className="px-2 py-3 text-center font-semibold" title="Nicht entschuldigt">
-                  <span className="text-status-danger-strong">NE</span>
+                <th className="px-2 py-3 text-center text-xs font-semibold">
+                  <span className="text-status-danger-strong">Nicht entschuldigt</span>
                 </th>
                 <th className="px-2 py-3 text-center font-semibold" title="Rote Disziplin-Punkte (3 = eine Betragens-Note schlechter)">
                   <span className="text-status-danger-strong">●</span>
@@ -413,9 +413,9 @@ function ClassPage() {
 
         {/* Legend */}
         <div className="mt-4 flex flex-wrap gap-3 text-xs text-muted-foreground">
-          <Legend color="status-danger" label="TV = Turnzeug vergessen" />
-          <Legend color="status-warning" label="E = Entschuldigt nicht mitgeturnt" />
-          <Legend color="status-danger-strong" label="NE = Nicht entschuldigt" />
+          <Legend color="status-danger" label="Turnzeug vergessen" />
+          <Legend color="status-warning" label="Entschuldigt nicht mitgeturnt" />
+          <Legend color="status-danger-strong" label="Nicht entschuldigt" />
           <Legend color="status-success" label="Mitgeturnt / Stunden gesamt" />
           <Legend color="status-danger-strong" label="● Rote Punkte (3 = Betragens-Note ↓)" />
           <Legend color="status-success" label="● Grüne Punkte (heben rote auf)" />
