@@ -97,7 +97,10 @@ function ClassPage() {
         s.firstName.toLowerCase().includes(q) || s.lastName.toLowerCase().includes(q)
       );
     });
-    const withGrade = filtered.map((s) => ({ s, g: computeGrade(s, cls.disciplines, settings) }));
+    const withGrade = filtered.map((s) => ({
+      s,
+      g: computeGrade(s, cls.disciplines, settings, cls.totalLessons),
+    }));
     withGrade.sort((a, b) => {
       let cmp = 0;
       switch (sortKey) {
