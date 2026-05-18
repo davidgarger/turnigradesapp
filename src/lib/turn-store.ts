@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 // ---------- Types ----------
 export type ClassId = "1" | "2" | "3" | "4";
@@ -189,6 +190,13 @@ function load(): TurnState {
 let state: TurnState = typeof window === "undefined" ? defaultState() : load();
 const listeners = new Set<() => void>();
 
+// ---------- Cloud sync ----------
+let currentUserId: string | null = null;
+let isApplyingRemote = false;
+let saveTimer: ReturnType<typeof setTimeout> | null = null;
+let lastSavedAt: string | null = null;
+let realtimeChannel: ReturnType<typeof supabase.channel> | null = null;
+
 function persist() {
   if (typeof window === "undefined") return;
   try {
@@ -198,10 +206,103 @@ function persist() {
   }
 }
 
+function scheduleCloudSave() {
+  if (!currentUserId || isApplyingRemote) return;
+  if (saveTimer) clearTimeout(saveTimer);
+  saveTimer = setTimeout(async () => {
+    if (!currentUserId) return;
+    const { data, error } = await supabase
+      .from("app_state")
+      .upsert({ user_id: currentUserId, state: JSON.parse(JSON.stringify(state)) })
+      .select("updated_at")
+      .single();
+    if (!error && data) {
+      lastSavedAt = data.updated_at as string;
+    } else if (error) {
+      console.error("Cloud-Sync (Speichern) fehlgeschlagen:", error.message);
+    }
+  }, 600);
+}
+
 function setState(updater: (s: TurnState) => TurnState) {
   state = updater(state);
   persist();
+  scheduleCloudSave();
   listeners.forEach((l) => l());
+}
+
+function applyRemoteState(next: TurnState, updatedAt: string | null) {
+  isApplyingRemote = true;
+  state = next;
+  lastSavedAt = updatedAt;
+  persist();
+  listeners.forEach((l) => l());
+  isApplyingRemote = false;
+}
+
+async function loadFromCloud(userId: string) {
+  const { data, error } = await supabase
+    .from("app_state")
+    .select("state, updated_at")
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (error) {
+    console.error("Cloud-Sync (Laden) fehlgeschlagen:", error.message);
+    return;
+  }
+  if (data && data.state && typeof data.state === "object" && (data.state as unknown as TurnState).classes) {
+    applyRemoteState(data.state as unknown as TurnState, data.updated_at as string);
+  } else {
+    // Erste Anmeldung – aktuellen lokalen Zustand in die Cloud hochladen
+    const { data: inserted, error: insErr } = await supabase
+      .from("app_state")
+      .upsert({ user_id: userId, state: JSON.parse(JSON.stringify(state)) })
+      .select("updated_at")
+      .single();
+    if (!insErr && inserted) lastSavedAt = inserted.updated_at as string;
+  }
+}
+
+function subscribeRealtime(userId: string) {
+  if (realtimeChannel) {
+    supabase.removeChannel(realtimeChannel);
+    realtimeChannel = null;
+  }
+  realtimeChannel = supabase
+    .channel(`app_state:${userId}`)
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "app_state", filter: `user_id=eq.${userId}` },
+      (payload) => {
+        const row = payload.new as { state?: unknown; updated_at?: string } | undefined;
+        if (!row || !row.state) return;
+        if (lastSavedAt && row.updated_at === lastSavedAt) return; // unsere eigene Schreibung
+        const incoming = row.state as TurnState;
+        if (!incoming.classes) return;
+        applyRemoteState(incoming, row.updated_at ?? null);
+      },
+    )
+    .subscribe();
+}
+
+export async function initCloudSync(userId: string | null) {
+  currentUserId = userId;
+  if (saveTimer) {
+    clearTimeout(saveTimer);
+    saveTimer = null;
+  }
+  if (realtimeChannel) {
+    await supabase.removeChannel(realtimeChannel);
+    realtimeChannel = null;
+  }
+  lastSavedAt = null;
+  if (!userId) {
+    // Beim Logout lokalen Zustand auf Default zurücksetzen
+    applyRemoteState(defaultState(), null);
+    return;
+  }
+  await loadFromCloud(userId);
+  subscribeRealtime(userId);
 }
 
 function subscribe(l: () => void) {

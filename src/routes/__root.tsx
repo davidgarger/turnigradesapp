@@ -4,12 +4,16 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 
 import appCss from "../styles.css?url";
 import { Toaster } from "@/components/ui/sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { initCloudSync } from "@/lib/turn-store";
 
 function NotFoundComponent() {
   return (
@@ -108,11 +112,64 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const router = useRouter();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const [authState, setAuthState] = useState<"loading" | "in" | "out">("loading");
+
+  useEffect(() => {
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      const uid = session?.user?.id ?? null;
+      setAuthState(uid ? "in" : "out");
+      void initCloudSync(uid);
+      router.invalidate();
+    });
+    supabase.auth.getSession().then(({ data }) => {
+      const uid = data.session?.user?.id ?? null;
+      setAuthState(uid ? "in" : "out");
+      void initCloudSync(uid);
+    });
+    return () => sub.subscription.unsubscribe();
+  }, [router]);
+
+  // Login-Seite immer durchlassen
+  if (pathname === "/login") {
+    return (
+      <QueryClientProvider client={queryClient}>
+        <Outlet />
+        <Toaster richColors position="top-right" />
+      </QueryClientProvider>
+    );
+  }
+
+  if (authState === "loading") {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background text-sm text-muted-foreground">
+        Lädt…
+      </div>
+    );
+  }
+
+  if (authState === "out") {
+    // Navigation in einem Effekt
+    return <RedirectToLogin />;
+  }
 
   return (
     <QueryClientProvider client={queryClient}>
       <Outlet />
       <Toaster richColors position="top-right" />
     </QueryClientProvider>
+  );
+}
+
+function RedirectToLogin() {
+  const router = useRouter();
+  useEffect(() => {
+    router.navigate({ to: "/login" });
+  }, [router]);
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-background text-sm text-muted-foreground">
+      Weiterleitung…
+    </div>
   );
 }
