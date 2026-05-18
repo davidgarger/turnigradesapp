@@ -52,6 +52,31 @@ export interface TurnState {
   settings: GradingSettings;
 }
 
+// Zählt die Termine im Datumsbereich, die auf einen der Wochentage fallen,
+// multipliziert mit lessonsPerDay, abzüglich entfallener Stunden.
+export function computeScheduledLessons(schedule: ClassSchedule): number {
+  if (!schedule.startDate || !schedule.endDate || schedule.weekdays.length === 0) return 0;
+  const start = new Date(schedule.startDate + "T00:00:00");
+  const end = new Date(schedule.endDate + "T00:00:00");
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime()) || end < start) return 0;
+  const weekdaySet = new Set(schedule.weekdays);
+  let count = 0;
+  const cur = new Date(start);
+  // Sicherheitslimit ca. 5 Jahre
+  let safety = 366 * 5;
+  while (cur <= end && safety-- > 0) {
+    if (weekdaySet.has(cur.getDay())) count++;
+    cur.setDate(cur.getDate() + 1);
+  }
+  const planned = count * Math.max(1, schedule.lessonsPerDay || 1);
+  return Math.max(0, planned - Math.max(0, schedule.cancelled));
+}
+
+export function getEffectiveTotalLessons(cls: ClassData): number {
+  if (cls.schedule) return computeScheduledLessons(cls.schedule);
+  return cls.totalLessons;
+}
+
 // ---------- Defaults ----------
 const defaultDisciplines = (): Discipline[] => [
   { id: "shuttle", name: "Shuttle Run", weight: 1 },
