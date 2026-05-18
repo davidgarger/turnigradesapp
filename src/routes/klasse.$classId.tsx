@@ -406,7 +406,7 @@ function ClassPage() {
                   grade={g}
                   classId={cls.id}
                   disciplines={cls.disciplines}
-                  totalLessons={cls.totalLessons}
+                  totalLessons={effectiveLessons}
                 />
               ))}
 
