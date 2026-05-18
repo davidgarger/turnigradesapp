@@ -372,7 +372,7 @@ function StudentCard({
         <div className="grid grid-cols-3 gap-2 border-b border-border bg-muted/40 p-3">
           <button
             type="button"
-            onClick={() => markAndNext("forgottenKit", "Turnzeug vergessen")}
+            onClick={() => markAndNext("forgottenKit", "forgottenKit", "Turnzeug vergessen")}
             className="inline-flex flex-col items-center justify-center gap-0.5 rounded-xl border-2 border-orange-300 bg-orange-50 px-2 py-2.5 font-bold text-orange-700 transition active:scale-95"
           >
             <Shirt className="h-4 w-4" />
