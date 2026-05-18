@@ -155,7 +155,7 @@ function genId() {
 const DEFAULT_TOTAL_LESSONS = 10;
 
 function seedStudents(classId: ClassId): Student[] {
-  return sampleNames[classId].map(([fn, ln], i) => ({
+  return (sampleNames[classId] ?? []).map(([fn, ln], i) => ({
     id: genId(),
     firstName: fn,
     lastName: ln,
@@ -173,6 +173,8 @@ function seedStudents(classId: ClassId): Student[] {
   }));
 }
 
+const ALL_CLASS_IDS: ClassId[] = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
+
 function defaultState(): TurnState {
   const mk = (id: ClassId, name: string): ClassData => ({
     id,
@@ -181,13 +183,12 @@ function defaultState(): TurnState {
     students: seedStudents(id),
     totalLessons: DEFAULT_TOTAL_LESSONS,
   });
+  const classes = {} as Record<ClassId, ClassData>;
+  for (const id of ALL_CLASS_IDS) {
+    classes[id] = mk(id, `${id}. Klasse`);
+  }
   return {
-    classes: {
-      "1": mk("1", "1. Klasse"),
-      "2": mk("2", "2. Klasse"),
-      "3": mk("3", "3. Klasse"),
-      "4": mk("4", "4. Klasse"),
-    },
+    classes,
     settings: defaultSettings,
   };
 }
