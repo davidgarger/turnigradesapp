@@ -20,6 +20,8 @@ export interface Student {
   excusedNotParticipating: number;
   unexcusedNotParticipating: number;
   attended: number; // Anzahl tatsächlich mitgeturnter Stunden
+  redPoints: number;   // Disziplin-Minuspunkte (3 = eine Note schlechter im Betragen)
+  greenPoints: number; // positive Punkte (heben rote Punkte auf)
 }
 
 export interface ClassSchedule {
@@ -144,6 +146,8 @@ function seedStudents(classId: ClassId): Student[] {
     excusedNotParticipating: i % 4 === 0 ? 1 : 0,
     unexcusedNotParticipating: i === 1 ? 1 : 0,
     attended: Math.max(0, DEFAULT_TOTAL_LESSONS - (i % 4)),
+    redPoints: i === 1 ? 2 : 0,
+    greenPoints: i % 2 === 0 ? 1 : 0,
   }));
 }
 
@@ -283,6 +287,8 @@ export const turnActions = {
         excusedNotParticipating: 0,
         unexcusedNotParticipating: 0,
         attended: 0,
+        redPoints: 0,
+        greenPoints: 0,
       };
       return {
         ...s,
@@ -399,6 +405,8 @@ export interface GradeResult {
   grade: number;
   measuredCount: number;
   hasDisciplineData: boolean;
+  behaviorNet: number;   // rote − grüne Punkte (mind. 0)
+  behaviorGrade: number; // Betragensnote 1..5 (je 3 Netto-Rotpunkte eine Note schlechter)
 }
 
 export function computeGrade(
@@ -439,6 +447,9 @@ export function computeGrade(
   const sortedThresholds = [...settings.gradeThresholds].sort((a, b) => b.min - a.min);
   const grade = sortedThresholds.find((t) => total >= t.min)?.grade ?? 5;
 
+  const behaviorNet = Math.max(0, student.redPoints - student.greenPoints);
+  const behaviorGrade = Math.min(5, Math.max(1, 1 + Math.floor(behaviorNet / 3)));
+
   return {
     disciplineAverage,
     attendanceRate,
@@ -447,6 +458,8 @@ export function computeGrade(
     grade,
     measuredCount,
     hasDisciplineData,
+    behaviorNet,
+    behaviorGrade,
   };
 }
 
@@ -460,11 +473,14 @@ export function exportClassCsv(cls: ClassData, settings: GradingSettings): strin
     "Turnzeug vergessen",
     "Entschuldigt n. mitgeturnt",
     "Nicht entschuldigt",
+    "Rote Punkte",
+    "Grüne Punkte",
     "Mitgeturnt",
     "Stunden gesamt",
     "Teilnahme %",
     "Gesamtpunkte",
     "Note",
+    "Betragensnote",
   ];
   const escape = (v: unknown) => {
     const s = String(v ?? "");
@@ -483,11 +499,14 @@ export function exportClassCsv(cls: ClassData, settings: GradingSettings): strin
         st.forgottenKit,
         st.excusedNotParticipating,
         st.unexcusedNotParticipating,
+        st.redPoints,
+        st.greenPoints,
         st.attended,
         eff,
         Math.round(g.attendanceRate * 100),
         g.total,
         g.grade,
+        g.behaviorGrade,
       ]
         .map(escape)
         .join(";"),

@@ -365,8 +365,17 @@ function ClassPage() {
                 <th className="px-2 py-3 text-center font-semibold" title="Nicht entschuldigt">
                   <span className="text-status-danger-strong">NE</span>
                 </th>
+                <th className="px-2 py-3 text-center font-semibold" title="Rote Disziplin-Punkte (3 = eine Betragens-Note schlechter)">
+                  <span className="text-status-danger-strong">●</span>
+                </th>
+                <th className="px-2 py-3 text-center font-semibold" title="Grüne (positive) Punkte – heben rote Punkte auf">
+                  <span className="text-status-success">●</span>
+                </th>
                 <th className="px-2 py-3 text-center font-semibold" title="Mitgeturnte Stunden">
                   Mitgeturnt
+                </th>
+                <th className="px-2 py-3 text-center font-semibold" title="Betragensnote (1 + ⌊(rot − grün)/3⌋)">
+                  Betragen
                 </th>
 
                 <th className="px-2 py-3 text-center font-semibold">
@@ -392,7 +401,7 @@ function ClassPage() {
               {rows.length === 0 && (
                 <tr>
                   <td
-                    colSpan={cls.disciplines.length + 8}
+                    colSpan={cls.disciplines.length + 10}
                     className="px-3 py-10 text-center text-muted-foreground"
                   >
                     Keine Schüler gefunden.
@@ -420,6 +429,8 @@ function ClassPage() {
           <Legend color="status-warning" label="E = Entschuldigt nicht mitgeturnt" />
           <Legend color="status-danger-strong" label="NE = Nicht entschuldigt" />
           <Legend color="status-success" label="Mitgeturnt / Stunden gesamt" />
+          <Legend color="status-danger-strong" label="● Rote Punkte (3 = Betragens-Note ↓)" />
+          <Legend color="status-success" label="● Grüne Punkte (heben rote auf)" />
 
         </div>
       </main>
@@ -458,6 +469,17 @@ function StudentRow({
         : grade.grade === 4
           ? "bg-status-danger-bg text-status-danger"
           : "bg-status-danger-strong-bg text-status-danger-strong";
+
+  const behaviorColor =
+    grade.behaviorGrade <= 1
+      ? "bg-status-success-bg text-status-success"
+      : grade.behaviorGrade === 2
+        ? "bg-status-success-bg text-status-success"
+        : grade.behaviorGrade === 3
+          ? "bg-status-warning-bg text-status-warning"
+          : grade.behaviorGrade === 4
+            ? "bg-status-danger-bg text-status-danger"
+            : "bg-status-danger-strong-bg text-status-danger-strong";
 
   return (
     <tr className="border-t border-border hover:bg-muted/30">
@@ -510,6 +532,16 @@ function StudentRow({
         tone="danger-strong"
         onChange={(v) => turnActions.updateStudent(classId, student.id, { unexcusedNotParticipating: v })}
       />
+      <StatusCell
+        value={student.redPoints}
+        tone="danger-strong"
+        onChange={(v) => turnActions.updateStudent(classId, student.id, { redPoints: v })}
+      />
+      <StatusCell
+        value={student.greenPoints}
+        tone="success"
+        onChange={(v) => turnActions.updateStudent(classId, student.id, { greenPoints: v })}
+      />
       <td className="px-1 py-1 text-center">
         <div className="inline-flex items-center gap-1">
           <button
@@ -542,6 +574,14 @@ function StudentRow({
             +
           </button>
         </div>
+      </td>
+      <td className="px-2 py-2 text-center">
+        <span
+          className={`inline-flex h-8 w-8 items-center justify-center rounded-md text-base font-bold ${behaviorColor}`}
+          title={`Rote: ${student.redPoints} · Grüne: ${student.greenPoints} · Netto: ${grade.behaviorNet}`}
+        >
+          {grade.behaviorGrade}
+        </span>
       </td>
 
       <td className="px-2 py-2 text-center font-semibold tabular-nums">{grade.total}</td>
@@ -593,7 +633,7 @@ function StatusCell({
   onChange,
 }: {
   value: number;
-  tone: "danger" | "warning" | "danger-strong";
+  tone: "danger" | "warning" | "danger-strong" | "success";
   onChange: (v: number) => void;
 }) {
   const toneClass =
@@ -603,7 +643,9 @@ function StatusCell({
         ? "border-status-danger/40 bg-status-danger-bg text-status-danger"
         : tone === "warning"
           ? "border-status-warning/40 bg-status-warning-bg text-status-warning"
-          : "border-status-danger-strong/40 bg-status-danger-strong-bg text-status-danger-strong";
+          : tone === "success"
+            ? "border-status-success/40 bg-status-success-bg text-status-success"
+            : "border-status-danger-strong/40 bg-status-danger-strong-bg text-status-danger-strong";
   return (
     <td className="px-1 py-1 text-center">
       <div className="inline-flex items-center gap-1">
