@@ -484,7 +484,7 @@ export function exportClassCsv(cls: ClassData, settings: GradingSettings): strin
         st.excusedNotParticipating,
         st.unexcusedNotParticipating,
         st.attended,
-        cls.totalLessons,
+        eff,
         Math.round(g.attendanceRate * 100),
         g.total,
         g.grade,
