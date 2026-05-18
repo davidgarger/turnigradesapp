@@ -18,6 +18,18 @@ export default function QuickSession({ classId, onClose }: Props) {
   const [index, setIndex] = useState(0);
   const [dragX, setDragX] = useState(0);
   const [animating, setAnimating] = useState<null | "left" | "right">(null);
+  const [started, setStarted] = useState(false);
+  const [topic, setTopic] = useState("");
+  const today = useMemo(
+    () =>
+      new Date().toLocaleDateString("de-DE", {
+        weekday: "long",
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+      }),
+    [],
+  );
   const startX = useRef<number | null>(null);
   const startY = useRef<number | null>(null);
   const lockedAxis = useRef<"x" | "y" | null>(null);
