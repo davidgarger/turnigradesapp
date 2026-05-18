@@ -120,18 +120,36 @@ function RootShell({ children }: { children: React.ReactNode }) {
   );
 }
 
+function hasStoredSupabaseSession(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith("sb-") && key.endsWith("-auth-token")) {
+        const v = localStorage.getItem(key);
+        if (v && v.length > 10) return true;
+      }
+    }
+  } catch {
+    /* ignore */
+  }
+  return false;
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const [authState, setAuthState] = useState<"loading" | "in" | "out">("loading");
+  // Synchron aus localStorage vorab-entscheiden, damit kein „Lädt…"-Flash entsteht
+  const [authState, setAuthState] = useState<"loading" | "in" | "out">(() =>
+    typeof window === "undefined" ? "loading" : hasStoredSupabaseSession() ? "in" : "out",
+  );
 
   useEffect(() => {
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
       const uid = session?.user?.id ?? null;
       setAuthState(uid ? "in" : "out");
       void initCloudSync(uid);
-      router.invalidate();
     });
     supabase.auth.getSession().then(({ data }) => {
       const uid = data.session?.user?.id ?? null;
@@ -139,10 +157,13 @@ function RootComponent() {
       void initCloudSync(uid);
     });
     return () => sub.subscription.unsubscribe();
-  }, [router]);
+  }, []);
 
-  // Login-Seite immer durchlassen
+  // Login-Seite immer durchlassen – falls bereits eingeloggt, weiterleiten
   if (pathname === "/login") {
+    if (authState === "in") {
+      return <RedirectTo to="/" />;
+    }
     return (
       <QueryClientProvider client={queryClient}>
         <Outlet />
@@ -160,8 +181,7 @@ function RootComponent() {
   }
 
   if (authState === "out") {
-    // Navigation in einem Effekt
-    return <RedirectToLogin />;
+    return <RedirectTo to="/login" />;
   }
 
   return (
@@ -172,11 +192,11 @@ function RootComponent() {
   );
 }
 
-function RedirectToLogin() {
+function RedirectTo({ to }: { to: string }) {
   const router = useRouter();
   useEffect(() => {
-    router.navigate({ to: "/login" });
-  }, [router]);
+    router.navigate({ to });
+  }, [router, to]);
   return (
     <div className="flex min-h-screen items-center justify-center bg-background text-sm text-muted-foreground">
       Weiterleitung…
