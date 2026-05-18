@@ -77,12 +77,10 @@ function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-indigo-50 via-white to-fuchsia-50 px-4">
       <div className="w-full max-w-md">
-        <div className="mb-6 flex flex-col items-center">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-fuchsia-500 text-white shadow-lg shadow-violet-500/30">
-            <ClipboardList className="h-7 w-7" />
-          </div>
-          <h1 className="mt-3 text-2xl font-bold tracking-tight text-foreground">Turnnoten</h1>
-          <p className="text-sm text-muted-foreground">Lehrer-Konto</p>
+        <div className="mb-6 flex flex-col items-center text-center">
+          <TurniLogo className="h-14 w-14 rounded-2xl shadow-lg shadow-violet-500/30" />
+          <h1 className="mt-3 text-2xl font-bold tracking-tight text-foreground">Turni</h1>
+          <p className="text-sm text-muted-foreground">Deine App für den Turnunterricht</p>
         </div>
 
         <div className="rounded-2xl border border-border bg-card p-6 shadow-xl">
