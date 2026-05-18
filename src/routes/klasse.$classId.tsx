@@ -365,8 +365,17 @@ function ClassPage() {
                 <th className="px-2 py-3 text-center font-semibold" title="Nicht entschuldigt">
                   <span className="text-status-danger-strong">NE</span>
                 </th>
+                <th className="px-2 py-3 text-center font-semibold" title="Rote Disziplin-Punkte (3 = eine Betragens-Note schlechter)">
+                  <span className="text-status-danger-strong">●</span>
+                </th>
+                <th className="px-2 py-3 text-center font-semibold" title="Grüne (positive) Punkte – heben rote Punkte auf">
+                  <span className="text-status-success">●</span>
+                </th>
                 <th className="px-2 py-3 text-center font-semibold" title="Mitgeturnte Stunden">
                   Mitgeturnt
+                </th>
+                <th className="px-2 py-3 text-center font-semibold" title="Betragensnote (1 + ⌊(rot − grün)/3⌋)">
+                  Betragen
                 </th>
 
                 <th className="px-2 py-3 text-center font-semibold">
