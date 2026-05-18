@@ -146,6 +146,8 @@ function seedStudents(classId: ClassId): Student[] {
     excusedNotParticipating: i % 4 === 0 ? 1 : 0,
     unexcusedNotParticipating: i === 1 ? 1 : 0,
     attended: Math.max(0, DEFAULT_TOTAL_LESSONS - (i % 4)),
+    redPoints: i === 1 ? 2 : 0,
+    greenPoints: i % 2 === 0 ? 1 : 0,
   }));
 }
 
