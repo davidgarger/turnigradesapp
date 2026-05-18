@@ -68,6 +68,8 @@ function ClassPage() {
   const { classId } = Route.useParams();
   const navigate = useNavigate();
   const state = useTurnState();
+  const [sessionOpen, setSessionOpen] = useState(false);
+
 
   if (!VALID.includes(classId as ClassId)) {
     return (
