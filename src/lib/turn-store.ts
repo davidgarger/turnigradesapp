@@ -362,8 +362,10 @@ export function computeGrade(
   const hasDisciplineData = weightTotal > 0;
   const disciplineAverage = hasDisciplineData ? weightedSum / weightTotal : 100;
 
+  // Entschuldigte Stunden zählen nicht als „verpasst" – sie reduzieren die persönliche Soll-Stundenzahl.
+  const personalLessons = Math.max(0, totalLessons - student.excusedNotParticipating);
   const attendanceRate =
-    totalLessons > 0 ? Math.max(0, Math.min(1, student.attended / totalLessons)) : 1;
+    personalLessons > 0 ? Math.max(0, Math.min(1, student.attended / personalLessons)) : 1;
 
   const penalties =
     student.forgottenKit * settings.forgottenKitPenalty +
