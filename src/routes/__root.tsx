@@ -82,7 +82,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "theme-color", content: "#6366f1" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "default" },
-      { name: "apple-mobile-web-app-title", content: "Turnnoten" },
+      { name: "apple-mobile-web-app-title", content: "Turni" },
       { property: "og:title", content: "Turnnoten" },
       { property: "og:description", content: "Schnelle Notenverwaltung für den Turnunterricht." },
       { property: "og:type", content: "website" },
