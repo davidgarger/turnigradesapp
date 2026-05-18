@@ -188,7 +188,7 @@ function ClassPage() {
             >
               <ArrowLeft className="h-4 w-4" />
             </button>
-            <div>
+            <div className="min-w-0">
               <input
                 value={cls.name}
                 onChange={(e) => turnActions.renameClass(cls.id, e.target.value)}
@@ -199,20 +199,18 @@ function ClassPage() {
                 {cls.students.length} Schüler · {cls.disciplines.length} Disziplinen
               </p>
             </div>
-          </div>
-          <div className="flex items-center gap-2 sm:gap-3">
-            <SchedulePanel cls={cls} effectiveLessons={effectiveLessons} />
-            <UndoButton />
             <button
               type="button"
               onClick={() => setSessionOpen(true)}
               className="inline-flex items-center gap-2 rounded-md bg-gradient-to-r from-indigo-500 to-fuchsia-500 px-3 py-2 text-sm font-semibold text-white shadow-md shadow-violet-500/30 transition hover:opacity-95"
             >
               <Zap className="h-4 w-4" />
-              <span className="hidden sm:inline">Neue Stunde starten</span>
-              <span className="sm:hidden">Neue Stunde</span>
+              <span className="hidden sm:inline">Neue Stunde</span>
             </button>
-
+          </div>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <SchedulePanel cls={cls} effectiveLessons={effectiveLessons} />
+            <UndoButton />
             <Link
               to="/einstellungen"
               className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
@@ -221,6 +219,7 @@ function ClassPage() {
               <span className="hidden sm:inline">Einstellungen</span>
             </Link>
           </div>
+
 
         </div>
       </header>
