@@ -647,6 +647,65 @@ export const turnActions = {
       };
     });
   },
+  addExcuse(classId: ClassId, studentId: string, excuse: Omit<Excuse, "id"> & { id?: string }) {
+    setState((s) => {
+      const cls = s.classes[classId];
+      return {
+        ...s,
+        classes: {
+          ...s.classes,
+          [classId]: {
+            ...cls,
+            students: cls.students.map((st) => {
+              if (st.id !== studentId) return st;
+              const list = st.excuses ?? [];
+              const next: Excuse = { id: excuse.id ?? genId(), date: excuse.date, note: excuse.note, photoPath: excuse.photoPath };
+              const nextList = [...list, next];
+              return { ...st, excuses: nextList, excusedNotParticipating: nextList.length };
+            }),
+          },
+        },
+      };
+    });
+  },
+  updateExcuse(classId: ClassId, studentId: string, excuseId: string, patch: Partial<Excuse>) {
+    setState((s) => {
+      const cls = s.classes[classId];
+      return {
+        ...s,
+        classes: {
+          ...s.classes,
+          [classId]: {
+            ...cls,
+            students: cls.students.map((st) => {
+              if (st.id !== studentId) return st;
+              const list = (st.excuses ?? []).map((e) => (e.id === excuseId ? { ...e, ...patch } : e));
+              return { ...st, excuses: list };
+            }),
+          },
+        },
+      };
+    });
+  },
+  removeExcuse(classId: ClassId, studentId: string, excuseId: string) {
+    setState((s) => {
+      const cls = s.classes[classId];
+      return {
+        ...s,
+        classes: {
+          ...s.classes,
+          [classId]: {
+            ...cls,
+            students: cls.students.map((st) => {
+              if (st.id !== studentId) return st;
+              const list = (st.excuses ?? []).filter((e) => e.id !== excuseId);
+              return { ...st, excuses: list, excusedNotParticipating: list.length };
+            }),
+          },
+        },
+      };
+    });
+  },
   addDiscipline(classId: ClassId, name: string, weight = 1) {
     setState((s) => {
       const cls = s.classes[classId];
