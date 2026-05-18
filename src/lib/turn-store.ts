@@ -287,6 +287,8 @@ export const turnActions = {
         excusedNotParticipating: 0,
         unexcusedNotParticipating: 0,
         attended: 0,
+        redPoints: 0,
+        greenPoints: 0,
       };
       return {
         ...s,
