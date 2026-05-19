@@ -1136,18 +1136,20 @@ function MaxInput({ value, onCommit }: { value: number; onCommit: (v: number) =>
   return (
     <input
       type="text"
-      inputMode="numeric"
+      inputMode="decimal"
       value={text}
       onChange={(e) => {
-        const v = e.target.value.replace(/[^\d]/g, "").slice(0, 4);
+        let v = e.target.value.replace(/[^\d.,]/g, "").replace(",", ".").slice(0, 6);
+        const parts = v.split(".");
+        if (parts.length > 2) v = parts[0] + "." + parts.slice(1).join("");
         setText(v);
-        if (v !== "") {
-          const n = Math.max(1, Math.min(1000, Number(v)));
-          onCommit(n);
+        if (v !== "" && !Number.isNaN(Number(v))) {
+          const n = Math.max(0.01, Math.min(1000, Number(v)));
+          onCommit(Math.round(n * 100) / 100);
         }
       }}
       onBlur={() => {
-        if (text === "" || Number(text) < 1) {
+        if (text === "" || Number(text) < 0.01 || Number.isNaN(Number(text))) {
           setText(String(value));
         }
       }}
