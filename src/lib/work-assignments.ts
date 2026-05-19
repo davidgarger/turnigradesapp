@@ -719,6 +719,7 @@ export function formatAssignmentText(opts: {
   datum: string;
   sport: Sport;
   status: Status;
+  difficulty?: Difficulty;
   assignment: GeneratedAssignment;
 }): string {
   const lines: string[] = [];
@@ -730,6 +731,7 @@ export function formatAssignmentText(opts: {
   lines.push(`Status: ${STATUS_LABEL[opts.status]}`);
   lines.push(`Sportart: ${SPORT_LABEL[opts.sport]}`);
   lines.push(`Auftragstyp: ${TASK_LABEL[opts.assignment.resolvedTaskType]}`);
+  if (opts.difficulty) lines.push(`Schwierigkeit: ${DIFFICULTY_LABEL[opts.difficulty]}`);
   lines.push("");
   lines.push("Aufgaben:");
   opts.assignment.tasks.forEach((t) => lines.push(t));
