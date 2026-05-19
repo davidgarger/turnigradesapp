@@ -240,7 +240,7 @@ function DisziplinenPage() {
                       <Trash2 className="h-4 w-4" />
                     </button>
                   </div>
-                  <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                  <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
                     <div className="grid gap-1">
                       <Label className="text-xs text-muted-foreground">Gewichtung (%)</Label>
                       <Input
@@ -290,6 +290,20 @@ function DisziplinenPage() {
                     ) : (
                       <div className="hidden sm:block" />
                     )}
+                    <div className="grid gap-1">
+                      <Label className="text-xs text-muted-foreground">
+                        Einheit
+                      </Label>
+                      <Input
+                        value={d.unit ?? ""}
+                        placeholder={suggestUnit(d.name) || (mode === "points" ? "Pkt" : "%")}
+                        onChange={(e) =>
+                          turnActions.updateDiscipline(cls.id, d.id, {
+                            unit: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
                   </div>
                 </div>
               );
