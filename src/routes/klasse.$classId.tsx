@@ -413,12 +413,18 @@ function ClassPage() {
                     Name <ArrowUpDown className="h-3 w-3" />
                   </button>
                 </th>
-                {cls.disciplines.map((d) => (
-                  <th key={d.id} className="px-2 py-3 text-center font-semibold">
-                    <div className="text-xs">{d.name}</div>
-                    <div className="text-[10px] font-normal text-muted-foreground">{d.weight}%</div>
-                  </th>
-                ))}
+                {cls.disciplines.map((d) => {
+                  const isPoints = (d.scoreMode ?? "percent") === "points";
+                  return (
+                    <th key={d.id} className="px-2 py-3 text-center font-semibold">
+                      <div className="text-xs">{d.name}</div>
+                      <div className="text-[10px] font-normal text-muted-foreground">
+                        {d.weight}% · {isPoints ? `0–${getDisciplineMax(d)} Pkt` : "0–100 %"}
+                      </div>
+                    </th>
+                  );
+                })}
+
                 <th className="px-2 py-3 text-center text-xs font-semibold">
                   <span className="text-status-danger">Turnzeug vergessen</span>
                 </th>
