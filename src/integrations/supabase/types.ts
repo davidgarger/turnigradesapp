@@ -32,6 +32,39 @@ export type Database = {
         }
         Relationships: []
       }
+      feedback: {
+        Row: {
+          contact_email: string | null
+          created_at: string
+          id: string
+          kind: string
+          message: string
+          page: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          contact_email?: string | null
+          created_at?: string
+          id?: string
+          kind: string
+          message: string
+          page?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          contact_email?: string | null
+          created_at?: string
+          id?: string
+          kind?: string
+          message?: string
+          page?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       user_prefs: {
         Row: {
           logo: string | null
