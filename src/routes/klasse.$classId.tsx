@@ -14,6 +14,7 @@ import {
   Undo2,
   Upload,
   Dumbbell,
+  Clock,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -1058,7 +1059,7 @@ function StudentHistoryDialog({ student, classId }: { student: Student; classId:
           aria-label="Stunden­übersicht"
           title="Alle Stunden des Schuljahres"
         >
-          <History className="h-4 w-4" />
+          <Clock className="h-4 w-4" />
         </button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl">
