@@ -45,6 +45,15 @@ function ArchivPage() {
     return Array.from(m.entries());
   }, [snapshots]);
 
+  if (!isValid || !cls) {
+    return (
+      <div className="p-6">
+        <p className="text-sm text-muted-foreground">Unbekannte Klasse.</p>
+        <Link to="/" className="text-primary underline">Zurück</Link>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <div className="mx-auto max-w-5xl px-4 py-6">
