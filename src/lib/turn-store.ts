@@ -4,11 +4,34 @@ import { supabase } from "@/integrations/supabase/client";
 // ---------- Types ----------
 export type ClassId = "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10";
 
+export type DisciplineScoreMode = "percent" | "points";
+
 export interface Discipline {
   id: string;
   name: string;
   weight: number; // relative weight (any positive number; only ratios matter)
+  // Bewertungsmodus pro Disziplin.
+  // "percent" (Default, abwärtskompatibel) → Eingabe 0–100 %.
+  // "points"  → Eingabe 0–scoreMax (z. B. 10 Punkte). Wird intern auf 0–100 normalisiert.
+  scoreMode?: DisciplineScoreMode;
+  scoreMax?: number; // nur bei "points" relevant, Default 100
 }
+
+export function getDisciplineMax(d: Discipline): number {
+  if (d.scoreMode === "points") return Math.max(1, d.scoreMax ?? 10);
+  return 100;
+}
+
+export function getDisciplineUnit(d: Discipline): string {
+  return d.scoreMode === "points" ? "Pkt" : "%";
+}
+
+export function scoreToPercent(d: Discipline, raw: number): number {
+  const max = getDisciplineMax(d);
+  if (max <= 0) return 0;
+  return Math.max(0, Math.min(100, (raw / max) * 100));
+}
+
 
 export interface Excuse {
   id: string;
