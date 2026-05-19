@@ -92,6 +92,19 @@ export interface Lesson {
   entries: LessonEntry[];
 }
 
+export interface DisciplineSnapshot {
+  id: string;
+  date: string; // ISO yyyy-mm-dd
+  disciplineId: string;
+  disciplineName: string;
+  scoreMode: DisciplineScoreMode;
+  scoreMax: number;
+  // Schüler-Snapshot: Vor/Nachname zum Zeitpunkt + Wert (raw, undefined = nicht gemessen)
+  entries: { studentId: string; firstName: string; lastName: string; value: number | undefined }[];
+  note?: string;
+  createdAt: string;
+}
+
 export interface ClassData {
   id: ClassId;
   name: string;
@@ -100,7 +113,9 @@ export interface ClassData {
   totalLessons: number; // manuelle Gesamtzahl (Fallback falls kein Stundenplan)
   schedule?: ClassSchedule;
   lessons?: Lesson[]; // Verlauf gehaltener Stunden
+  snapshots?: DisciplineSnapshot[]; // archivierte Disziplin-Resultate
 }
+
 
 export interface GradingSettings {
   forgottenKitPenalty: number;
