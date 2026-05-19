@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Settings, Users, ClipboardList, ImagePlus, Trash2, Palette, Check, LogOut, MoreVertical, Pencil, ArrowLeftRight, RotateCcw, Plus, EyeOff } from "lucide-react";
+import { Settings, Users, ClipboardList, ImagePlus, Trash2, Palette, Check, LogOut, MoreVertical, Pencil, ArrowLeftRight, RotateCcw, Plus, EyeOff, LayoutGrid } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { turnActions, useTurnState } from "@/lib/turn-store";
 import { TurniLogo } from "@/components/TurniLogo";
