@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useRouterState } from "@tanstack/react-router";
+import { useRouterState } from "@tanstack/react-router";
 import { Heart, MessageSquarePlus, X, Send, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -202,6 +202,3 @@ function FeedbackDialog({ onClose }: { onClose: () => void }) {
     </div>
   );
 }
-
-// Avoid unused-import lint when Link not used here
-export const _ = Link;
