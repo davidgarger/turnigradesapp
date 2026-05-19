@@ -65,17 +65,6 @@ const SPORTS: Sport[] = [
   "aufwaermen",
   "allgemein",
 ];
-const TASK_TYPES: TaskType[] = [
-  "beobachtung",
-  "regeln",
-  "technik",
-  "reflexion",
-  "lueckentext",
-  "quiz",
-  "steckbrief",
-  "sportgeschichte",
-  "zufaellig",
-];
 const STATUSES: Status[] = ["entschuldigt", "unentschuldigt", "turnzeug_vergessen"];
 const DIFFICULTIES: Difficulty[] = ["leicht", "mittel", "schwer"];
 
