@@ -367,17 +367,11 @@ function ClassPage() {
                   {mode === "points" ? (
                     <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
                       max
-                      <input
-                        type="number"
-                        min={1}
-                        max={1000}
+                      <MaxInput
                         value={max}
-                        onChange={(e) =>
-                          turnActions.updateDiscipline(cls.id, d.id, {
-                            scoreMax: Math.max(1, Number(e.target.value) || 1),
-                          })
+                        onCommit={(v) =>
+                          turnActions.updateDiscipline(cls.id, d.id, { scoreMax: v })
                         }
-                        className="h-7 w-16 rounded border border-input bg-background px-1 text-right text-xs"
                       />
                     </span>
                   ) : null}
@@ -1133,6 +1127,34 @@ function ScoreInput({
     </div>
   );
 }
+
+function MaxInput({ value, onCommit }: { value: number; onCommit: (v: number) => void }) {
+  const [text, setText] = useState<string>(String(value));
+  useEffect(() => { setText(String(value)); }, [value]);
+  return (
+    <input
+      type="text"
+      inputMode="numeric"
+      value={text}
+      onChange={(e) => {
+        const v = e.target.value.replace(/[^\d]/g, "").slice(0, 4);
+        setText(v);
+        if (v !== "") {
+          const n = Math.max(1, Math.min(1000, Number(v)));
+          onCommit(n);
+        }
+      }}
+      onBlur={() => {
+        if (text === "" || Number(text) < 1) {
+          setText(String(value));
+        }
+      }}
+      className="h-7 w-16 rounded border border-input bg-background px-1 text-right text-xs"
+    />
+  );
+}
+
+
 
 
 function UndoButton() {
