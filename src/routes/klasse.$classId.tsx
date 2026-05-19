@@ -20,6 +20,8 @@ import {
   computeGrade,
   downloadCsv,
   exportClassCsv,
+  getDisciplineMax,
+  getDisciplineUnit,
   getEffectiveTotalLessons,
   computeScheduledLessons,
   turnActions,
@@ -28,9 +30,12 @@ import {
   canUndo,
   type ClassId,
   type ClassSchedule,
+  type Discipline,
+  type DisciplineScoreMode,
   type Student,
   type Excuse,
 } from "@/lib/turn-store";
+
 import { supabase } from "@/integrations/supabase/client";
 import QuickSession from "@/components/QuickSession";
 import ImportStudentsDialog, { type ParsedStudent } from "@/components/ImportStudentsDialog";
