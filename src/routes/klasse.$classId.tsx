@@ -113,7 +113,10 @@ function ClassPage() {
 
   const [discName, setDiscName] = useState("");
   const [discWeight, setDiscWeight] = useState(10);
+  const [discMode, setDiscMode] = useState<DisciplineScoreMode>("percent");
+  const [discMax, setDiscMax] = useState<number>(10);
   const [discOpen, setDiscOpen] = useState(false);
+
 
   const rows = useMemo(() => {
     const filtered = cls.students.filter((s) => {
