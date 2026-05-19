@@ -23,6 +23,7 @@ import {
   exportClassCsv,
   getDisciplineMax,
   getDisciplineUnit,
+  suggestUnit,
   getEffectiveTotalLessons,
   computeScheduledLessons,
   turnActions,
@@ -397,31 +398,9 @@ function ClassPage() {
           </Button>
         </div>
 
-        {/* Disziplinen-Verwaltungsfeld */}
-        <div className="mt-6 rounded-lg border border-border bg-card p-4 shadow-sm">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <div className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-primary/10 text-primary">
-                <Dumbbell className="h-5 w-5" />
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-foreground">Disziplinen verwalten</p>
-                <p className="text-xs text-muted-foreground">
-                  {cls.disciplines.length} Disziplinen · Gewichtung, Einheit & Bewertung anpassen
-                </p>
-              </div>
-            </div>
-            <Link
-              to="/klasse/$classId/disziplinen"
-              params={{ classId: cls.id }}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
-            >
-              <Dumbbell className="h-4 w-4" /> Öffnen
-            </Link>
-          </div>
-        </div>
+        {/* Disziplinen-Verwaltungsfeld (inline) */}
+        <DisciplinesManager cls={cls} />
+
 
 
 
@@ -1255,5 +1234,170 @@ function ExcusePhotosSection({ studentExcuses, open }: { studentExcuses: Excuse[
         </div>
       )}
     </div>
+  );
+}
+
+function DisciplinesManager({ cls }: { cls: ReturnType<typeof useTurnState>["classes"][ClassId] }) {
+  const [name, setName] = useState("");
+  const [weight, setWeight] = useState(10);
+  const [mode, setMode] = useState<DisciplineScoreMode>("percent");
+  const [max, setMax] = useState<number>(10);
+  const [unit, setUnit] = useState<string>("");
+  const [unitTouched, setUnitTouched] = useState(false);
+
+  const handleAdd = () => {
+    if (!name.trim()) {
+      toast.error("Bitte einen Namen angeben.");
+      return;
+    }
+    const finalUnit = unit.trim() || suggestUnit(name);
+    turnActions.addDiscipline(cls.id, name.trim(), weight, {
+      scoreMode: mode,
+      scoreMax: mode === "points" ? Math.max(1, max) : undefined,
+      unit: finalUnit || undefined,
+    });
+    setName(""); setWeight(10); setMode("percent"); setMax(10); setUnit(""); setUnitTouched(false);
+    toast.success("Disziplin hinzugefügt");
+  };
+
+  return (
+    <section className="mt-6 rounded-lg border border-border bg-card p-4 shadow-sm">
+      <header className="mb-4 flex items-center gap-3">
+        <div className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-primary/10 text-primary">
+          <Dumbbell className="h-5 w-5" />
+        </div>
+        <div>
+          <h2 className="text-sm font-semibold text-foreground">Disziplinen verwalten</h2>
+          <p className="text-xs text-muted-foreground">
+            {cls.disciplines.length} Disziplinen · direkt anlegen und Parameter ändern
+          </p>
+        </div>
+      </header>
+
+      {/* Neue Disziplin */}
+      <div className="mb-4 grid gap-3 rounded-md border border-dashed border-border bg-background/50 p-3 sm:grid-cols-[1fr_120px_140px_120px_120px_auto]">
+        <div className="grid gap-1">
+          <Label className="text-xs text-muted-foreground">Name</Label>
+          <Input
+            value={name}
+            onChange={(e) => { setName(e.target.value); if (!unitTouched) setUnit(suggestUnit(e.target.value)); }}
+            placeholder="z. B. Weitsprung"
+          />
+        </div>
+        <div className="grid gap-1">
+          <Label className="text-xs text-muted-foreground">Gew. (%)</Label>
+          <Input type="number" min={0} max={100} value={weight} onChange={(e) => setWeight(Number(e.target.value))} />
+        </div>
+        <div className="grid gap-1">
+          <Label className="text-xs text-muted-foreground">Bewertung</Label>
+          <select
+            value={mode}
+            onChange={(e) => setMode(e.target.value as DisciplineScoreMode)}
+            className="h-10 rounded-md border border-input bg-background px-2 text-sm"
+          >
+            <option value="percent">Prozent</option>
+            <option value="points">Punkte</option>
+          </select>
+        </div>
+        <div className="grid gap-1">
+          <Label className="text-xs text-muted-foreground">Max</Label>
+          <Input
+            type="number" min={1} max={1000} value={max}
+            disabled={mode !== "points"}
+            onChange={(e) => setMax(Math.max(1, Number(e.target.value) || 1))}
+          />
+        </div>
+        <div className="grid gap-1">
+          <Label className="text-xs text-muted-foreground">Einheit</Label>
+          <Input value={unit} onChange={(e) => { setUnit(e.target.value); setUnitTouched(true); }} placeholder="m / s / Wdh" />
+        </div>
+        <div className="flex items-end">
+          <Button onClick={handleAdd} className="w-full sm:w-auto">
+            <Plus className="h-4 w-4" /> Hinzufügen
+          </Button>
+        </div>
+      </div>
+
+      {/* Liste */}
+      {cls.disciplines.length === 0 ? (
+        <p className="rounded-md border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+          Noch keine Disziplinen.
+        </p>
+      ) : (
+        <ul className="space-y-2">
+          {cls.disciplines.map((d) => {
+            const dMode = d.scoreMode ?? "percent";
+            const dMax = getDisciplineMax(d);
+            return (
+              <li key={d.id} className="rounded-md border border-border bg-background p-3">
+                <div className="grid gap-2 sm:grid-cols-[1fr_100px_140px_100px_120px_auto] sm:items-end">
+                  <div className="grid gap-1">
+                    <Label className="text-xs text-muted-foreground">Name</Label>
+                    <Input
+                      value={d.name}
+                      onChange={(e) => turnActions.updateDiscipline(cls.id, d.id, { name: e.target.value })}
+                    />
+                  </div>
+                  <div className="grid gap-1">
+                    <Label className="text-xs text-muted-foreground">Gew. (%)</Label>
+                    <Input
+                      type="number" min={0} max={100} value={d.weight}
+                      onChange={(e) => turnActions.updateDiscipline(cls.id, d.id, { weight: Number(e.target.value) })}
+                    />
+                  </div>
+                  <div className="grid gap-1">
+                    <Label className="text-xs text-muted-foreground">Bewertung</Label>
+                    <select
+                      value={dMode}
+                      onChange={(e) => {
+                        const next = e.target.value as DisciplineScoreMode;
+                        turnActions.updateDiscipline(cls.id, d.id, {
+                          scoreMode: next,
+                          scoreMax: next === "points" ? (d.scoreMax ?? 10) : undefined,
+                        });
+                      }}
+                      className="h-10 rounded-md border border-input bg-background px-2 text-sm"
+                    >
+                      <option value="percent">Prozent</option>
+                      <option value="points">Punkte</option>
+                    </select>
+                  </div>
+                  <div className="grid gap-1">
+                    <Label className="text-xs text-muted-foreground">Max</Label>
+                    <Input
+                      type="number" min={1} max={1000} value={dMax}
+                      disabled={dMode !== "points"}
+                      onChange={(e) => turnActions.updateDiscipline(cls.id, d.id, { scoreMax: Math.max(1, Number(e.target.value) || 1) })}
+                    />
+                  </div>
+                  <div className="grid gap-1">
+                    <Label className="text-xs text-muted-foreground">Einheit</Label>
+                    <Input
+                      value={d.unit ?? ""}
+                      placeholder={suggestUnit(d.name) || (dMode === "points" ? "Pkt" : "%")}
+                      onChange={(e) => turnActions.updateDiscipline(cls.id, d.id, { unit: e.target.value })}
+                    />
+                  </div>
+                  <div className="flex items-end">
+                    <button
+                      onClick={() => {
+                        if (confirm(`Disziplin „${d.name}" wirklich löschen? Alle erfassten Werte gehen verloren.`)) {
+                          turnActions.deleteDiscipline(cls.id, d.id);
+                          toast.success("Disziplin gelöscht");
+                        }
+                      }}
+                      className="inline-flex h-10 w-10 items-center justify-center rounded-md text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                      aria-label="Disziplin löschen"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </section>
   );
 }
