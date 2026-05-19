@@ -790,12 +790,21 @@ export function generateAssignment(
   const resolved: Exclude<TaskType, "zufaellig"> =
     taskType === "zufaellig" ? pickRandom(ALL_RESOLVED) : taskType;
 
-  // Anzahl je Auftragstyp nach Schwierigkeit
+  // Anzahl je Auftragstyp nach Schwierigkeit – bewusst umfangreicher,
+  // damit der Auftrag eine ganze Lektion (ca. 30–45 Min.) füllt.
   const counts = {
-    leicht: { pool: 2, quiz: 2, cloze: 3 },
-    mittel: { pool: 3, quiz: 3, cloze: 5 },
-    schwer: { pool: 4, quiz: 5, cloze: 5 },
+    leicht: { pool: 4, quiz: 4, cloze: 5 },
+    mittel: { pool: 5, quiz: 6, cloze: 6 },
+    schwer: { pool: 6, quiz: 8, cloze: 7 },
   }[difficulty];
+
+  // Hinweis zum erwarteten Umfang der Antworten je Schwierigkeit.
+  const umfangHinweis =
+    difficulty === "leicht"
+      ? "Beantworte jede Aufgabe in 1–2 vollständigen Sätzen."
+      : difficulty === "schwer"
+        ? "Beantworte jede Aufgabe in 3–5 vollständigen Sätzen und begründe deine Aussagen."
+        : "Beantworte jede Aufgabe in 2–3 vollständigen Sätzen.";
 
   if (resolved === "lueckentext") {
     const cloze = pickRandom(CLOZE[sport]);
@@ -812,16 +821,44 @@ export function generateAssignment(
     });
     const intro =
       difficulty === "leicht"
-        ? "Setze die fehlenden Wörter in die Lücken ein:"
-        : difficulty === "schwer"
-          ? "Setze die fehlenden Wörter ein und schreibe danach zu zwei Sätzen eine kurze Erklärung in eigenen Worten:"
-          : "Setze die fehlenden Wörter in die Lücken ein:";
+        ? "Teil 1 – Setze die fehlenden Wörter in die Lücken ein:"
+        : "Teil 1 – Setze die fehlenden Wörter ein:";
+
+    // Teil 2: Vertiefung mit eigenen Sätzen / Erklärungen.
+    const vertiefung: string[] = ["", "Teil 2 – Vertiefung:"];
+    if (difficulty === "leicht") {
+      vertiefung.push(
+        "a) Wähle drei der eingesetzten Wörter und schreibe zu jedem einen eigenen kurzen Satz.",
+        "b) Male oder zeichne eine kleine Skizze zu einem der Sätze.",
+      );
+    } else if (difficulty === "mittel") {
+      vertiefung.push(
+        "a) Wähle drei Fachbegriffe aus dem Lückentext und erkläre sie in eigenen Worten (je 1–2 Sätze).",
+        "b) Schreibe drei eigene neue Lückensätze zum Thema. Markiere die Lösung in [eckigen Klammern].",
+        "c) Welche zwei Begriffe gehören für dich am engsten zusammen? Begründe in 2–3 Sätzen.",
+      );
+    } else {
+      vertiefung.push(
+        "a) Erkläre vier Fachbegriffe aus dem Text in eigenen Worten (je 2–3 Sätze).",
+        "b) Schreibe fünf eigene Lückensätze zum Thema. Markiere die Lösungen in [eckigen Klammern] und gib einen passenden Titel an.",
+        "c) Stelle einen Zusammenhang zwischen zwei Begriffen her und beschreibe ihn in 4–5 Sätzen.",
+        "d) Formuliere eine eigene Frage zum Thema, die du im Unterricht stellen würdest.",
+      );
+    }
+
     return {
-      tasks: [`Thema: ${cloze.topic}`, intro, ...tasks],
+      tasks: [
+        `Thema: ${cloze.topic}`,
+        umfangHinweis,
+        "",
+        intro,
+        ...tasks,
+        ...vertiefung,
+      ],
       closing:
         difficulty === "schwer"
-          ? "Erkläre eines der Fachwörter aus deinem Text in 2–3 Sätzen."
-          : "Lies deinen ganzen Text am Ende noch einmal laut für dich durch.",
+          ? "Schreibe einen zusammenhängenden Text (mind. 8 Sätze), der mindestens 5 der Fachbegriffe sinnvoll verwendet."
+          : "Lies deinen Text am Ende laut für dich durch und überprüfe alle Lücken.",
       resolvedTaskType: resolved,
       answerKey: solutions.join("   ·   "),
     };
@@ -829,7 +866,11 @@ export function generateAssignment(
 
   if (resolved === "quiz") {
     const picked = shuffle(QUIZ[sport]).slice(0, counts.quiz);
-    const tasks: string[] = ["Kreuze bei jeder Frage die richtige Antwort an:"];
+    const tasks: string[] = [
+      umfangHinweis,
+      "",
+      "Teil 1 – Kreuze bei jeder Frage die richtige Antwort an:",
+    ];
     const letters = ["A", "B", "C"] as const;
     const solutions: string[] = [];
     picked.forEach((q, i) => {
@@ -837,13 +878,34 @@ export function generateAssignment(
       q.options.forEach((opt, j) => tasks.push(`   ${letters[j]}) ${opt}`));
       solutions.push(`${i + 1}: ${letters[q.correctIndex]}`);
     });
-    if (difficulty === "schwer") {
-      tasks.push("");
-      tasks.push("Zusatzaufgabe: Begründe bei zwei Antworten kurz, warum sie richtig sind.");
+
+    tasks.push("", "Teil 2 – Vertiefung:");
+    if (difficulty === "leicht") {
+      tasks.push(
+        "a) Wähle deine Lieblingsfrage und schreibe einen ganzen Satz dazu auf.",
+        "b) Welche Frage war am leichtesten? Warum?",
+      );
+    } else if (difficulty === "mittel") {
+      tasks.push(
+        "a) Begründe bei drei deiner Antworten in je 1–2 Sätzen, warum sie richtig ist.",
+        "b) Erfinde zwei eigene Quizfragen zum Thema (mit je drei Antwortmöglichkeiten und markierter Lösung).",
+        "c) Welche Frage hat dich am meisten zum Nachdenken gebracht? Erkläre.",
+      );
+    } else {
+      tasks.push(
+        "a) Begründe alle deine Antworten kurz schriftlich (je 2–3 Sätze).",
+        "b) Erfinde drei eigene anspruchsvolle Quizfragen mit je drei Antwortmöglichkeiten und markierter Lösung.",
+        "c) Welche zwei Themen aus dem Quiz gehören inhaltlich zusammen? Beschreibe den Zusammenhang in 4–5 Sätzen.",
+        "d) Was wäre eine gute Folgefrage für die nächste Stunde? Begründe deine Wahl.",
+      );
     }
+
     return {
       tasks,
-      closing: "Welche Frage fandest du am schwierigsten? Warum?",
+      closing:
+        difficulty === "schwer"
+          ? "Fasse die wichtigsten Erkenntnisse aus dem Quiz in einem zusammenhängenden Text von 6–8 Sätzen zusammen."
+          : "Welche Frage fandest du am schwierigsten und warum?",
       resolvedTaskType: resolved,
       answerKey: solutions.join("   ·   "),
     };
@@ -852,36 +914,48 @@ export function generateAssignment(
   if (resolved === "steckbrief") {
     const p = pickRandom(PEOPLE[sport]);
     const baseTasks = [
-      `Persönlichkeit: ${p.name}`,
-      `Sportart: ${p.sport}`,
-      `Land: ${p.nation}`,
-      `Geboren: ${p.geboren}`,
-      `Bekannt für: ${p.bekanntFuer}`,
-      `Wusstest du schon? ${p.funFact}`,
+      "Steckbrief:",
+      `• Persönlichkeit: ${p.name}`,
+      `• Sportart: ${p.sport}`,
+      `• Land: ${p.nation}`,
+      `• Geboren: ${p.geboren}`,
+      `• Bekannt für: ${p.bekanntFuer}`,
+      `• Wusstest du schon? ${p.funFact}`,
+      "",
+      umfangHinweis,
       "",
       "Aufgaben:",
     ];
     const aufgaben =
       difficulty === "leicht"
         ? [
-            `1) Schreibe zwei Sätze über ${p.name}.`,
-            `2) Möchtest du diese Sportart auch ausprobieren? Warum?`,
+            `1) Schreibe drei Sätze über ${p.name} mit eigenen Worten.`,
+            `2) Nenne zwei Eigenschaften, die ${p.name} stark machen.`,
+            `3) Möchtest du diese Sportart auch ausprobieren? Begründe.`,
+            `4) Male ein kleines Bild oder Symbol, das zu ${p.name} passt.`,
           ]
         : difficulty === "schwer"
           ? [
-              `1) Schreibe einen kurzen Text (mindestens 6 Sätze) über ${p.name}.`,
-              `2) Welche Eigenschaften braucht jemand, um in „${p.sport}“ Spitzensportler/in zu werden?`,
-              `3) Vergleiche „${p.sport}“ mit einer anderen Sportart deiner Wahl.`,
-              `4) Was kann man von ${p.name} für die eigene Disziplin und Motivation lernen?`,
+              `1) Schreibe einen zusammenhängenden Text (mind. 10 Sätze) über das Leben und die Leistungen von ${p.name}.`,
+              `2) Welche körperlichen UND mentalen Eigenschaften braucht jemand, um in „${p.sport}“ Weltklasse zu werden? Begründe.`,
+              `3) Vergleiche „${p.sport}“ mit einer anderen Sportart deiner Wahl: Gemeinsamkeiten, Unterschiede, Anforderungen.`,
+              `4) Welche gesellschaftliche Bedeutung hat eine Sportpersönlichkeit wie ${p.name} (Vorbildfunktion, Medien, Werbung)?`,
+              `5) Was kannst du persönlich von ${p.name} für deine eigene Disziplin, Motivation oder dein Training lernen?`,
+              `6) Formuliere drei Interviewfragen, die du ${p.name} gerne stellen würdest, und begründe jede Frage kurz.`,
             ]
           : [
-              `1) Schreibe drei Sätze über ${p.name} mit eigenen Worten.`,
-              `2) Welche Eigenschaften braucht jemand, um in „${p.sport}“ so erfolgreich zu werden?`,
-              `3) Würdest du diese Sportart auch gerne ausprobieren? Begründe.`,
+              `1) Schreibe einen kurzen Text (5–6 Sätze) über ${p.name} mit eigenen Worten.`,
+              `2) Welche Eigenschaften braucht jemand, um in „${p.sport}“ so erfolgreich zu werden? Nenne mindestens drei und begründe.`,
+              `3) Welche Schwierigkeiten oder Rückschläge musste ${p.name} möglicherweise überwinden? Was vermutest du?`,
+              `4) Würdest du diese Sportart auch ausprobieren? Begründe in 2–3 Sätzen.`,
+              `5) Formuliere zwei Interviewfragen, die du ${p.name} gerne stellen würdest.`,
             ];
     return {
       tasks: [...baseTasks, ...aufgaben],
-      closing: `Was bewundert man deiner Meinung nach an ${p.name} am meisten?`,
+      closing:
+        difficulty === "schwer"
+          ? `Was macht ${p.name} aus deiner Sicht zu einer wirklichen Sportpersönlichkeit? Begründe in einem kurzen Text (5–6 Sätze).`
+          : `Was bewunderst du an ${p.name} am meisten? Begründe in 2–3 Sätzen.`,
       resolvedTaskType: resolved,
     };
   }
@@ -890,34 +964,107 @@ export function generateAssignment(
     const h = pickRandom(HISTORY[sport]);
     const fragen =
       difficulty === "leicht"
-        ? h.questions.slice(0, 2)
+        ? h.questions
         : difficulty === "schwer"
-          ? [...h.questions, "Was hätte sich anders entwickelt, wenn es diesen Sport nicht gäbe? Begründe."]
-          : h.questions;
+          ? [
+              ...h.questions,
+              "Welche gesellschaftlichen Veränderungen waren für diese Entwicklung wichtig? Erkläre.",
+              "Was hätte sich anders entwickelt, wenn es diesen Sport nicht gäbe? Begründe ausführlich.",
+              "Welche Verbindung gibt es zwischen dieser Sportgeschichte und dem Sport, wie er heute betrieben wird?",
+            ]
+          : [
+              ...h.questions,
+              "Welche Veränderung findest du am wichtigsten? Begründe.",
+              "Was hat sich seit damals stark verändert, was ist gleich geblieben?",
+            ];
+
+    const vertiefung: string[] = ["", "Vertiefung:"];
+    if (difficulty === "leicht") {
+      vertiefung.push(
+        "a) Male eine kleine Zeitleiste mit drei wichtigen Daten aus dem Text.",
+        "b) Erkläre einer Mitschülerin / einem Mitschüler den Text mit eigenen Worten.",
+      );
+    } else if (difficulty === "mittel") {
+      vertiefung.push(
+        "a) Zeichne eine Zeitleiste mit mindestens vier wichtigen Ereignissen aus dem Text.",
+        "b) Markiere im Text drei Schlüsselbegriffe und erkläre sie in eigenen Worten.",
+        "c) Recherchiere (oder vermute begründet) ein weiteres wichtiges Datum zu diesem Thema.",
+      );
+    } else {
+      vertiefung.push(
+        "a) Erstelle eine ausführliche Zeitleiste mit mindestens sechs Ereignissen rund um diesen Sport.",
+        "b) Erkläre fünf zentrale Fachbegriffe aus dem Text in eigenen Worten.",
+        "c) Stelle eine eigene These auf, warum sich dieser Sport so entwickelt hat, und belege sie mit drei Argumenten.",
+        "d) Formuliere zwei kritische Fragen zur Geschichte dieses Sports, die heute noch wichtig sind.",
+      );
+    }
+
     return {
       tasks: [
         `Text: ${h.title}`,
         h.text,
         "",
-        difficulty === "leicht"
-          ? "Beantworte die folgenden Fragen in kurzen Sätzen:"
-          : "Beantworte die folgenden Fragen in ganzen Sätzen:",
+        umfangHinweis,
+        "",
+        "Fragen zum Text:",
         ...fragen.map((q, i) => `${i + 1}) ${q}`),
+        ...vertiefung,
       ],
       closing:
         difficulty === "schwer"
-          ? "Was bedeutet die Geschichte dieses Sports für die heutige Zeit?"
-          : "Was ist das Interessanteste, das du in diesem Text neu erfahren hast?",
+          ? "Was bedeutet die Geschichte dieses Sports für die heutige Zeit? Beantworte in einem zusammenhängenden Text (mind. 8 Sätze)."
+          : "Was ist das Interessanteste, das du heute neu erfahren hast? Erkläre in 2–3 Sätzen.",
       resolvedTaskType: resolved,
     };
   }
 
   // Standard-Pools (Beobachtung / Regeln / Technik / Reflexion)
   const set = pickRandom(POOL[sport][resolved]);
-  const tasks = shuffle(set.tasks).slice(0, counts.pool);
+  const tasks: string[] = [
+    umfangHinweis,
+    "",
+    "Teil 1 – Hauptaufgaben:",
+  ];
+  shuffle(set.tasks)
+    .slice(0, counts.pool)
+    .forEach((t, i) => tasks.push(`${i + 1}) ${t}`));
+
+  // Teil 2: Vertiefung passend zum Auftragstyp.
+  tasks.push("", "Teil 2 – Vertiefung:");
+  const transferByType: Record<"beobachtung" | "regeln" | "technik" | "reflexion", string[]> = {
+    beobachtung: [
+      "a) Fasse deine Beobachtungen in einer kurzen Tabelle zusammen (Was? Wer? Wie oft?).",
+      "b) Welche drei Tipps würdest du den Mitspielenden aufgrund deiner Beobachtungen geben?",
+      "c) Welche Situation hat dich überrascht? Beschreibe sie genau.",
+    ],
+    regeln: [
+      "a) Erkläre eine der Regeln so, dass sie ein jüngeres Kind versteht.",
+      "b) Was würde im Spiel passieren, wenn es diese Regel nicht gäbe? Begründe.",
+      "c) Erfinde eine eigene faire Zusatzregel und begründe sie kurz.",
+    ],
+    technik: [
+      "a) Zeichne eine kleine Bewegungsskizze (Strichmännchen) zu einer Technik.",
+      "b) Welche typischen Fehler passieren bei dieser Technik? Wie könnte man sie vermeiden?",
+      "c) Erstelle einen kurzen Übungsplan (3 Übungen), um die Technik zu verbessern.",
+    ],
+    reflexion: [
+      "a) Beschreibe ein konkretes Beispiel aus deinem Leben, das zur Frage passt.",
+      "b) Was würdest du beim nächsten Mal anders machen? Begründe.",
+      "c) Formuliere ein persönliches Ziel für die nächste Sportstunde.",
+    ],
+  };
+  const transfer = transferByType[resolved];
+  const transferCount =
+    difficulty === "leicht" ? 2 : difficulty === "mittel" ? 3 : 3;
+  transfer.slice(0, transferCount).forEach((t) => tasks.push(t));
+
   if (difficulty === "schwer") {
-    tasks.push("Zusatzaufgabe: Begründe deine wichtigste Beobachtung oder Antwort in 2–3 Sätzen.");
+    tasks.push(
+      "",
+      "Teil 3 – Transfer: Schreibe einen zusammenhängenden Text (mind. 8 Sätze), in dem du deine wichtigsten Erkenntnisse aus Teil 1 und Teil 2 verbindest.",
+    );
   }
+
   return { tasks, closing: set.closing, resolvedTaskType: resolved };
 }
 

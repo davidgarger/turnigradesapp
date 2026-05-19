@@ -478,23 +478,13 @@ function ArbeitsauftragPage() {
               </dl>
 
               <h3 className="mt-6 text-lg font-bold">Deine Aufgaben</h3>
-              {["beobachtung", "regeln", "technik", "reflexion"].includes(
-                assignment.resolvedTaskType,
-              ) ? (
-                <ol className="mt-2 list-decimal space-y-2 pl-6 text-base leading-relaxed">
-                  {assignment.tasks.map((t, i) => (
-                    <li key={i}>{t}</li>
-                  ))}
-                </ol>
-              ) : (
-                <div className="mt-2 space-y-1 text-base leading-relaxed">
-                  {assignment.tasks.map((t, i) => (
-                    <p key={i} className="whitespace-pre-wrap">
-                      {t === "" ? "\u00A0" : t}
-                    </p>
-                  ))}
-                </div>
-              )}
+              <div className="mt-2 space-y-1 text-base leading-relaxed">
+                {assignment.tasks.map((t, i) => (
+                  <p key={i} className="whitespace-pre-wrap">
+                    {t === "" ? "\u00A0" : t}
+                  </p>
+                ))}
+              </div>
 
               <h3 className="mt-6 text-lg font-bold">Abschlussfrage</h3>
               <p className="mt-1 text-base leading-relaxed">{assignment.closing}</p>
