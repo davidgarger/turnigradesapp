@@ -1152,6 +1152,9 @@ function MaxInput({ value, onCommit }: { value: number; onCommit: (v: number) =>
       className="h-7 w-16 rounded border border-input bg-background px-1 text-right text-xs"
     />
   );
+}
+
+
 
 
 function UndoButton() {
