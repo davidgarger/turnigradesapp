@@ -8,6 +8,7 @@ import {
   STATUS_LABEL,
   TASK_LABEL,
   DIFFICULTY_LABEL,
+  allowedTaskTypesForSport,
   difficultyForClassId,
   formatAssignmentText,
   generateAssignment,
