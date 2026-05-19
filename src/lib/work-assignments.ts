@@ -720,6 +720,33 @@ const HISTORY: Record<Sport, HistoryText[]> = {
       ],
     },
   ],
+  volleyball: [
+    { title: "Wie Volleyball entstand", text: "Volleyball wurde 1895 vom Sportlehrer William G. Morgan in den USA erfunden. Er suchte nach einer Spielform, die weniger körperbetont war als Basketball, aber trotzdem im Team gespielt wurde. Aus „Mintonette“ wurde später Volleyball. Heute ist es einer der beliebtesten Mannschaftssportarten weltweit.", questions: ["Wer hat Volleyball erfunden und wann?", "Warum suchte Morgan eine Alternative zu Basketball?", "Wie hieß die Sportart zu Beginn?"] },
+  ],
+  handball: [
+    { title: "Die Geschichte des Handballs", text: "Der moderne Handball entstand Anfang des 20. Jahrhunderts in Skandinavien und Deutschland. Lange wurde er als „Feldhandball“ mit 11 Spielern auf einem Fußballfeld gespielt. Seit den 1960er-Jahren dominiert die heutige Form mit 7 Spielern in der Halle. Handball ist heute olympische Disziplin.", questions: ["Wo entstand der moderne Handball?", "Was ist der Unterschied zwischen Feld- und Hallenhandball?", "Seit wann gibt es vor allem den Hallenhandball mit 7 Spielern?"] },
+  ],
+  unihockey: [
+    { title: "Wie Unihockey populär wurde", text: "Unihockey, international Floorball genannt, entstand in den 1970er-Jahren in Schweden. Das Spiel ist eine Hallenversion von Hockey mit Plastikstock und Lochball. Vor allem in Schweden, Finnland und der Schweiz ist Unihockey heute sehr beliebt und wird auch als Schulsport geschätzt.", questions: ["Wo und wann entstand Unihockey?", "Womit wird Unihockey gespielt?", "In welchen Ländern ist Unihockey besonders verbreitet?"] },
+  ],
+  badminton: [
+    { title: "Die Geschichte des Badmintons", text: "Badminton geht auf ein altes indisches Spiel namens „Poona“ zurück. Englische Offiziere brachten es im 19. Jahrhundert nach England. Den Namen erhielt der Sport nach dem englischen Landsitz „Badminton House“, auf dem er 1873 vorgestellt wurde. Seit 1992 ist Badminton olympisch.", questions: ["Aus welchem Spiel entstand Badminton?", "Wie kam Badminton zu seinem Namen?", "Seit wann ist Badminton olympisch?"] },
+  ],
+  schwimmen: [
+    { title: "Die Geschichte des Schwimmens", text: "Schon in der Antike schwammen Menschen aus praktischen Gründen, zum Beispiel beim Fischen. Als Sport entstand Schwimmen im 19. Jahrhundert vor allem in England. 1896 war Schwimmen bei den ersten modernen Olympischen Spielen dabei. Heute ist es eine der wichtigsten olympischen Sportarten.", questions: ["Warum schwammen Menschen schon in der Antike?", "Wo entwickelte sich Schwimmen als Sport?", "Seit wann ist Schwimmen olympisch?"] },
+  ],
+  olympia: [
+    { title: "Olympische Spiele – früher und heute", text: "Die Olympischen Spiele entstanden um 776 v. Chr. in Olympia, Griechenland. Sie waren ein religiöses und sportliches Fest zu Ehren des Gottes Zeus. 1896 wurden sie auf Initiative von Pierre de Coubertin in Athen wiederbelebt. Heute treffen sich Athleten aus aller Welt alle vier Jahre zu Sommer- oder Winterspielen.", questions: ["Wann und wo fanden die ersten Olympischen Spiele statt?", "Wer hat die modernen Olympischen Spiele wiederbelebt?", "Wie oft finden Sommer- bzw. Winterspiele statt?"] },
+  ],
+  fairplay: [
+    { title: "Woher Fairplay kommt", text: "Der Begriff „Fairplay“ stammt aus dem englischen Sport des 19. Jahrhunderts. Damals einigte man sich darauf, dass Wettkämpfe nach klaren, gleichen Regeln gespielt werden sollten. Heute steht Fairplay nicht nur für Regeltreue, sondern auch für Respekt, Ehrlichkeit und Rücksicht gegenüber Gegnern, Mitspielenden und Schiedsrichtern.", questions: ["Aus welcher Zeit und welchem Land stammt der Begriff Fairplay?", "Worauf einigten sich die Sportler damals?", "Was bedeutet Fairplay heute über die Regeln hinaus?"] },
+  ],
+  anatomie: [
+    { title: "Wie wir den Körper verstehen lernten", text: "Schon der antike Arzt Galen untersuchte vor fast 2000 Jahren Muskeln und Knochen, oft an verletzten Gladiatoren. Im 16. Jahrhundert revolutionierte Andreas Vesalius mit genauen Zeichnungen die Anatomie. Heute wissen wir genau, wie Muskeln, Gelenke und Organe zusammenarbeiten – wichtig für Medizin und Sport.", questions: ["Wer untersuchte schon in der Antike den menschlichen Körper?", "Was machte Andreas Vesalius besonders wichtig?", "Warum ist Anatomie für den Sport wichtig?"] },
+  ],
+  aufwaermen: [
+    { title: "Warum Aufwärmen heute selbstverständlich ist", text: "Lange wurde im Sport einfach losgelegt. Erst im 20. Jahrhundert zeigten Sportwissenschaftler wie Hans Selye und später Jürgen Weineck, dass der Körper sich an Belastung anpassen muss. Heute weiß man: Ein gutes Aufwärmen erhöht die Körpertemperatur, macht Muskeln dehnbarer und schützt vor Verletzungen.", questions: ["Wie ging man früher mit dem Aufwärmen um?", "Welche Wissenschaftler haben das Verständnis verändert?", "Welche Vorteile hat ein gutes Aufwärmen heute?"] },
+  ],
 };
 
 // ────────────────────────────────────────────────────────────────────────────
