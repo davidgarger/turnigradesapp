@@ -30,7 +30,6 @@ import {
   canUndo,
   type ClassId,
   type ClassSchedule,
-  type Discipline,
   type DisciplineScoreMode,
   type Student,
   type Excuse,
