@@ -65,14 +65,18 @@ function DisziplinenPage() {
       toast.error("Bitte einen Namen angeben.");
       return;
     }
+    const finalUnit = unit.trim() || suggestUnit(name);
     turnActions.addDiscipline(cls.id, name.trim(), weight, {
       scoreMode: mode,
       scoreMax: mode === "points" ? Math.max(1, max) : undefined,
+      unit: finalUnit || undefined,
     });
     setName("");
     setWeight(10);
     setMode("percent");
     setMax(10);
+    setUnit("");
+    setUnitTouched(false);
     setOpen(false);
     toast.success("Disziplin hinzugefügt");
   };
@@ -113,9 +117,28 @@ function DisziplinenPage() {
                   <Input
                     id="dn"
                     value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      setName(v);
+                      if (!unitTouched) setUnit(suggestUnit(v));
+                    }}
                     placeholder="z. B. Weitsprung"
                   />
+                </div>
+                <div className="grid gap-1.5">
+                  <Label htmlFor="du">Einheit</Label>
+                  <Input
+                    id="du"
+                    value={unit}
+                    onChange={(e) => {
+                      setUnit(e.target.value);
+                      setUnitTouched(true);
+                    }}
+                    placeholder="z. B. m, Level, s, Wdh – leer = Standard"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Wird in der Tabelle hinter dem Wert angezeigt. Aus dem Namen vorgeschlagen.
+                  </p>
                 </div>
                 <div className="grid gap-1.5">
                   <Label htmlFor="dw">Gewichtung (%)</Label>
