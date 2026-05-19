@@ -23,6 +23,7 @@ import {
   exportClassCsv,
   getDisciplineMax,
   getDisciplineUnit,
+  suggestUnit,
   getEffectiveTotalLessons,
   computeScheduledLessons,
   turnActions,
