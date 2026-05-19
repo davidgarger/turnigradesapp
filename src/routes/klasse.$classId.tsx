@@ -1084,13 +1084,16 @@ function SchedulePanel({
 function ScoreInput({
   value,
   onChange,
+  max = 100,
+  unit = "%",
 }: {
   value: number | undefined;
   onChange: (v: number | undefined) => void;
+  max?: number;
+  unit?: string;
 }) {
   const [text, setText] = useState<string>(value === undefined ? "" : String(value));
 
-  // Externe Änderungen (z. B. Reset, Import) übernehmen, solange das Feld nicht editiert wird.
   useEffect(() => {
     setText(value === undefined ? "" : String(value));
   }, [value]);
@@ -1106,25 +1109,32 @@ function ScoreInput({
       onChange(undefined);
       return;
     }
-    onChange(Math.max(0, Math.min(100, Math.round(n))));
+    onChange(Math.max(0, Math.min(max, Math.round(n))));
   };
 
+  const maxLen = String(max).length;
+
   return (
-    <input
-      type="text"
-      inputMode="numeric"
-      value={text}
-      placeholder="–"
-      onChange={(e) => {
-        const v = e.target.value.replace(/[^\d]/g, "").slice(0, 3);
-        setText(v);
-        commit(v);
-      }}
-      onBlur={(e) => commit(e.target.value)}
-      className="h-9 w-16 rounded-md border border-input bg-background px-2 text-center text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-    />
+    <div className="inline-flex items-center gap-1">
+      <input
+        type="text"
+        inputMode="numeric"
+        value={text}
+        placeholder="–"
+        onChange={(e) => {
+          const v = e.target.value.replace(/[^\d]/g, "").slice(0, maxLen);
+          setText(v);
+          commit(v);
+        }}
+        onBlur={(e) => commit(e.target.value)}
+        className="h-9 w-14 rounded-md border border-input bg-background px-2 text-center text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+        title={`0–${max} ${unit}`}
+      />
+      <span className="text-[10px] text-muted-foreground">{unit}</span>
+    </div>
   );
 }
+
 
 function UndoButton() {
   // re-render bei state-Änderungen, damit canUndo() aktuell ist
