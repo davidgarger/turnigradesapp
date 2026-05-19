@@ -6,6 +6,7 @@ import {
   turnActions,
   useTurnState,
   getDisciplineMax,
+  suggestUnit,
   type ClassId,
   type DisciplineScoreMode,
 } from "@/lib/turn-store";
@@ -47,6 +48,8 @@ function DisziplinenPage() {
   const [weight, setWeight] = useState(10);
   const [mode, setMode] = useState<DisciplineScoreMode>("percent");
   const [max, setMax] = useState<number>(10);
+  const [unit, setUnit] = useState<string>("");
+  const [unitTouched, setUnitTouched] = useState(false);
 
   if (!isValid || !cls) {
     return (
@@ -62,14 +65,18 @@ function DisziplinenPage() {
       toast.error("Bitte einen Namen angeben.");
       return;
     }
+    const finalUnit = unit.trim() || suggestUnit(name);
     turnActions.addDiscipline(cls.id, name.trim(), weight, {
       scoreMode: mode,
       scoreMax: mode === "points" ? Math.max(1, max) : undefined,
+      unit: finalUnit || undefined,
     });
     setName("");
     setWeight(10);
     setMode("percent");
     setMax(10);
+    setUnit("");
+    setUnitTouched(false);
     setOpen(false);
     toast.success("Disziplin hinzugefügt");
   };
@@ -110,9 +117,28 @@ function DisziplinenPage() {
                   <Input
                     id="dn"
                     value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      setName(v);
+                      if (!unitTouched) setUnit(suggestUnit(v));
+                    }}
                     placeholder="z. B. Weitsprung"
                   />
+                </div>
+                <div className="grid gap-1.5">
+                  <Label htmlFor="du">Einheit</Label>
+                  <Input
+                    id="du"
+                    value={unit}
+                    onChange={(e) => {
+                      setUnit(e.target.value);
+                      setUnitTouched(true);
+                    }}
+                    placeholder="z. B. m, Level, s, Wdh – leer = Standard"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Wird in der Tabelle hinter dem Wert angezeigt. Aus dem Namen vorgeschlagen.
+                  </p>
                 </div>
                 <div className="grid gap-1.5">
                   <Label htmlFor="dw">Gewichtung (%)</Label>
@@ -214,7 +240,7 @@ function DisziplinenPage() {
                       <Trash2 className="h-4 w-4" />
                     </button>
                   </div>
-                  <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                  <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
                     <div className="grid gap-1">
                       <Label className="text-xs text-muted-foreground">Gewichtung (%)</Label>
                       <Input
@@ -264,6 +290,20 @@ function DisziplinenPage() {
                     ) : (
                       <div className="hidden sm:block" />
                     )}
+                    <div className="grid gap-1">
+                      <Label className="text-xs text-muted-foreground">
+                        Einheit
+                      </Label>
+                      <Input
+                        value={d.unit ?? ""}
+                        placeholder={suggestUnit(d.name) || (mode === "points" ? "Pkt" : "%")}
+                        onChange={(e) =>
+                          turnActions.updateDiscipline(cls.id, d.id, {
+                            unit: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
                   </div>
                 </div>
               );
