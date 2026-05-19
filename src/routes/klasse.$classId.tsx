@@ -246,8 +246,10 @@ function ClassPage() {
             <Link
               to="/klasse/$classId/disziplinen"
               params={{ classId: cls.id }}
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
-              title="Disziplinen verwalten"
+              title="Disziplinen verwalten (neues Fenster)"
             >
               <Dumbbell className="h-4 w-4" />
               <span className="hidden sm:inline">Disziplinen</span>
