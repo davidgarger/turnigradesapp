@@ -377,7 +377,18 @@ function ClassPage() {
                   ) : null}
                   <button
                     onClick={() => {
-                      if (confirm(`Disziplin „${d.name}“ wirklich löschen?`)) {
+                      const id = turnActions.saveDisciplineSnapshot(cls.id, d.id);
+                      if (id) toast.success(`„${d.name}" archiviert (${new Date().toLocaleDateString("de-DE")})`);
+                    }}
+                    className="text-muted-foreground hover:text-primary"
+                    aria-label="Disziplin-Resultate archivieren"
+                    title="Aktuelle Resultate als Snapshot speichern"
+                  >
+                    <History className="h-3.5 w-3.5" />
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (confirm(`Disziplin „${d.name}" wirklich löschen?`)) {
                         turnActions.deleteDiscipline(cls.id, d.id);
                       }
                     }}
@@ -386,6 +397,7 @@ function ClassPage() {
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                   </button>
+
                 </div>
               );
             })}
