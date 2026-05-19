@@ -464,7 +464,15 @@ const CLOZE: Record<Sport, Cloze[]> = {
       ],
     },
   ],
-};
+  volleyball: [{ topic: "Volleyball – Grundlagen", sentences: ["Eine Volleyballmannschaft hat auf dem Feld [sechs] Spieler.", "Pro Ballwechsel sind maximal [drei] Ballberührungen erlaubt.", "Das obere Zuspiel heißt [Pritschen].", "Das untere Zuspiel heißt [Baggern].", "Das Spiel beginnt mit einem [Aufschlag]."] }],
+  handball: [{ topic: "Handball – Grundlagen", sentences: ["Auf dem Feld stehen pro Mannschaft [sieben] Spieler.", "Ein Strafwurf wird vom [Siebenmeter]punkt ausgeführt.", "Ohne zu dribbeln darf man höchstens [drei] Schritte machen.", "In den Torraum darf nur der [Torwart].", "Ein Wurf in der Luft heißt [Sprungwurf]."] }],
+  unihockey: [{ topic: "Unihockey – Grundlagen", sentences: ["Unihockey wird mit einem [Stock] und einem Lochball gespielt.", "Der Stock darf nicht über [Hüft]höhe geschwungen werden.", "Im Torraum darf nur der [Torwart] sein.", "Das Spiel beginnt mit einem [Bully].", "Unihockey heißt international auch [Floorball]."] }],
+  badminton: [{ topic: "Badminton – Grundlagen", sentences: ["Im Badminton spielt man mit einem [Federball] (Shuttle).", "Ein Satz wird normalerweise bis [21] Punkte gespielt.", "Der hohe weite Schlag heißt [Clear].", "Ein kurzer, weicher Schlag über das Netz heißt [Drop].", "Der Schläger wird mit dem [Universal]griff gehalten."] }],
+  schwimmen: [{ topic: "Schwimmen – Grundlagen", sentences: ["Die schnellste Schwimmart ist [Kraul].", "Beim [Brust]schwimmen atmet man nach vorne.", "Eine gute Wasserlage bedeutet, der Körper ist [waagrecht].", "Die Wende im Wettkampf heißt [Rollwende] oder Wende.", "Vor dem Schwimmen muss man unbedingt [duschen]."] }],
+  olympia: [{ topic: "Olympische Spiele", sentences: ["Die ersten Olympischen Spiele fanden in [Griechenland] statt.", "Die modernen Olympischen Spiele wurden [1896] wiederbelebt.", "Die Olympischen Sommerspiele finden alle [vier] Jahre statt.", "Auf der Olympia-Flagge sind [fünf] Ringe.", "Die drei Medaillen heißen Gold, [Silber] und Bronze."] }],
+  fairplay: [{ topic: "Fairplay im Sport", sentences: ["Fairplay heißt, sich an die [Regeln] zu halten.", "Eine wichtige Person, die das Spiel überwacht, ist die [Schiedsrichterin].", "Wer einen Fehler offen zugibt, zeigt [Ehrlichkeit].", "Nach dem Spiel reicht man dem Gegner die [Hand].", "Auch nach einer Niederlage bleibt man [fair]."] }],
+  anatomie: [{ topic: "Anatomie & Muskulatur", sentences: ["Der Muskel an der Vorderseite des Oberarms heißt [Bizeps].", "Der Gegenspieler an der Rückseite heißt [Trizeps].", "Das größte Gelenk im Körper ist das [Knie].", "Das Herz ist ein [Muskel].", "Bei Anstrengung wird die [Atmung] schneller."] }],
+  aufwaermen: [{ topic: "Aufwärmen & Cool-down", sentences: ["Aufwärmen schützt vor [Verletzungen].", "Ein gutes Warm-up dauert etwa [10] Minuten.", "Man beginnt mit allgemeinen Übungen und wird dann [spezifischer].", "Zum Aufwärmen gehört auch das Mobilisieren der [Gelenke].", "Nach dem Sport hilft ein ruhiges [Cool-down]."] }],
 
 // ────────────────────────────────────────────────────────────────────────────
 // Quiz: 3 Fragen mit je 3 Optionen, richtige Antwort markiert
