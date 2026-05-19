@@ -228,6 +228,14 @@ function ClassPage() {
             <SchedulePanel cls={cls} effectiveLessons={effectiveLessons} />
             <UndoButton />
             <Link
+              to="/arbeitsauftrag"
+              search={{ classId: cls.id }}
+              className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+            >
+              <ClipboardList className="h-4 w-4" />
+              <span className="hidden sm:inline">Arbeitsauftrag</span>
+            </Link>
+            <Link
               to="/einstellungen"
               className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
             >
