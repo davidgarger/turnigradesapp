@@ -22,6 +22,23 @@ export type TaskType =
 
 export type Status = "entschuldigt" | "unentschuldigt" | "turnzeug_vergessen";
 
+export type Difficulty = "leicht" | "mittel" | "schwer";
+
+export const DIFFICULTY_LABEL: Record<Difficulty, string> = {
+  leicht: "Leicht (Unter-/Mittelstufe, 1.–4. Kl.)",
+  mittel: "Mittel (5.–7. Kl.)",
+  schwer: "Schwer (Oberstufe, 8.–10. Kl.)",
+};
+
+// Automatische Schwierigkeit anhand der Klassenstufe (1–10).
+export function difficultyForClassId(classId: string | undefined): Difficulty {
+  const n = Number(classId);
+  if (!Number.isFinite(n)) return "mittel";
+  if (n <= 4) return "leicht";
+  if (n <= 7) return "mittel";
+  return "schwer";
+}
+
 export const SPORT_LABEL: Record<Sport, string> = {
   basketball: "Basketball",
   fussball: "Fußball",
