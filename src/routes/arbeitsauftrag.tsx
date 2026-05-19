@@ -150,6 +150,25 @@ function ArbeitsauftragPage() {
   const [taskType, setTaskType] = useState<TaskType>("zufaellig");
   const [assignment, setAssignment] = useState<GeneratedAssignment | null>(null);
 
+  // Klassenfilter für die Schülerliste – ermöglicht schnelles Finden,
+  // besonders wenn viele Schüler aus mehreren Klassen vorhanden sind.
+  const [filterClassId, setFilterClassId] = useState<string>(
+    initialStudent?.classId ?? search.classId ?? "",
+  );
+
+  // Schwierigkeit der Aufgaben – automatisch aus der gewählten Klassenstufe
+  // abgeleitet, jederzeit manuell überschreibbar.
+  const [difficulty, setDifficulty] = useState<Difficulty>(
+    difficultyForClassId(initialStudent?.classId ?? search.classId),
+  );
+  const [difficultyManual, setDifficultyManual] = useState(false);
+
+  const filteredStudents = useMemo(
+    () =>
+      filterClassId ? allStudents.filter((s) => s.classId === filterClassId) : allStudents,
+    [allStudents, filterClassId],
+  );
+
   const onPickStudent = (id: string) => {
     if (!id) return;
     const st = allStudents.find((s) => s.id === id);
@@ -158,6 +177,12 @@ function ArbeitsauftragPage() {
     setKlasse(st.className);
     const auto = latestStatusByStudent.get(st.id);
     if (auto) setStatus(auto);
+    if (!difficultyManual) setDifficulty(difficultyForClassId(st.classId));
+  };
+
+  const onPickFilterClass = (cid: string) => {
+    setFilterClassId(cid);
+    if (cid && !difficultyManual) setDifficulty(difficultyForClassId(cid));
   };
 
   const onGenerate = () => {
@@ -165,7 +190,7 @@ function ArbeitsauftragPage() {
       toast.error("Bitte Name eingeben.");
       return;
     }
-    setAssignment(generateAssignment(sport, taskType));
+    setAssignment(generateAssignment(sport, taskType, difficulty));
   };
 
   const fullText = assignment
@@ -175,6 +200,7 @@ function ArbeitsauftragPage() {
         datum: formatDateDe(datum),
         sport,
         status,
+        difficulty,
         assignment,
       })
     : "";
