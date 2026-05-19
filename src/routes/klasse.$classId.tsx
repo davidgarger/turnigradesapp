@@ -398,31 +398,9 @@ function ClassPage() {
           </Button>
         </div>
 
-        {/* Disziplinen-Verwaltungsfeld */}
-        <div className="mt-6 rounded-lg border border-border bg-card p-4 shadow-sm">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <div className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-primary/10 text-primary">
-                <Dumbbell className="h-5 w-5" />
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-foreground">Disziplinen verwalten</p>
-                <p className="text-xs text-muted-foreground">
-                  {cls.disciplines.length} Disziplinen · Gewichtung, Einheit & Bewertung anpassen
-                </p>
-              </div>
-            </div>
-            <Link
-              to="/klasse/$classId/disziplinen"
-              params={{ classId: cls.id }}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
-            >
-              <Dumbbell className="h-4 w-4" /> Öffnen
-            </Link>
-          </div>
-        </div>
+        {/* Disziplinen-Verwaltungsfeld (inline) */}
+        <DisciplinesManager cls={cls} />
+
 
 
 
