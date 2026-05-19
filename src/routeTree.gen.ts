@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as EinstellungenRouteImport } from './routes/einstellungen'
+import { Route as ArbeitsauftragRouteImport } from './routes/arbeitsauftrag'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as KlasseClassIdRouteImport } from './routes/klasse.$classId'
 import { Route as KlasseClassIdQuickRouteImport } from './routes/klasse.$classId.quick'
@@ -23,6 +24,11 @@ const LoginRoute = LoginRouteImport.update({
 const EinstellungenRoute = EinstellungenRouteImport.update({
   id: '/einstellungen',
   path: '/einstellungen',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ArbeitsauftragRoute = ArbeitsauftragRouteImport.update({
+  id: '/arbeitsauftrag',
+  path: '/arbeitsauftrag',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -43,6 +49,7 @@ const KlasseClassIdQuickRoute = KlasseClassIdQuickRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/arbeitsauftrag': typeof ArbeitsauftragRoute
   '/einstellungen': typeof EinstellungenRoute
   '/login': typeof LoginRoute
   '/klasse/$classId': typeof KlasseClassIdRouteWithChildren
@@ -50,6 +57,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/arbeitsauftrag': typeof ArbeitsauftragRoute
   '/einstellungen': typeof EinstellungenRoute
   '/login': typeof LoginRoute
   '/klasse/$classId': typeof KlasseClassIdRouteWithChildren
@@ -58,6 +66,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/arbeitsauftrag': typeof ArbeitsauftragRoute
   '/einstellungen': typeof EinstellungenRoute
   '/login': typeof LoginRoute
   '/klasse/$classId': typeof KlasseClassIdRouteWithChildren
@@ -67,6 +76,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/arbeitsauftrag'
     | '/einstellungen'
     | '/login'
     | '/klasse/$classId'
@@ -74,6 +84,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/arbeitsauftrag'
     | '/einstellungen'
     | '/login'
     | '/klasse/$classId'
@@ -81,6 +92,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/arbeitsauftrag'
     | '/einstellungen'
     | '/login'
     | '/klasse/$classId'
@@ -89,6 +101,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ArbeitsauftragRoute: typeof ArbeitsauftragRoute
   EinstellungenRoute: typeof EinstellungenRoute
   LoginRoute: typeof LoginRoute
   KlasseClassIdRoute: typeof KlasseClassIdRouteWithChildren
@@ -108,6 +121,13 @@ declare module '@tanstack/react-router' {
       path: '/einstellungen'
       fullPath: '/einstellungen'
       preLoaderRoute: typeof EinstellungenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/arbeitsauftrag': {
+      id: '/arbeitsauftrag'
+      path: '/arbeitsauftrag'
+      fullPath: '/arbeitsauftrag'
+      preLoaderRoute: typeof ArbeitsauftragRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -148,6 +168,7 @@ const KlasseClassIdRouteWithChildren = KlasseClassIdRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ArbeitsauftragRoute: ArbeitsauftragRoute,
   EinstellungenRoute: EinstellungenRoute,
   LoginRoute: LoginRoute,
   KlasseClassIdRoute: KlasseClassIdRouteWithChildren,
@@ -155,3 +176,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
