@@ -5,8 +5,17 @@
 export type Sport =
   | "basketball"
   | "fussball"
+  | "volleyball"
+  | "handball"
+  | "unihockey"
+  | "badminton"
+  | "schwimmen"
   | "geraeteturnen"
   | "leichtathletik"
+  | "olympia"
+  | "fairplay"
+  | "anatomie"
+  | "aufwaermen"
   | "allgemein";
 
 export type TaskType =
@@ -42,8 +51,17 @@ export function difficultyForClassId(classId: string | undefined): Difficulty {
 export const SPORT_LABEL: Record<Sport, string> = {
   basketball: "Basketball",
   fussball: "Fußball",
+  volleyball: "Volleyball",
+  handball: "Handball",
+  unihockey: "Unihockey / Floorball",
+  badminton: "Badminton",
+  schwimmen: "Schwimmen",
   geraeteturnen: "Geräteturnen",
   leichtathletik: "Leichtathletik",
+  olympia: "Olympische Spiele",
+  fairplay: "Fairplay & Sportethik",
+  anatomie: "Anatomie & Muskulatur",
+  aufwaermen: "Aufwärmen & Cool-down",
   allgemein: "Allgemein",
 };
 
