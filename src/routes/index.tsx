@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Settings, Users, ClipboardList, ImagePlus, Trash2, Palette, Check, LogOut, MoreVertical, Pencil, ArrowLeftRight, RotateCcw, Plus, EyeOff, LayoutGrid } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { turnActions, useTurnState } from "@/lib/turn-store";
+import { schoolYearLabel } from "@/routes/klasse.$classId";
 import { TurniLogo } from "@/components/TurniLogo";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -354,6 +355,11 @@ function Index() {
                   </div>
                   <div className="relative mt-6">
                     <div className="text-lg font-bold">{cls.name}</div>
+                    {schoolYearLabel(cls) && (
+                      <div className="mt-0.5 text-[11px] font-semibold uppercase tracking-wider text-white/85">
+                        Schuljahr {schoolYearLabel(cls)}
+                      </div>
+                    )}
                     <div className="mt-2 flex flex-wrap gap-1.5 text-[11px] font-semibold uppercase tracking-wider">
                       <span className="rounded-full bg-white/20 px-2 py-0.5 text-white">
                         {cls.students.length} Schüler
