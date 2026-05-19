@@ -13,7 +13,8 @@ import {
   Zap,
   Undo2,
   Upload,
-  History,
+  Dumbbell,
+  Clock,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -66,6 +67,14 @@ import { Label } from "@/components/ui/label";
 
 const VALID: ClassId[] = ["1", "2", "3", "4"];
 
+export function schoolYearLabel(cls: { schedule?: ClassSchedule }): string | null {
+  const start = cls.schedule?.startDate;
+  if (!start) return null;
+  const y = new Date(start + "T00:00:00").getFullYear();
+  if (Number.isNaN(y)) return null;
+  return `${y}/${String((y + 1) % 100).padStart(2, "0")}`;
+}
+
 export const Route = createFileRoute("/klasse/$classId")({
   component: ClassPage,
   head: ({ params }) => ({
@@ -110,11 +119,6 @@ function ClassPage() {
   const [studentOpen, setStudentOpen] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
 
-  const [discName, setDiscName] = useState("");
-  const [discWeight, setDiscWeight] = useState(10);
-  const [discMode, setDiscMode] = useState<DisciplineScoreMode>("percent");
-  const [discMax, setDiscMax] = useState<number>(10);
-  const [discOpen, setDiscOpen] = useState(false);
 
 
   const rows = useMemo(() => {
@@ -182,22 +186,6 @@ function ClassPage() {
     toast.success(`${list.length} Schüler importiert`);
   };
 
-  const handleAddDiscipline = () => {
-    if (!discName.trim()) {
-      toast.error("Bitte einen Namen angeben.");
-      return;
-    }
-    turnActions.addDiscipline(cls.id, discName.trim(), discWeight, {
-      scoreMode: discMode,
-      scoreMax: discMode === "points" ? Math.max(1, discMax) : undefined,
-    });
-    setDiscName("");
-    setDiscWeight(10);
-    setDiscMode("percent");
-    setDiscMax(10);
-    setDiscOpen(false);
-    toast.success("Disziplin hinzugefügt");
-  };
 
 
   const handleExport = () => {
@@ -226,6 +214,12 @@ function ClassPage() {
                 aria-label="Klassenname bearbeiten"
               />
               <p className="px-1 text-xs text-muted-foreground">
+                {schoolYearLabel(cls) ? (
+                  <>
+                    <span className="font-medium text-foreground">{schoolYearLabel(cls)}</span>
+                    {" · "}
+                  </>
+                ) : null}
                 {cls.students.length} Schüler · {cls.disciplines.length} Disziplinen
               </p>
             </div>
@@ -250,13 +244,13 @@ function ClassPage() {
               <span className="hidden sm:inline">Arbeitsauftrag</span>
             </Link>
             <Link
-              to="/klasse/$classId/archiv"
+              to="/klasse/$classId/disziplinen"
               params={{ classId: cls.id }}
               className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
-              title="Disziplin-Archiv"
+              title="Disziplinen verwalten"
             >
-              <History className="h-4 w-4" />
-              <span className="hidden sm:inline">Archiv</span>
+              <Dumbbell className="h-4 w-4" />
+              <span className="hidden sm:inline">Disziplinen</span>
             </Link>
 
             <Link
@@ -330,90 +324,7 @@ function ClassPage() {
 
 
 
-        {/* Disciplines overview chip-row (with delete & weight edit) */}
-        {cls.disciplines.length > 0 && (
-          <div className="mb-4 flex flex-wrap items-center gap-2 rounded-lg border border-border bg-card p-3">
-            <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Disziplinen
-            </span>
-            {cls.disciplines.map((d) => {
-              const mode = d.scoreMode ?? "percent";
-              const max = getDisciplineMax(d);
-              return (
-                <div
-                  key={d.id}
-                  className="flex flex-wrap items-center gap-2 rounded-md border border-border bg-background px-2 py-1 text-sm"
-                >
-                  <span className="font-medium text-foreground">{d.name}</span>
-                  <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-                    Gewichtung
-                    <input
-                      type="number"
-                      min={0}
-                      max={100}
-                      value={d.weight}
-                      onChange={(e) =>
-                        turnActions.updateDiscipline(cls.id, d.id, { weight: Number(e.target.value) })
-                      }
-                      className="h-7 w-14 rounded border border-input bg-background px-1 text-right text-xs"
-                    />
-                    %
-                  </span>
-                  <select
-                    value={mode}
-                    onChange={(e) => {
-                      const next = e.target.value as DisciplineScoreMode;
-                      turnActions.updateDiscipline(cls.id, d.id, {
-                        scoreMode: next,
-                        scoreMax: next === "points" ? (d.scoreMax ?? 10) : undefined,
-                      });
-                    }}
-                    className="h-7 rounded border border-input bg-background px-1 text-xs"
-                    title="Bewertungsmodus"
-                  >
-                    <option value="percent">%</option>
-                    <option value="points">Punkte/Zahl</option>
-                  </select>
-                  {mode === "points" ? (
-                    <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-                      max
-                      <MaxInput
-                        value={max}
-                        onCommit={(v) =>
-                          turnActions.updateDiscipline(cls.id, d.id, { scoreMax: v })
-                        }
-                      />
-                    </span>
-                  ) : null}
-                  <button
-                    onClick={() => {
-                      const id = turnActions.saveDisciplineSnapshot(cls.id, d.id);
-                      if (id) toast.success(`„${d.name}" archiviert (${new Date().toLocaleDateString("de-DE")})`);
-                    }}
-                    className="text-muted-foreground hover:text-primary"
-                    aria-label="Disziplin-Resultate archivieren"
-                    title="Aktuelle Resultate als Snapshot speichern"
-                  >
-                    <History className="h-3.5 w-3.5" />
-                  </button>
-                  <button
-                    onClick={() => {
-                      if (confirm(`Disziplin „${d.name}" wirklich löschen?`)) {
-                        turnActions.deleteDiscipline(cls.id, d.id);
-                      }
-                    }}
-                    className="text-muted-foreground hover:text-destructive"
-                    aria-label="Disziplin löschen"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </button>
 
-                </div>
-              );
-            })}
-
-          </div>
-        )}
 
         {/* Table */}
         <div className="overflow-x-auto rounded-lg border border-border bg-card shadow-sm">
@@ -497,90 +408,13 @@ function ClassPage() {
 
         {/* Aktionen unterhalb der Tabelle */}
         <div className="mt-4 flex flex-wrap items-center gap-2">
-          <Dialog open={discOpen} onOpenChange={setDiscOpen}>
-            <DialogTrigger asChild>
-              <Button variant="outline">
-                <Plus className="h-4 w-4" /> Disziplin
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Disziplin hinzufügen</DialogTitle>
-              </DialogHeader>
-              <div className="grid gap-3">
-                <div className="grid gap-1.5">
-                  <Label htmlFor="dn">Name</Label>
-                  <Input
-                    id="dn"
-                    value={discName}
-                    onChange={(e) => setDiscName(e.target.value)}
-                    placeholder="z. B. Weitsprung"
-                  />
-                </div>
-                <div className="grid gap-1.5">
-                  <Label htmlFor="dw">Gewichtung (%)</Label>
-                  <Input
-                    id="dw"
-                    type="number"
-                    min={0}
-                    max={100}
-                    value={discWeight}
-                    onChange={(e) => setDiscWeight(Number(e.target.value))}
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Die Gewichtungen aller Disziplinen werden im Verhältnis zueinander gewertet.
-                  </p>
-                </div>
-                <div className="grid gap-1.5">
-                  <Label>Bewertung</Label>
-                  <div className="grid grid-cols-2 gap-1 rounded-md bg-muted p-1 text-sm">
-                    <button
-                      type="button"
-                      onClick={() => setDiscMode("percent")}
-                      className={`rounded px-2 py-1.5 transition ${discMode === "percent" ? "bg-background font-semibold text-foreground shadow-sm" : "text-muted-foreground"}`}
-                    >
-                      Prozent (0–100 %)
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setDiscMode("points")}
-                      className={`rounded px-2 py-1.5 transition ${discMode === "points" ? "bg-background font-semibold text-foreground shadow-sm" : "text-muted-foreground"}`}
-                    >
-                      Punkte / Zahl
-                    </button>
-                  </div>
-                  {discMode === "points" ? (
-                    <div className="grid gap-1.5">
-                      <Label htmlFor="dmax">Maximaler Wert (= 100 %)</Label>
-                      <Input
-                        id="dmax"
-                        type="number"
-                        min={1}
-                        max={1000}
-                        value={discMax}
-                        onChange={(e) => setDiscMax(Math.max(1, Number(e.target.value) || 1))}
-                      />
-                      <p className="text-xs text-muted-foreground">
-                        Eingabe pro Schüler:in als Zahl 0–{discMax}. Wird intern auf Prozent
-                        normalisiert (z. B. {Math.round(discMax / 2)} = 50 %).
-                      </p>
-                    </div>
-                  ) : (
-                    <p className="text-xs text-muted-foreground">
-                      Eingabe direkt als Prozentwert 0–100.
-                    </p>
-                  )}
-                </div>
-
-              </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setDiscOpen(false)}>
-                  Abbrechen
-                </Button>
-                <Button onClick={handleAddDiscipline}>Hinzufügen</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+          <Link
+            to="/klasse/$classId/disziplinen"
+            params={{ classId: cls.id }}
+            className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+          >
+            <Dumbbell className="h-4 w-4" /> Disziplinen verwalten
+          </Link>
 
           <Button variant="outline" onClick={handleExport}>
             <Download className="h-4 w-4" /> Export CSV
@@ -1239,7 +1073,7 @@ function StudentHistoryDialog({ student, classId }: { student: Student; classId:
           aria-label="Stunden­übersicht"
           title="Alle Stunden des Schuljahres"
         >
-          <History className="h-4 w-4" />
+          <Clock className="h-4 w-4" />
         </button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl">
