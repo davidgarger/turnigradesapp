@@ -470,6 +470,47 @@ function ClassPage() {
                     Die Gewichtungen aller Disziplinen werden im Verhältnis zueinander gewertet.
                   </p>
                 </div>
+                <div className="grid gap-1.5">
+                  <Label>Bewertung</Label>
+                  <div className="grid grid-cols-2 gap-1 rounded-md bg-muted p-1 text-sm">
+                    <button
+                      type="button"
+                      onClick={() => setDiscMode("percent")}
+                      className={`rounded px-2 py-1.5 transition ${discMode === "percent" ? "bg-background font-semibold text-foreground shadow-sm" : "text-muted-foreground"}`}
+                    >
+                      Prozent (0–100 %)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setDiscMode("points")}
+                      className={`rounded px-2 py-1.5 transition ${discMode === "points" ? "bg-background font-semibold text-foreground shadow-sm" : "text-muted-foreground"}`}
+                    >
+                      Punkte / Zahl
+                    </button>
+                  </div>
+                  {discMode === "points" ? (
+                    <div className="grid gap-1.5">
+                      <Label htmlFor="dmax">Maximaler Wert (= 100 %)</Label>
+                      <Input
+                        id="dmax"
+                        type="number"
+                        min={1}
+                        max={1000}
+                        value={discMax}
+                        onChange={(e) => setDiscMax(Math.max(1, Number(e.target.value) || 1))}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Eingabe pro Schüler:in als Zahl 0–{discMax}. Wird intern auf Prozent
+                        normalisiert (z. B. {Math.round(discMax / 2)} = 50 %).
+                      </p>
+                    </div>
+                  ) : (
+                    <p className="text-xs text-muted-foreground">
+                      Eingabe direkt als Prozentwert 0–100.
+                    </p>
+                  )}
+                </div>
+
               </div>
               <DialogFooter>
                 <Button variant="outline" onClick={() => setDiscOpen(false)}>
