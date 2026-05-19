@@ -820,7 +820,63 @@ export const turnActions = {
   updateSettings(patch: Partial<GradingSettings>) {
     setState((s) => ({ ...s, settings: { ...s.settings, ...patch } }));
   },
+  saveDisciplineSnapshot(
+    classId: ClassId,
+    disciplineId: string,
+    opts?: { date?: string; note?: string },
+  ): string | null {
+    let newId: string | null = null;
+    setState((s) => {
+      const cls = s.classes[classId];
+      const d = cls.disciplines.find((x) => x.id === disciplineId);
+      if (!d) return s;
+      const snap: DisciplineSnapshot = {
+        id: genId(),
+        date: opts?.date ?? new Date().toISOString().slice(0, 10),
+        disciplineId: d.id,
+        disciplineName: d.name,
+        scoreMode: d.scoreMode ?? "percent",
+        scoreMax: getDisciplineMax(d),
+        entries: cls.students.map((st) => ({
+          studentId: st.id,
+          firstName: st.firstName,
+          lastName: st.lastName,
+          value: st.scores[d.id],
+        })),
+        note: opts?.note,
+        createdAt: new Date().toISOString(),
+      };
+      newId = snap.id;
+      return {
+        ...s,
+        classes: {
+          ...s.classes,
+          [classId]: {
+            ...cls,
+            snapshots: [...(cls.snapshots ?? []), snap],
+          },
+        },
+      };
+    });
+    return newId;
+  },
+  deleteDisciplineSnapshot(classId: ClassId, snapshotId: string) {
+    setState((s) => {
+      const cls = s.classes[classId];
+      return {
+        ...s,
+        classes: {
+          ...s.classes,
+          [classId]: {
+            ...cls,
+            snapshots: (cls.snapshots ?? []).filter((sn) => sn.id !== snapshotId),
+          },
+        },
+      };
+    });
+  },
 };
+
 
 // ---------- Grading logic ----------
 export interface GradeResult {
