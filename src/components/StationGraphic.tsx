@@ -279,7 +279,7 @@ function SprungLandung() {
   );
 }
 
-const MAP: Record<GraphicKey, () => JSX.Element> = {
+const MAP: Record<GraphicKey, () => React.ReactElement> = {
   "reck-hang": ReckHang,
   "reck-knee-tuck": ReckKneeTuck,
   "reck-hip-bar": ReckHipBar,
