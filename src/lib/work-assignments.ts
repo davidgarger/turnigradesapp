@@ -782,13 +782,49 @@ const ALL_RESOLVED: Exclude<TaskType, "zufaellig">[] = [
   "sportgeschichte",
 ];
 
+// Welche Auftragstypen sind je Sportart wirklich sinnvoll?
+// Querschnittsthemen (Olympia, Fairplay, Anatomie, Aufwärmen) erlauben
+// nicht alle Typen, da z. B. "Technik" oder "Steckbrief" nicht überall passt.
+const ALLOWED_BY_SPORT: Record<Sport, Exclude<TaskType, "zufaellig">[]> = {
+  basketball: ALL_RESOLVED,
+  fussball: ALL_RESOLVED,
+  volleyball: ALL_RESOLVED,
+  handball: ALL_RESOLVED,
+  unihockey: ALL_RESOLVED,
+  badminton: ALL_RESOLVED,
+  schwimmen: ALL_RESOLVED,
+  geraeteturnen: ALL_RESOLVED,
+  leichtathletik: ALL_RESOLVED,
+  // Olympia: keine klassische Technik/Beobachtung im Sportart-Sinn.
+  olympia: ["regeln", "reflexion", "lueckentext", "quiz", "steckbrief", "sportgeschichte"],
+  // Fairplay: keine Bewegungstechnik.
+  fairplay: ["beobachtung", "regeln", "reflexion", "lueckentext", "quiz", "steckbrief", "sportgeschichte"],
+  // Anatomie: Wissensthema – ohne Beobachtung/Technik im Spielsinn.
+  anatomie: ["regeln", "reflexion", "lueckentext", "quiz", "steckbrief", "sportgeschichte"],
+  // Aufwärmen: Steckbrief unpassend, alles andere greift.
+  aufwaermen: ["beobachtung", "regeln", "technik", "reflexion", "lueckentext", "quiz", "sportgeschichte"],
+  allgemein: ALL_RESOLVED,
+};
+
+export function allowedTaskTypesForSport(sport: Sport): TaskType[] {
+  return [...ALLOWED_BY_SPORT[sport], "zufaellig"];
+}
+
 export function generateAssignment(
   sport: Sport,
   taskType: TaskType,
   difficulty: Difficulty = "mittel",
 ): GeneratedAssignment {
-  const resolved: Exclude<TaskType, "zufaellig"> =
-    taskType === "zufaellig" ? pickRandom(ALL_RESOLVED) : taskType;
+  const allowed = ALLOWED_BY_SPORT[sport];
+  let resolved: Exclude<TaskType, "zufaellig">;
+  if (taskType === "zufaellig") {
+    resolved = pickRandom(allowed);
+  } else if (!allowed.includes(taskType)) {
+    // Fallback, falls jemand einen nicht erlaubten Typ übergibt.
+    resolved = pickRandom(allowed);
+  } else {
+    resolved = taskType;
+  }
 
   // Anzahl je Auftragstyp nach Schwierigkeit – bewusst umfangreicher,
   // damit der Auftrag eine ganze Lektion (ca. 30–45 Min.) füllt.
