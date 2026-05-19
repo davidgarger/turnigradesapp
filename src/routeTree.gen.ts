@@ -16,7 +16,7 @@ import { Route as ArbeitsauftragRouteImport } from './routes/arbeitsauftrag'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as KlasseClassIdRouteImport } from './routes/klasse.$classId'
 import { Route as KlasseClassIdQuickRouteImport } from './routes/klasse.$classId.quick'
-import { Route as KlasseClassIdArchivRouteImport } from './routes/klasse.$classId.archiv'
+import { Route as KlasseClassIdDisziplinenRouteImport } from './routes/klasse.$classId.disziplinen'
 
 const StationenkartenRoute = StationenkartenRouteImport.update({
   id: '/stationenkarten',
@@ -53,11 +53,12 @@ const KlasseClassIdQuickRoute = KlasseClassIdQuickRouteImport.update({
   path: '/quick',
   getParentRoute: () => KlasseClassIdRoute,
 } as any)
-const KlasseClassIdArchivRoute = KlasseClassIdArchivRouteImport.update({
-  id: '/archiv',
-  path: '/archiv',
-  getParentRoute: () => KlasseClassIdRoute,
-} as any)
+const KlasseClassIdDisziplinenRoute =
+  KlasseClassIdDisziplinenRouteImport.update({
+    id: '/disziplinen',
+    path: '/disziplinen',
+    getParentRoute: () => KlasseClassIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -66,7 +67,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/stationenkarten': typeof StationenkartenRoute
   '/klasse/$classId': typeof KlasseClassIdRouteWithChildren
-  '/klasse/$classId/archiv': typeof KlasseClassIdArchivRoute
+  '/klasse/$classId/disziplinen': typeof KlasseClassIdDisziplinenRoute
   '/klasse/$classId/quick': typeof KlasseClassIdQuickRoute
 }
 export interface FileRoutesByTo {
@@ -76,7 +77,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/stationenkarten': typeof StationenkartenRoute
   '/klasse/$classId': typeof KlasseClassIdRouteWithChildren
-  '/klasse/$classId/archiv': typeof KlasseClassIdArchivRoute
+  '/klasse/$classId/disziplinen': typeof KlasseClassIdDisziplinenRoute
   '/klasse/$classId/quick': typeof KlasseClassIdQuickRoute
 }
 export interface FileRoutesById {
@@ -87,7 +88,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/stationenkarten': typeof StationenkartenRoute
   '/klasse/$classId': typeof KlasseClassIdRouteWithChildren
-  '/klasse/$classId/archiv': typeof KlasseClassIdArchivRoute
+  '/klasse/$classId/disziplinen': typeof KlasseClassIdDisziplinenRoute
   '/klasse/$classId/quick': typeof KlasseClassIdQuickRoute
 }
 export interface FileRouteTypes {
@@ -99,7 +100,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/stationenkarten'
     | '/klasse/$classId'
-    | '/klasse/$classId/archiv'
+    | '/klasse/$classId/disziplinen'
     | '/klasse/$classId/quick'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -109,7 +110,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/stationenkarten'
     | '/klasse/$classId'
-    | '/klasse/$classId/archiv'
+    | '/klasse/$classId/disziplinen'
     | '/klasse/$classId/quick'
   id:
     | '__root__'
@@ -119,7 +120,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/stationenkarten'
     | '/klasse/$classId'
-    | '/klasse/$classId/archiv'
+    | '/klasse/$classId/disziplinen'
     | '/klasse/$classId/quick'
   fileRoutesById: FileRoutesById
 }
@@ -183,23 +184,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof KlasseClassIdQuickRouteImport
       parentRoute: typeof KlasseClassIdRoute
     }
-    '/klasse/$classId/archiv': {
-      id: '/klasse/$classId/archiv'
-      path: '/archiv'
-      fullPath: '/klasse/$classId/archiv'
-      preLoaderRoute: typeof KlasseClassIdArchivRouteImport
+    '/klasse/$classId/disziplinen': {
+      id: '/klasse/$classId/disziplinen'
+      path: '/disziplinen'
+      fullPath: '/klasse/$classId/disziplinen'
+      preLoaderRoute: typeof KlasseClassIdDisziplinenRouteImport
       parentRoute: typeof KlasseClassIdRoute
     }
   }
 }
 
 interface KlasseClassIdRouteChildren {
-  KlasseClassIdArchivRoute: typeof KlasseClassIdArchivRoute
+  KlasseClassIdDisziplinenRoute: typeof KlasseClassIdDisziplinenRoute
   KlasseClassIdQuickRoute: typeof KlasseClassIdQuickRoute
 }
 
 const KlasseClassIdRouteChildren: KlasseClassIdRouteChildren = {
-  KlasseClassIdArchivRoute: KlasseClassIdArchivRoute,
+  KlasseClassIdDisziplinenRoute: KlasseClassIdDisziplinenRoute,
   KlasseClassIdQuickRoute: KlasseClassIdQuickRoute,
 }
 
