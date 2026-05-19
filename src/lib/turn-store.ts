@@ -15,6 +15,8 @@ export interface Discipline {
   // "points"  → Eingabe 0–scoreMax (z. B. 10 Punkte). Wird intern auf 0–100 normalisiert.
   scoreMode?: DisciplineScoreMode;
   scoreMax?: number; // nur bei "points" relevant, Default 100
+  // Anzeigeeinheit (z. B. "m", "Level", "s", "Wdh"). Wenn leer → Default basierend auf scoreMode.
+  unit?: string;
 }
 
 export function getDisciplineMax(d: Discipline): number {
@@ -23,7 +25,18 @@ export function getDisciplineMax(d: Discipline): number {
 }
 
 export function getDisciplineUnit(d: Discipline): string {
+  if (d.unit && d.unit.trim()) return d.unit.trim();
   return d.scoreMode === "points" ? "Pkt" : "%";
+}
+
+// Erkennt eine sinnvolle Einheit anhand des Disziplin-Namens.
+export function suggestUnit(name: string): string {
+  const n = name.toLowerCase();
+  if (/(shuttle|level|stufe)/.test(n)) return "Level";
+  if (/(kugel|stoß|stoss|weit|hoch|sprung|wurf|ball)/.test(n)) return "m";
+  if (/(lauf|sprint|cooper|\d{2,4}\s*m|zeit)/.test(n)) return "s";
+  if (/(klimm|liegest|situp|sit-up|sit_up|wdh|wiederhol|burpee)/.test(n)) return "Wdh";
+  return "";
 }
 
 export function scoreToPercent(d: Discipline, raw: number): number {
