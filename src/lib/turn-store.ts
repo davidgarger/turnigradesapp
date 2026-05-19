@@ -4,11 +4,34 @@ import { supabase } from "@/integrations/supabase/client";
 // ---------- Types ----------
 export type ClassId = "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10";
 
+export type DisciplineScoreMode = "percent" | "points";
+
 export interface Discipline {
   id: string;
   name: string;
   weight: number; // relative weight (any positive number; only ratios matter)
+  // Bewertungsmodus pro Disziplin.
+  // "percent" (Default, abwärtskompatibel) → Eingabe 0–100 %.
+  // "points"  → Eingabe 0–scoreMax (z. B. 10 Punkte). Wird intern auf 0–100 normalisiert.
+  scoreMode?: DisciplineScoreMode;
+  scoreMax?: number; // nur bei "points" relevant, Default 100
 }
+
+export function getDisciplineMax(d: Discipline): number {
+  if (d.scoreMode === "points") return Math.max(1, d.scoreMax ?? 10);
+  return 100;
+}
+
+export function getDisciplineUnit(d: Discipline): string {
+  return d.scoreMode === "points" ? "Pkt" : "%";
+}
+
+export function scoreToPercent(d: Discipline, raw: number): number {
+  const max = getDisciplineMax(d);
+  if (max <= 0) return 0;
+  return Math.max(0, Math.min(100, (raw / max) * 100));
+}
+
 
 export interface Excuse {
   id: string;
@@ -119,9 +142,11 @@ export function getEffectiveTotalLessons(cls: ClassData): number {
 
 // ---------- Defaults ----------
 const defaultDisciplines = (): Discipline[] => [
-  { id: "shuttle", name: "Shuttle Run", weight: 1 },
-  { id: "cooper", name: "Cooper-Test", weight: 1 },
+  // Shuttle Run wird typischerweise in erreichten Stufen bewertet (max ~21).
+  { id: "shuttle", name: "Shuttle Run", weight: 1, scoreMode: "points", scoreMax: 21 },
+  { id: "cooper", name: "Cooper-Test", weight: 1, scoreMode: "percent" },
 ];
+
 
 const defaultSettings: GradingSettings = {
   forgottenKitPenalty: 3,
@@ -177,9 +202,10 @@ function seedStudents(classId: ClassId): Student[] {
     lastName: ln,
     classId,
     scores: {
-      shuttle: 60 + ((i * 7) % 35),
+      shuttle: 8 + ((i * 3) % 8),    // 8–15 Stufen
       cooper: 55 + ((i * 11) % 40),
     },
+
     forgottenKit: i % 3 === 0 ? 1 : 0,
     excusedNotParticipating: i % 4 === 0 ? 1 : 0,
     unexcusedNotParticipating: i === 1 ? 1 : 0,
@@ -712,21 +738,34 @@ export const turnActions = {
       };
     });
   },
-  addDiscipline(classId: ClassId, name: string, weight = 1) {
+  addDiscipline(
+    classId: ClassId,
+    name: string,
+    weight = 1,
+    extra?: { scoreMode?: DisciplineScoreMode; scoreMax?: number },
+  ) {
     setState((s) => {
       const cls = s.classes[classId];
+      const d: Discipline = {
+        id: genId(),
+        name,
+        weight,
+        scoreMode: extra?.scoreMode ?? "percent",
+        scoreMax: extra?.scoreMode === "points" ? Math.max(1, extra.scoreMax ?? 10) : undefined,
+      };
       return {
         ...s,
         classes: {
           ...s.classes,
           [classId]: {
             ...cls,
-            disciplines: [...cls.disciplines, { id: genId(), name, weight }],
+            disciplines: [...cls.disciplines, d],
           },
         },
       };
     });
   },
+
   updateDiscipline(classId: ClassId, disciplineId: string, patch: Partial<Discipline>) {
     setState((s) => {
       const cls = s.classes[classId];
@@ -793,11 +832,13 @@ export function computeGrade(
   for (const d of disciplines) {
     const v = student.scores[d.id];
     if (typeof v === "number" && !Number.isNaN(v)) {
-      weightedSum += v * d.weight;
+      const pct = scoreToPercent(d, v);
+      weightedSum += pct * d.weight;
       weightTotal += d.weight;
       measuredCount++;
     }
   }
+
   const hasDisciplineData = weightTotal > 0;
   const disciplineAverage = hasDisciplineData ? weightedSum / weightTotal : 100;
 

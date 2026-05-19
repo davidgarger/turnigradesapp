@@ -20,6 +20,8 @@ import {
   computeGrade,
   downloadCsv,
   exportClassCsv,
+  getDisciplineMax,
+  getDisciplineUnit,
   getEffectiveTotalLessons,
   computeScheduledLessons,
   turnActions,
@@ -28,9 +30,11 @@ import {
   canUndo,
   type ClassId,
   type ClassSchedule,
+  type DisciplineScoreMode,
   type Student,
   type Excuse,
 } from "@/lib/turn-store";
+
 import { supabase } from "@/integrations/supabase/client";
 import QuickSession from "@/components/QuickSession";
 import ImportStudentsDialog, { type ParsedStudent } from "@/components/ImportStudentsDialog";
@@ -108,7 +112,10 @@ function ClassPage() {
 
   const [discName, setDiscName] = useState("");
   const [discWeight, setDiscWeight] = useState(10);
+  const [discMode, setDiscMode] = useState<DisciplineScoreMode>("percent");
+  const [discMax, setDiscMax] = useState<number>(10);
   const [discOpen, setDiscOpen] = useState(false);
+
 
   const rows = useMemo(() => {
     const filtered = cls.students.filter((s) => {
@@ -180,12 +187,18 @@ function ClassPage() {
       toast.error("Bitte einen Namen angeben.");
       return;
     }
-    turnActions.addDiscipline(cls.id, discName.trim(), discWeight);
+    turnActions.addDiscipline(cls.id, discName.trim(), discWeight, {
+      scoreMode: discMode,
+      scoreMax: discMode === "points" ? Math.max(1, discMax) : undefined,
+    });
     setDiscName("");
     setDiscWeight(10);
+    setDiscMode("percent");
+    setDiscMax(10);
     setDiscOpen(false);
     toast.success("Disziplin hinzugefügt");
   };
+
 
   const handleExport = () => {
     const csv = exportClassCsv(cls, settings);
@@ -313,36 +326,76 @@ function ClassPage() {
             <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
               Disziplinen
             </span>
-            {cls.disciplines.map((d) => (
-              <div
-                key={d.id}
-                className="flex items-center gap-2 rounded-md border border-border bg-background px-2 py-1 text-sm"
-              >
-                <span className="font-medium text-foreground">{d.name}</span>
-                <input
-                  type="number"
-                  min={0}
-                  max={100}
-                  value={d.weight}
-                  onChange={(e) =>
-                    turnActions.updateDiscipline(cls.id, d.id, { weight: Number(e.target.value) })
-                  }
-                  className="h-7 w-14 rounded border border-input bg-background px-1 text-right text-xs"
-                />
-                <span className="text-xs text-muted-foreground">%</span>
-                <button
-                  onClick={() => {
-                    if (confirm(`Disziplin „${d.name}“ wirklich löschen?`)) {
-                      turnActions.deleteDiscipline(cls.id, d.id);
-                    }
-                  }}
-                  className="text-muted-foreground hover:text-destructive"
-                  aria-label="Disziplin löschen"
+            {cls.disciplines.map((d) => {
+              const mode = d.scoreMode ?? "percent";
+              const max = getDisciplineMax(d);
+              return (
+                <div
+                  key={d.id}
+                  className="flex flex-wrap items-center gap-2 rounded-md border border-border bg-background px-2 py-1 text-sm"
                 >
-                  <Trash2 className="h-3.5 w-3.5" />
-                </button>
-              </div>
-            ))}
+                  <span className="font-medium text-foreground">{d.name}</span>
+                  <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+                    Gewichtung
+                    <input
+                      type="number"
+                      min={0}
+                      max={100}
+                      value={d.weight}
+                      onChange={(e) =>
+                        turnActions.updateDiscipline(cls.id, d.id, { weight: Number(e.target.value) })
+                      }
+                      className="h-7 w-14 rounded border border-input bg-background px-1 text-right text-xs"
+                    />
+                    %
+                  </span>
+                  <select
+                    value={mode}
+                    onChange={(e) => {
+                      const next = e.target.value as DisciplineScoreMode;
+                      turnActions.updateDiscipline(cls.id, d.id, {
+                        scoreMode: next,
+                        scoreMax: next === "points" ? (d.scoreMax ?? 10) : undefined,
+                      });
+                    }}
+                    className="h-7 rounded border border-input bg-background px-1 text-xs"
+                    title="Bewertungsmodus"
+                  >
+                    <option value="percent">%</option>
+                    <option value="points">Punkte/Zahl</option>
+                  </select>
+                  {mode === "points" ? (
+                    <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+                      max
+                      <input
+                        type="number"
+                        min={1}
+                        max={1000}
+                        value={max}
+                        onChange={(e) =>
+                          turnActions.updateDiscipline(cls.id, d.id, {
+                            scoreMax: Math.max(1, Number(e.target.value) || 1),
+                          })
+                        }
+                        className="h-7 w-16 rounded border border-input bg-background px-1 text-right text-xs"
+                      />
+                    </span>
+                  ) : null}
+                  <button
+                    onClick={() => {
+                      if (confirm(`Disziplin „${d.name}“ wirklich löschen?`)) {
+                        turnActions.deleteDiscipline(cls.id, d.id);
+                      }
+                    }}
+                    className="text-muted-foreground hover:text-destructive"
+                    aria-label="Disziplin löschen"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              );
+            })}
+
           </div>
         )}
 
@@ -359,12 +412,18 @@ function ClassPage() {
                     Name <ArrowUpDown className="h-3 w-3" />
                   </button>
                 </th>
-                {cls.disciplines.map((d) => (
-                  <th key={d.id} className="px-2 py-3 text-center font-semibold">
-                    <div className="text-xs">{d.name}</div>
-                    <div className="text-[10px] font-normal text-muted-foreground">{d.weight}%</div>
-                  </th>
-                ))}
+                {cls.disciplines.map((d) => {
+                  const isPoints = (d.scoreMode ?? "percent") === "points";
+                  return (
+                    <th key={d.id} className="px-2 py-3 text-center font-semibold">
+                      <div className="text-xs">{d.name}</div>
+                      <div className="text-[10px] font-normal text-muted-foreground">
+                        {d.weight}% · {isPoints ? `0–${getDisciplineMax(d)} Pkt` : "0–100 %"}
+                      </div>
+                    </th>
+                  );
+                })}
+
                 <th className="px-2 py-3 text-center text-xs font-semibold">
                   <span className="text-status-danger">Turnzeug vergessen</span>
                 </th>
@@ -456,6 +515,47 @@ function ClassPage() {
                     Die Gewichtungen aller Disziplinen werden im Verhältnis zueinander gewertet.
                   </p>
                 </div>
+                <div className="grid gap-1.5">
+                  <Label>Bewertung</Label>
+                  <div className="grid grid-cols-2 gap-1 rounded-md bg-muted p-1 text-sm">
+                    <button
+                      type="button"
+                      onClick={() => setDiscMode("percent")}
+                      className={`rounded px-2 py-1.5 transition ${discMode === "percent" ? "bg-background font-semibold text-foreground shadow-sm" : "text-muted-foreground"}`}
+                    >
+                      Prozent (0–100 %)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setDiscMode("points")}
+                      className={`rounded px-2 py-1.5 transition ${discMode === "points" ? "bg-background font-semibold text-foreground shadow-sm" : "text-muted-foreground"}`}
+                    >
+                      Punkte / Zahl
+                    </button>
+                  </div>
+                  {discMode === "points" ? (
+                    <div className="grid gap-1.5">
+                      <Label htmlFor="dmax">Maximaler Wert (= 100 %)</Label>
+                      <Input
+                        id="dmax"
+                        type="number"
+                        min={1}
+                        max={1000}
+                        value={discMax}
+                        onChange={(e) => setDiscMax(Math.max(1, Number(e.target.value) || 1))}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Eingabe pro Schüler:in als Zahl 0–{discMax}. Wird intern auf Prozent
+                        normalisiert (z. B. {Math.round(discMax / 2)} = 50 %).
+                      </p>
+                    </div>
+                  ) : (
+                    <p className="text-xs text-muted-foreground">
+                      Eingabe direkt als Prozentwert 0–100.
+                    </p>
+                  )}
+                </div>
+
               </div>
               <DialogFooter>
                 <Button variant="outline" onClick={() => setDiscOpen(false)}>
@@ -549,9 +649,12 @@ function StudentRow({
         <td key={d.id} className="px-1 py-1 text-center">
           <ScoreInput
             value={student.scores[d.id]}
+            max={getDisciplineMax(d)}
+            unit={getDisciplineUnit(d)}
             onChange={(v) => turnActions.setScore(classId, student.id, d.id, v)}
           />
         </td>
+
       ))}
       <StatusCell
         value={student.forgottenKit}
@@ -980,13 +1083,16 @@ function SchedulePanel({
 function ScoreInput({
   value,
   onChange,
+  max = 100,
+  unit = "%",
 }: {
   value: number | undefined;
   onChange: (v: number | undefined) => void;
+  max?: number;
+  unit?: string;
 }) {
   const [text, setText] = useState<string>(value === undefined ? "" : String(value));
 
-  // Externe Änderungen (z. B. Reset, Import) übernehmen, solange das Feld nicht editiert wird.
   useEffect(() => {
     setText(value === undefined ? "" : String(value));
   }, [value]);
@@ -1002,25 +1108,32 @@ function ScoreInput({
       onChange(undefined);
       return;
     }
-    onChange(Math.max(0, Math.min(100, Math.round(n))));
+    onChange(Math.max(0, Math.min(max, Math.round(n))));
   };
 
+  const maxLen = String(max).length;
+
   return (
-    <input
-      type="text"
-      inputMode="numeric"
-      value={text}
-      placeholder="–"
-      onChange={(e) => {
-        const v = e.target.value.replace(/[^\d]/g, "").slice(0, 3);
-        setText(v);
-        commit(v);
-      }}
-      onBlur={(e) => commit(e.target.value)}
-      className="h-9 w-16 rounded-md border border-input bg-background px-2 text-center text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-    />
+    <div className="inline-flex items-center gap-1">
+      <input
+        type="text"
+        inputMode="numeric"
+        value={text}
+        placeholder="–"
+        onChange={(e) => {
+          const v = e.target.value.replace(/[^\d]/g, "").slice(0, maxLen);
+          setText(v);
+          commit(v);
+        }}
+        onBlur={(e) => commit(e.target.value)}
+        className="h-9 w-14 rounded-md border border-input bg-background px-2 text-center text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+        title={`0–${max} ${unit}`}
+      />
+      <span className="text-[10px] text-muted-foreground">{unit}</span>
+    </div>
   );
 }
+
 
 function UndoButton() {
   // re-render bei state-Änderungen, damit canUndo() aktuell ist
