@@ -770,7 +770,7 @@ export const turnActions = {
     classId: ClassId,
     name: string,
     weight = 1,
-    extra?: { scoreMode?: DisciplineScoreMode; scoreMax?: number },
+    extra?: { scoreMode?: DisciplineScoreMode; scoreMax?: number; unit?: string },
   ) {
     setState((s) => {
       const cls = s.classes[classId];
@@ -780,6 +780,7 @@ export const turnActions = {
         weight,
         scoreMode: extra?.scoreMode ?? "percent",
         scoreMax: extra?.scoreMode === "points" ? Math.max(1, extra.scoreMax ?? 10) : undefined,
+        unit: extra?.unit?.trim() || undefined,
       };
       return {
         ...s,
