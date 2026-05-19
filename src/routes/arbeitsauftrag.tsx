@@ -48,7 +48,22 @@ export const Route = createFileRoute("/arbeitsauftrag")({
   }),
 });
 
-const SPORTS: Sport[] = ["basketball", "fussball", "geraeteturnen", "leichtathletik", "allgemein"];
+const SPORTS: Sport[] = [
+  "basketball",
+  "fussball",
+  "volleyball",
+  "handball",
+  "unihockey",
+  "badminton",
+  "schwimmen",
+  "geraeteturnen",
+  "leichtathletik",
+  "olympia",
+  "fairplay",
+  "anatomie",
+  "aufwaermen",
+  "allgemein",
+];
 const TASK_TYPES: TaskType[] = [
   "beobachtung",
   "regeln",
