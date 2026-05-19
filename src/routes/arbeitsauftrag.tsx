@@ -459,6 +459,7 @@ function ArbeitsauftragPage() {
                 <Info label="Status" value={STATUS_LABEL[status]} />
                 <Info label="Sportart" value={SPORT_LABEL[sport]} />
                 <Info label="Auftragstyp" value={TASK_LABEL[assignment.resolvedTaskType]} />
+                <Info label="Schwierigkeit" value={DIFFICULTY_LABEL[difficulty]} />
               </dl>
 
               <h3 className="mt-6 text-lg font-bold">Deine Aufgaben</h3>
