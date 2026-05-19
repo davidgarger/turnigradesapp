@@ -90,6 +90,30 @@ function ArbeitsauftragPage() {
     return list.sort((a, b) => a.name.localeCompare(b.name, "de"));
   }, [state.classes]);
 
+  // Mappe den jüngsten Schnellcheck-Eintrag eines Schülers auf einen Status.
+  const latestStatusByStudent = useMemo(() => {
+    const map = new Map<string, Status>();
+    type Hit = { at: string; status: Status };
+    const latest = new Map<string, Hit>();
+    Object.values(state.classes).forEach((c) => {
+      (c.lessons ?? []).forEach((lesson) => {
+        lesson.entries.forEach((e) => {
+          let st: Status | null = null;
+          if (e.type === "excused") st = "entschuldigt";
+          else if (e.type === "unexcused") st = "unentschuldigt";
+          else if (e.type === "forgottenKit") st = "turnzeug_vergessen";
+          if (!st) return;
+          const prev = latest.get(e.studentId);
+          if (!prev || prev.at < e.at) {
+            latest.set(e.studentId, { at: e.at, status: st });
+          }
+        });
+      });
+    });
+    latest.forEach((v, k) => map.set(k, v.status));
+    return map;
+  }, [state.classes]);
+
   const initialStudent = useMemo(() => {
     if (search.studentId) return allStudents.find((s) => s.id === search.studentId);
     return undefined;
@@ -103,7 +127,11 @@ function ArbeitsauftragPage() {
         : ""),
   );
   const [datum, setDatum] = useState(todayIso());
-  const [status, setStatus] = useState<Status>(search.status ?? "entschuldigt");
+  const [status, setStatus] = useState<Status>(
+    search.status ??
+      (initialStudent ? latestStatusByStudent.get(initialStudent.id) : undefined) ??
+      "entschuldigt",
+  );
   const [sport, setSport] = useState<Sport>("allgemein");
   const [taskType, setTaskType] = useState<TaskType>("zufaellig");
   const [assignment, setAssignment] = useState<GeneratedAssignment | null>(null);
@@ -114,6 +142,8 @@ function ArbeitsauftragPage() {
     if (!st) return;
     setName(st.name);
     setKlasse(st.className);
+    const auto = latestStatusByStudent.get(st.id);
+    if (auto) setStatus(auto);
   };
 
   const onGenerate = () => {
