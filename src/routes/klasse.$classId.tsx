@@ -229,13 +229,13 @@ function ClassPage() {
               <span className="hidden sm:inline">Arbeitsauftrag</span>
             </Link>
             <Link
-              to="/klasse/$classId/archiv"
+              to="/klasse/$classId/disziplinen"
               params={{ classId: cls.id }}
               className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
-              title="Disziplin-Archiv"
+              title="Disziplinen verwalten"
             >
-              <History className="h-4 w-4" />
-              <span className="hidden sm:inline">Archiv</span>
+              <Dumbbell className="h-4 w-4" />
+              <span className="hidden sm:inline">Disziplinen</span>
             </Link>
 
             <Link
