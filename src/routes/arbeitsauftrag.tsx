@@ -26,7 +26,9 @@ export const Route = createFileRoute("/arbeitsauftrag")({
     classId: typeof s.classId === "string" ? s.classId : undefined,
     studentId: typeof s.studentId === "string" ? s.studentId : undefined,
     status:
-      s.status === "verletzt" || s.status === "entschuldigt" || s.status === "teilbefreit"
+      s.status === "entschuldigt" ||
+      s.status === "unentschuldigt" ||
+      s.status === "turnzeug_vergessen"
         ? s.status
         : undefined,
   }),
@@ -45,7 +47,7 @@ export const Route = createFileRoute("/arbeitsauftrag")({
 
 const SPORTS: Sport[] = ["basketball", "fussball", "geraeteturnen", "leichtathletik", "allgemein"];
 const TASK_TYPES: TaskType[] = ["beobachtung", "regeln", "technik", "reflexion", "zufaellig"];
-const STATUSES: Status[] = ["verletzt", "entschuldigt", "teilbefreit"];
+const STATUSES: Status[] = ["entschuldigt", "unentschuldigt", "turnzeug_vergessen"];
 
 function todayIso() {
   const d = new Date();
