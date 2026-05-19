@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 
 import appCss from "../styles.css?url";
 import { Toaster } from "@/components/ui/sonner";
+import { SiteFooter } from "@/components/SiteFooter";
 import { supabase } from "@/integrations/supabase/client";
 import { initCloudSync } from "@/lib/turn-store";
 
