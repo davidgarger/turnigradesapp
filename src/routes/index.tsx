@@ -295,6 +295,13 @@ function Index() {
               <span className="hidden sm:inline">Arbeitsauftrag</span>
             </Link>
             <Link
+              to="/postenkarten"
+              className="inline-flex items-center gap-2 rounded-md bg-gradient-to-r from-emerald-500 to-teal-500 px-3 py-2 text-sm font-semibold text-white shadow-md shadow-teal-500/30 transition hover:opacity-95"
+            >
+              <LayoutGrid className="h-4 w-4" />
+              <span className="hidden sm:inline">Postenkarten</span>
+            </Link>
+            <Link
               to="/einstellungen"
               className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
             >
