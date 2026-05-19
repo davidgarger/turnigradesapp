@@ -7,8 +7,11 @@ import {
   SPORT_LABEL,
   STATUS_LABEL,
   TASK_LABEL,
+  DIFFICULTY_LABEL,
+  difficultyForClassId,
   formatAssignmentText,
   generateAssignment,
+  type Difficulty,
   type GeneratedAssignment,
   type Sport,
   type Status,
@@ -58,6 +61,7 @@ const TASK_TYPES: TaskType[] = [
   "zufaellig",
 ];
 const STATUSES: Status[] = ["entschuldigt", "unentschuldigt", "turnzeug_vergessen"];
+const DIFFICULTIES: Difficulty[] = ["leicht", "mittel", "schwer"];
 
 function todayIso() {
   const d = new Date();
@@ -146,6 +150,25 @@ function ArbeitsauftragPage() {
   const [taskType, setTaskType] = useState<TaskType>("zufaellig");
   const [assignment, setAssignment] = useState<GeneratedAssignment | null>(null);
 
+  // Klassenfilter für die Schülerliste – ermöglicht schnelles Finden,
+  // besonders wenn viele Schüler aus mehreren Klassen vorhanden sind.
+  const [filterClassId, setFilterClassId] = useState<string>(
+    initialStudent?.classId ?? search.classId ?? "",
+  );
+
+  // Schwierigkeit der Aufgaben – automatisch aus der gewählten Klassenstufe
+  // abgeleitet, jederzeit manuell überschreibbar.
+  const [difficulty, setDifficulty] = useState<Difficulty>(
+    difficultyForClassId(initialStudent?.classId ?? search.classId),
+  );
+  const [difficultyManual, setDifficultyManual] = useState(false);
+
+  const filteredStudents = useMemo(
+    () =>
+      filterClassId ? allStudents.filter((s) => s.classId === filterClassId) : allStudents,
+    [allStudents, filterClassId],
+  );
+
   const onPickStudent = (id: string) => {
     if (!id) return;
     const st = allStudents.find((s) => s.id === id);
@@ -154,6 +177,12 @@ function ArbeitsauftragPage() {
     setKlasse(st.className);
     const auto = latestStatusByStudent.get(st.id);
     if (auto) setStatus(auto);
+    if (!difficultyManual) setDifficulty(difficultyForClassId(st.classId));
+  };
+
+  const onPickFilterClass = (cid: string) => {
+    setFilterClassId(cid);
+    if (cid && !difficultyManual) setDifficulty(difficultyForClassId(cid));
   };
 
   const onGenerate = () => {
@@ -161,7 +190,7 @@ function ArbeitsauftragPage() {
       toast.error("Bitte Name eingeben.");
       return;
     }
-    setAssignment(generateAssignment(sport, taskType));
+    setAssignment(generateAssignment(sport, taskType, difficulty));
   };
 
   const fullText = assignment
@@ -171,6 +200,7 @@ function ArbeitsauftragPage() {
         datum: formatDateDe(datum),
         sport,
         status,
+        difficulty,
         assignment,
       })
     : "";
@@ -270,20 +300,46 @@ function ArbeitsauftragPage() {
           </div>
 
           {allStudents.length > 0 && (
-            <Field label="Schüler aus Liste übernehmen (optional)">
-              <select
-                onChange={(e) => onPickStudent(e.target.value)}
-                defaultValue={initialStudent?.id ?? ""}
-                className="h-12 w-full rounded-xl border border-input bg-background px-3 text-base text-foreground outline-none focus:ring-2 focus:ring-ring"
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <Field label="Klasse filtern (optional)">
+                <select
+                  value={filterClassId}
+                  onChange={(e) => onPickFilterClass(e.target.value)}
+                  className="h-12 w-full rounded-xl border border-input bg-background px-3 text-base text-foreground outline-none focus:ring-2 focus:ring-ring"
+                >
+                  <option value="">Alle Klassen</option>
+                  {Object.values(state.classes)
+                    .filter((c) => c.students.length > 0)
+                    .map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name}
+                      </option>
+                    ))}
+                </select>
+              </Field>
+              <Field
+                label={
+                  filterClassId
+                    ? `Schüler aus ${state.classes[filterClassId as keyof typeof state.classes]?.name ?? "Klasse"} wählen`
+                    : "Schüler aus Liste übernehmen (optional)"
+                }
               >
-                <option value="">— bitte wählen —</option>
-                {allStudents.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.name} · {s.className}
-                  </option>
-                ))}
-              </select>
-            </Field>
+                <select
+                  onChange={(e) => onPickStudent(e.target.value)}
+                  defaultValue={initialStudent?.id ?? ""}
+                  key={filterClassId} // reset Auswahl bei Filterwechsel
+                  className="h-12 w-full rounded-xl border border-input bg-background px-3 text-base text-foreground outline-none focus:ring-2 focus:ring-ring"
+                >
+                  <option value="">— bitte wählen —</option>
+                  {filteredStudents.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.name}
+                      {filterClassId ? "" : ` · ${s.className}`}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+            </div>
           )}
 
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -350,6 +406,28 @@ function ArbeitsauftragPage() {
                 ))}
               </select>
             </Field>
+            <Field
+              label={
+                difficultyManual
+                  ? "Schwierigkeit (manuell)"
+                  : "Schwierigkeit (automatisch aus Klasse)"
+              }
+            >
+              <select
+                value={difficulty}
+                onChange={(e) => {
+                  setDifficulty(e.target.value as Difficulty);
+                  setDifficultyManual(true);
+                }}
+                className="h-12 w-full rounded-xl border border-input bg-background px-3 text-base text-foreground outline-none focus:ring-2 focus:ring-ring"
+              >
+                {DIFFICULTIES.map((d) => (
+                  <option key={d} value={d}>
+                    {DIFFICULTY_LABEL[d]}
+                  </option>
+                ))}
+              </select>
+            </Field>
           </div>
 
           <button
@@ -381,6 +459,7 @@ function ArbeitsauftragPage() {
                 <Info label="Status" value={STATUS_LABEL[status]} />
                 <Info label="Sportart" value={SPORT_LABEL[sport]} />
                 <Info label="Auftragstyp" value={TASK_LABEL[assignment.resolvedTaskType]} />
+                <Info label="Schwierigkeit" value={DIFFICULTY_LABEL[difficulty]} />
               </dl>
 
               <h3 className="mt-6 text-lg font-bold">Deine Aufgaben</h3>
