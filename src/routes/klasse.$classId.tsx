@@ -206,6 +206,12 @@ function ClassPage() {
                 aria-label="Klassenname bearbeiten"
               />
               <p className="px-1 text-xs text-muted-foreground">
+                {schoolYearLabel(cls) ? (
+                  <>
+                    <span className="font-medium text-foreground">{schoolYearLabel(cls)}</span>
+                    {" · "}
+                  </>
+                ) : null}
                 {cls.students.length} Schüler · {cls.disciplines.length} Disziplinen
               </p>
             </div>
