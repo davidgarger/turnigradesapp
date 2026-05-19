@@ -67,6 +67,14 @@ import { Label } from "@/components/ui/label";
 
 const VALID: ClassId[] = ["1", "2", "3", "4"];
 
+export function schoolYearLabel(cls: { schedule?: ClassSchedule }): string | null {
+  const start = cls.schedule?.startDate;
+  if (!start) return null;
+  const y = new Date(start + "T00:00:00").getFullYear();
+  if (Number.isNaN(y)) return null;
+  return `${y}/${String((y + 1) % 100).padStart(2, "0")}`;
+}
+
 export const Route = createFileRoute("/klasse/$classId")({
   component: ClassPage,
   head: ({ params }) => ({
