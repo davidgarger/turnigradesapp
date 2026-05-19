@@ -17,18 +17,39 @@ import {
 import { StationGraphic } from "@/components/StationGraphic";
 
 export const Route = createFileRoute("/stationenkarten")({
-  component: StationenkartenPage,
+  component: ComingSoonPage,
   head: () => ({
     meta: [
-      { title: "Stationenkarten — Turni" },
-      {
-        name: "description",
-        content:
-          "Druckfertige Stationenkarten als Übungsreihe: Vorübungen, die schrittweise zur Zielübung führen — inkl. Grafiken und QR-Code für Video.",
-      },
+      { title: "Stationenkarten — Coming Soon" },
+      { name: "description", content: "Stationenkarten – in Arbeit." },
     ],
   }),
 });
+
+function ComingSoonPage() {
+  const navigate = useNavigate();
+  return (
+    <div className="min-h-screen bg-background flex items-center justify-center px-6">
+      <div className="max-w-md text-center">
+        <div className="mx-auto mb-4 inline-flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary">
+          <LayoutGrid className="h-7 w-7" />
+        </div>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">Stationenkarten</h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Coming soon – wir feilen noch an dieser Funktion. Schau bald wieder vorbei.
+        </p>
+        <button
+          type="button"
+          onClick={() => navigate({ to: "/" })}
+          className="mt-6 inline-flex items-center gap-2 rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+        >
+          <ArrowLeft className="h-4 w-4" /> Zurück zur Startseite
+        </button>
+      </div>
+    </div>
+  );
+}
+
 
 const SPORTS: StationSport[] = ["leichtathletik", "geraeteturnen"];
 const LEVELS: StationLevel[] = ["unterstufe", "mittelstufe", "oberstufe"];
