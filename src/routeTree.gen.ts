@@ -9,7 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as PostenkartenRouteImport } from './routes/postenkarten'
+import { Route as StationenkartenRouteImport } from './routes/stationenkarten'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as EinstellungenRouteImport } from './routes/einstellungen'
 import { Route as ArbeitsauftragRouteImport } from './routes/arbeitsauftrag'
@@ -17,9 +17,9 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as KlasseClassIdRouteImport } from './routes/klasse.$classId'
 import { Route as KlasseClassIdQuickRouteImport } from './routes/klasse.$classId.quick'
 
-const PostenkartenRoute = PostenkartenRouteImport.update({
-  id: '/postenkarten',
-  path: '/postenkarten',
+const StationenkartenRoute = StationenkartenRouteImport.update({
+  id: '/stationenkarten',
+  path: '/stationenkarten',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -58,7 +58,7 @@ export interface FileRoutesByFullPath {
   '/arbeitsauftrag': typeof ArbeitsauftragRoute
   '/einstellungen': typeof EinstellungenRoute
   '/login': typeof LoginRoute
-  '/postenkarten': typeof PostenkartenRoute
+  '/stationenkarten': typeof StationenkartenRoute
   '/klasse/$classId': typeof KlasseClassIdRouteWithChildren
   '/klasse/$classId/quick': typeof KlasseClassIdQuickRoute
 }
@@ -67,7 +67,7 @@ export interface FileRoutesByTo {
   '/arbeitsauftrag': typeof ArbeitsauftragRoute
   '/einstellungen': typeof EinstellungenRoute
   '/login': typeof LoginRoute
-  '/postenkarten': typeof PostenkartenRoute
+  '/stationenkarten': typeof StationenkartenRoute
   '/klasse/$classId': typeof KlasseClassIdRouteWithChildren
   '/klasse/$classId/quick': typeof KlasseClassIdQuickRoute
 }
@@ -77,7 +77,7 @@ export interface FileRoutesById {
   '/arbeitsauftrag': typeof ArbeitsauftragRoute
   '/einstellungen': typeof EinstellungenRoute
   '/login': typeof LoginRoute
-  '/postenkarten': typeof PostenkartenRoute
+  '/stationenkarten': typeof StationenkartenRoute
   '/klasse/$classId': typeof KlasseClassIdRouteWithChildren
   '/klasse/$classId/quick': typeof KlasseClassIdQuickRoute
 }
@@ -88,7 +88,7 @@ export interface FileRouteTypes {
     | '/arbeitsauftrag'
     | '/einstellungen'
     | '/login'
-    | '/postenkarten'
+    | '/stationenkarten'
     | '/klasse/$classId'
     | '/klasse/$classId/quick'
   fileRoutesByTo: FileRoutesByTo
@@ -97,7 +97,7 @@ export interface FileRouteTypes {
     | '/arbeitsauftrag'
     | '/einstellungen'
     | '/login'
-    | '/postenkarten'
+    | '/stationenkarten'
     | '/klasse/$classId'
     | '/klasse/$classId/quick'
   id:
@@ -106,7 +106,7 @@ export interface FileRouteTypes {
     | '/arbeitsauftrag'
     | '/einstellungen'
     | '/login'
-    | '/postenkarten'
+    | '/stationenkarten'
     | '/klasse/$classId'
     | '/klasse/$classId/quick'
   fileRoutesById: FileRoutesById
@@ -116,17 +116,17 @@ export interface RootRouteChildren {
   ArbeitsauftragRoute: typeof ArbeitsauftragRoute
   EinstellungenRoute: typeof EinstellungenRoute
   LoginRoute: typeof LoginRoute
-  PostenkartenRoute: typeof PostenkartenRoute
+  StationenkartenRoute: typeof StationenkartenRoute
   KlasseClassIdRoute: typeof KlasseClassIdRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/postenkarten': {
-      id: '/postenkarten'
-      path: '/postenkarten'
-      fullPath: '/postenkarten'
-      preLoaderRoute: typeof PostenkartenRouteImport
+    '/stationenkarten': {
+      id: '/stationenkarten'
+      path: '/stationenkarten'
+      fullPath: '/stationenkarten'
+      preLoaderRoute: typeof StationenkartenRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -191,9 +191,19 @@ const rootRouteChildren: RootRouteChildren = {
   ArbeitsauftragRoute: ArbeitsauftragRoute,
   EinstellungenRoute: EinstellungenRoute,
   LoginRoute: LoginRoute,
-  PostenkartenRoute: PostenkartenRoute,
+  StationenkartenRoute: StationenkartenRoute,
   KlasseClassIdRoute: KlasseClassIdRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

@@ -1,4 +1,4 @@
-// Postenkarten-Generator für Leichtathletik & Geräteturnen.
+// Stationenkarten-Generator für Leichtathletik & Geräteturnen.
 // Inhalte = didaktische Standard-Vorübungen aus Allgemeinwissen
 // (Lehrmittel Sporterziehung CH, mobilesport.ch-Logik).
 // Lehrperson sollte Inhalte vor Einsatz fachlich prüfen.

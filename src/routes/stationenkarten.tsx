@@ -14,15 +14,15 @@ import {
   type StationSport,
 } from "@/lib/station-cards";
 
-export const Route = createFileRoute("/postenkarten")({
-  component: PostenkartenPage,
+export const Route = createFileRoute("/stationenkarten")({
+  component: StationenkartenPage,
   head: () => ({
     meta: [
-      { title: "Postenkarten — Turni" },
+      { title: "Stationenkarten — Turni" },
       {
         name: "description",
         content:
-          "Druckfertige Postenkarten mit Vorübungen für Leichtathletik und Geräteturnen — inkl. QR-Code für Video.",
+          "Druckfertige Stationenkarten mit Vorübungen für Leichtathletik und Geräteturnen — inkl. QR-Code für Video.",
       },
     ],
   }),
@@ -31,7 +31,7 @@ export const Route = createFileRoute("/postenkarten")({
 const SPORTS: StationSport[] = ["leichtathletik", "geraeteturnen"];
 const LEVELS: StationLevel[] = ["unterstufe", "mittelstufe", "oberstufe"];
 
-function PostenkartenPage() {
+function StationenkartenPage() {
   const navigate = useNavigate();
   const [sport, setSport] = useState<StationSport>("leichtathletik");
   const [discipline, setDiscipline] = useState<StationDiscipline>("sprint");
@@ -80,7 +80,7 @@ function PostenkartenPage() {
             <ArrowLeft className="h-6 w-6" />
           </button>
           <div className="min-w-0 flex-1">
-            <h1 className="truncate text-lg font-semibold sm:text-xl">Postenkarten-Generator</h1>
+            <h1 className="truncate text-lg font-semibold sm:text-xl">Stationenkarten-Generator</h1>
             <p className="truncate text-xs text-muted-foreground sm:text-sm">
               Vorübungen für Leichtathletik & Geräteturnen — druckfertig mit QR-Code
             </p>
@@ -132,7 +132,7 @@ function PostenkartenPage() {
                 ))}
               </select>
             </Field>
-            <Field label="Anzahl Posten">
+            <Field label="Anzahl Stationen">
               <input
                 type="number"
                 min={1}
@@ -238,7 +238,7 @@ function CardView({
             <span>{LEVEL_LABEL[level]}</span>
           </div>
           <h2 className="mt-1 text-xl font-bold leading-tight text-foreground">
-            Posten {index}/{total}: {card.title}
+            Station {index}/{total}: {card.title}
           </h2>
         </div>
         <div className="shrink-0 text-center">
