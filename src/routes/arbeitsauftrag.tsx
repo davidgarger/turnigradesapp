@@ -399,7 +399,12 @@ function ArbeitsauftragPage() {
             <Field label="Sportart">
               <select
                 value={sport}
-                onChange={(e) => setSport(e.target.value as Sport)}
+                onChange={(e) => {
+                  const next = e.target.value as Sport;
+                  setSport(next);
+                  const allowed = allowedTaskTypesForSport(next);
+                  if (!allowed.includes(taskType)) setTaskType("zufaellig");
+                }}
                 className="h-12 w-full rounded-xl border border-input bg-background px-3 text-base text-foreground outline-none focus:ring-2 focus:ring-ring"
               >
                 {SPORTS.map((s) => (
@@ -415,7 +420,7 @@ function ArbeitsauftragPage() {
                 onChange={(e) => setTaskType(e.target.value as TaskType)}
                 className="h-12 w-full rounded-xl border border-input bg-background px-3 text-base text-foreground outline-none focus:ring-2 focus:ring-ring"
               >
-                {TASK_TYPES.map((s) => (
+                {allowedTaskTypesForSport(sport).map((s) => (
                   <option key={s} value={s}>
                     {TASK_LABEL[s]}
                   </option>
