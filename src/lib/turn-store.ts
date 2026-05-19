@@ -142,9 +142,11 @@ export function getEffectiveTotalLessons(cls: ClassData): number {
 
 // ---------- Defaults ----------
 const defaultDisciplines = (): Discipline[] => [
-  { id: "shuttle", name: "Shuttle Run", weight: 1 },
-  { id: "cooper", name: "Cooper-Test", weight: 1 },
+  // Shuttle Run wird typischerweise in erreichten Stufen bewertet (max ~21).
+  { id: "shuttle", name: "Shuttle Run", weight: 1, scoreMode: "points", scoreMax: 21 },
+  { id: "cooper", name: "Cooper-Test", weight: 1, scoreMode: "percent" },
 ];
+
 
 const defaultSettings: GradingSettings = {
   forgottenKitPenalty: 3,
