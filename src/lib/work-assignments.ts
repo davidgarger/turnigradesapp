@@ -342,6 +342,60 @@ const POOL: Record<
       },
     ],
   },
+  volleyball: {
+    beobachtung: [{ tasks: ["Beobachte: Wer ruft den Ball am häufigsten richtig an?", "Zähle die gelungenen Pritsch-Annahmen einer Mannschaft.", "Notiere drei gute Annahmen mit Bagger.", "Wer bewegt sich besonders schnell ans Netz?", "Achte auf die Aufstellung beim Aufschlag."], closing: "Welches Team spielt heute besser zusammen? Warum?" }],
+    regeln: [{ tasks: ["Wie viele Spieler stehen pro Mannschaft auf dem Feld?", "Wie viele Ballberührungen darf eine Mannschaft maximal machen?", "Wann gibt es einen Punkt?", "Was passiert, wenn der Ball ins Netz fällt?", "Wie wird der Aufschlag ausgeführt?"], closing: "Welche Regel ist im Volleyball am wichtigsten? Warum?" }],
+    technik: [{ tasks: ["Beschreibe in drei Schritten den oberen Zuspiel (Pritschen).", "Wie hält man die Arme beim Baggern?", "Warum geht man beim Annehmen in die Knie?", "Wie steht man beim Aufschlag?", "Was muss beim Block über dem Netz beachtet werden?"], closing: "Welche Technik möchtest du selber besser können?" }],
+    reflexion: [{ tasks: ["Was magst du an Volleyball, was nicht?", "Wie hilft man jemandem, der den Ball oft verfehlt?", "Was tut weh nach einer Volleyballstunde? Warum?", "Wie wichtig ist Kommunikation auf dem Feld?", "Wann hast du dich beim Volleyball stark gefühlt?"], closing: "Was nimmst du heute aus der Stunde mit?" }],
+  },
+  handball: {
+    beobachtung: [{ tasks: ["Zähle, wie viele Tore in 10 Minuten fallen.", "Beobachte den Torwart: Wie steht er bei einem Wurf?", "Wer wirft heute besonders genau?", "Notiere drei gute Pässe.", "Wer verteidigt besonders fair?"], closing: "Welche Aktion hat dir am besten gefallen?" }],
+    regeln: [{ tasks: ["Wie viele Spieler einer Mannschaft sind gleichzeitig auf dem Feld?", "Wie viele Schritte darf man ohne Dribbling machen?", "Wann gibt es einen Siebenmeter?", "Was bedeutet die rote Karte?", "Wer darf in den Torraum?"], closing: "Welche Regel findest du am schwierigsten?" }],
+    technik: [{ tasks: ["Beschreibe den Sprungwurf in drei Schritten.", "Wie hält man den Ball beim Pass?", "Worauf achtet man beim Fangen?", "Wie täuscht man einen Gegner aus?", "Warum ist das Dribbling im Handball weniger wichtig als im Basketball?"], closing: "Welche Technik möchtest du üben?" }],
+    reflexion: [{ tasks: ["Was magst du an Handball?", "Wie fühlt es sich an, ein Tor zu werfen?", "Wann hast du gut mit anderen zusammengespielt?", "Wie geht man mit einem groben Foul um?", "Was ist wichtiger: schnell oder genau werfen?"], closing: "Was nimmst du heute aus der Stunde mit?" }],
+  },
+  unihockey: {
+    beobachtung: [{ tasks: ["Achte auf die Stockhaltung. Wer hält ihn korrekt mit beiden Händen?", "Zähle die Torabschlüsse in 10 Minuten.", "Wer läuft besonders aufmerksam mit?", "Notiere drei gute Pässe entlang der Bande.", "Wer verteidigt besonders ruhig?"], closing: "Was hat dir beim Zuschauen am meisten gefallen?" }],
+    regeln: [{ tasks: ["Wie hoch darf der Stock geschwungen werden?", "Was ist ein „Hoher Stock“?", "Wann gibt es einen Bully?", "Wer darf in den Torraum?", "Was passiert bei einer Strafzeit?"], closing: "Welche Regel schützt die Spielenden am meisten?" }],
+    technik: [{ tasks: ["Beschreibe den Handgelenkschuss in drei Schritten.", "Wie führt man den Ball ruhig am Stock?", "Wie passt man genau in den Lauf?", "Wie steht man als Verteidiger?", "Warum ist die tiefe Knieposition wichtig?"], closing: "Welche Technik möchtest du verbessern?" }],
+    reflexion: [{ tasks: ["Was magst du an Unihockey?", "Was ist anders als bei Fußball oder Handball?", "Wie hilft man jemandem, der noch unsicher mit dem Stock ist?", "Wann ist Unihockey gefährlich? Was kann man tun?", "Was macht ein gutes Team aus?"], closing: "Was nimmst du heute aus der Stunde mit?" }],
+  },
+  badminton: {
+    beobachtung: [{ tasks: ["Beobachte das Spiel: Wer steht oft in der Mitte des Feldes?", "Wer schlägt den Federball besonders genau?", "Wer bewegt sich schnell zwischen vorne und hinten?", "Notiere drei gelungene Aufschläge.", "Achte auf die Schlägerhaltung."], closing: "Welche Spielerin / welcher Spieler hat dir am besten gefallen?" }],
+    regeln: [{ tasks: ["Wie viele Punkte braucht man, um einen Satz zu gewinnen?", "Wie wird der Aufschlag ausgeführt?", "Wann ist der Federball „aus“?", "Wer hat im Einzel und im Doppel Aufschlag?", "Was passiert, wenn der Ball das Netz berührt und trotzdem ins Feld fällt?"], closing: "Welche Regel ist im Badminton besonders speziell?" }],
+    technik: [{ tasks: ["Beschreibe den Überkopf-Clear in drei Schritten.", "Wie hält man den Schläger richtig (Universal-Griff)?", "Was ist ein Drop?", "Wie steht man in der Grundstellung?", "Warum ist Beinarbeit beim Badminton so wichtig?"], closing: "Welche Technik möchtest du selber besser können?" }],
+    reflexion: [{ tasks: ["Was magst du an Badminton?", "Wann wird man im Badminton schnell müde? Warum?", "Wie fühlt es sich an, einen schwierigen Ball noch zu erreichen?", "Wie geht man mit einem Punktverlust um?", "Wann ist Doppel schwieriger als Einzel?"], closing: "Was nimmst du heute aus der Stunde mit?" }],
+  },
+  schwimmen: {
+    beobachtung: [{ tasks: ["Beobachte die Beinbewegung beim Kraulen.", "Wer atmet ruhig zur Seite?", "Wer gleitet besonders lange nach dem Abstoß?", "Achte auf den Armzug beim Brustschwimmen.", "Wer hat eine ruhige Wasserlage?"], closing: "Welche Schwimmart sieht heute am elegantesten aus?" }],
+    regeln: [{ tasks: ["Welche Sicherheitsregeln gelten im Schwimmbad?", "Warum darf man am Beckenrand nicht rennen?", "Warum nicht alleine ins tiefe Becken springen?", "Wann pfeift die Bademeisterin / der Bademeister?", "Welche Wendungen gibt es im Wettkampf?"], closing: "Welche Sicherheitsregel ist dir am wichtigsten?" }],
+    technik: [{ tasks: ["Beschreibe den Beinschlag beim Kraulen.", "Wie atmet man beim Brustschwimmen?", "Wie macht man den Startsprung sicher?", "Was ist die Wasserlage und warum ist sie wichtig?", "Wie kann man Wasserwiderstand verringern?"], closing: "Welche Schwimmart möchtest du besser können?" }],
+    reflexion: [{ tasks: ["Wie fühlst du dich im Wasser?", "Hattest du schon einmal Respekt vor tiefem Wasser? Was hat geholfen?", "Was ist anders an Sport im Wasser?", "Warum ist Schwimmen so gesund?", "Wann hast du dich im Wasser besonders sicher gefühlt?"], closing: "Was nimmst du heute aus der Stunde mit?" }],
+  },
+  olympia: {
+    beobachtung: [{ tasks: ["Welche olympischen Sportarten kennst du? Notiere fünf.", "Welche olympischen Disziplinen siehst du im Sportunterricht wieder?", "Was fällt dir beim Olympia-Logo (5 Ringe) auf?", "Welche Sommer- und Welche Wintersportarten gibt es bei Olympia?", "Welche Disziplin würdest du gerne live sehen? Warum?"], closing: "Was macht Olympia so besonders?" }],
+    regeln: [{ tasks: ["Wie oft finden die Sommerspiele statt?", "Wie oft finden die Winterspiele statt?", "Was bedeuten die fünf Ringe?", "Wer entzündet das Olympische Feuer?", "Was ist der olympische Eid?"], closing: "Welche dieser Regeln oder Symbole findest du am wichtigsten?" }],
+    technik: [{ tasks: ["Wähle eine olympische Sportart. Beschreibe sie kurz.", "Welche Eigenschaften braucht eine Spitzensportlerin?", "Was bedeutet „Bronze, Silber, Gold“?", "Wie qualifiziert man sich für Olympia (grob beschrieben)?", "Was ist der Unterschied zwischen Olympia und Weltmeisterschaft?"], closing: "Welche Sportart würdest du gerne ausprobieren?" }],
+    reflexion: [{ tasks: ["Was bedeutet „Dabei sein ist alles“?", "Warum verbinden viele Menschen Hoffnung mit Olympia?", "Was ist gut, was ist problematisch an Olympia?", "Welche Geschichte einer/eines Olympioniken kennst du?", "Wie würdest du dich fühlen, wenn du Olympiagold gewinnst?"], closing: "Was nimmst du heute aus der Stunde mit?" }],
+  },
+  fairplay: {
+    beobachtung: [{ tasks: ["Beobachte: Wer hilft heute fair einem anderen auf?", "Wer akzeptiert Schiedsrichterentscheidungen ruhig?", "Wer gibt einen Fehler offen zu?", "Wer hilft schwächeren Mitspielenden?", "Wer feiert auch die Erfolge anderer?"], closing: "Welche faire Aktion hat dir besonders gefallen?" }],
+    regeln: [{ tasks: ["Was bedeutet Fairplay in eigenen Worten?", "Welche drei Regeln machen Sport fair?", "Wie sollte man sich nach einer Niederlage verhalten?", "Wie geht man mit einer Siegerin oder einem Sieger um?", "Warum gibt es Schiedsrichter?"], closing: "Welche Regel sollte überall gelten?" }],
+    technik: [{ tasks: ["Wie kann man verlieren lernen?", "Wie geht man mit einem unfairen Mitspieler um?", "Wie kann man andere ermutigen?", "Was bedeutet Respekt im Sport?", "Welche Worte helfen, ein Team zu stärken?"], closing: "Welcher Tipp ist für dich am wichtigsten?" }],
+    reflexion: [{ tasks: ["Wann warst du selbst unfair? Was hättest du anders machen können?", "Wann hat dich jemand fair behandelt?", "Was tut weh: Niederlage oder Unfairness?", "Hat Fairplay auch ausserhalb des Sports Bedeutung?", "Was kannst du heute fairer machen?"], closing: "Was nimmst du heute aus der Stunde mit?" }],
+  },
+  anatomie: {
+    beobachtung: [{ tasks: ["Welche Muskeln spürst du nach dem Aufwärmen am stärksten?", "Welche Körperteile arbeiten beim Laufen besonders?", "Welche beim Werfen?", "Welche beim Springen?", "Welche beim Schwimmen?"], closing: "Welcher Muskel überrascht dich heute?" }],
+    regeln: [{ tasks: ["Nenne drei grosse Muskelgruppen.", "Wozu dienen Knochen?", "Was sind Gelenke?", "Warum braucht der Körper Pause?", "Was passiert mit dem Herzschlag bei Anstrengung?"], closing: "Welche Information war neu für dich?" }],
+    technik: [{ tasks: ["Wo befindet sich der Bizeps? Was tut er?", "Wo der Trizeps? Was tut er?", "Welche Muskeln helfen bei einem Sprung?", "Warum atmet man bei Sport schneller?", "Wie wachsen Muskeln (kurz erklärt)?"], closing: "Welcher Muskel ist dir wichtig im Alltag?" }],
+    reflexion: [{ tasks: ["Wann hast du nach dem Sport Muskelkater gespürt?", "Was hat dem Körper dann geholfen?", "Warum ist Bewegung gut für den Kopf?", "Was tut deinem Körper besonders gut?", "Wie kannst du gut auf deinen Körper hören?"], closing: "Was nimmst du heute aus der Stunde mit?" }],
+  },
+  aufwaermen: {
+    beobachtung: [{ tasks: ["Beobachte: Wer wärmt sich heute konzentriert auf?", "Welche Übungen kommen besonders oft vor?", "Wer atmet ruhig durch?", "Wer bewegt alle Gelenke locker durch?", "Wie verändert sich die Stimmung in der Klasse während des Aufwärmens?"], closing: "Welche Aufwärmübung hat dir am besten gefallen?" }],
+    regeln: [{ tasks: ["Warum wärmt man sich überhaupt auf?", "Wie lange sollte ein gutes Warm-up dauern?", "Welche Reihenfolge ist sinnvoll (allgemein → spezifisch)?", "Was gehört zum Cool-down?", "Warum nicht direkt mit Maximaltempo starten?"], closing: "Welche dieser Regeln ist dir am wichtigsten?" }],
+    technik: [{ tasks: ["Nenne drei gute Aufwärmübungen.", "Beschreibe eine Mobilisationsübung für die Schultern.", "Welche Übung wärmt die Beine gut auf?", "Welche Atemübung hilft zur Konzentration?", "Welche Dehnübung passt nach dem Sport?"], closing: "Welche Übung baust du beim nächsten Mal selbst ein?" }],
+    reflexion: [{ tasks: ["Wann hast du dich ohne Aufwärmen verletzt oder unwohl gefühlt?", "Wie verändert sich dein Körper nach dem Aufwärmen?", "Wie hilft Aufwärmen mental?", "Was macht ein gutes Cool-down aus?", "Wie kannst du dein eigenes Aufwärmprogramm gestalten?"], closing: "Was nimmst du heute aus der Stunde mit?" }],
+  },
 };
 
 // ────────────────────────────────────────────────────────────────────────────
