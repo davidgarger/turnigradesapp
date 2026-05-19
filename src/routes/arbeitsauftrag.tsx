@@ -300,20 +300,46 @@ function ArbeitsauftragPage() {
           </div>
 
           {allStudents.length > 0 && (
-            <Field label="Schüler aus Liste übernehmen (optional)">
-              <select
-                onChange={(e) => onPickStudent(e.target.value)}
-                defaultValue={initialStudent?.id ?? ""}
-                className="h-12 w-full rounded-xl border border-input bg-background px-3 text-base text-foreground outline-none focus:ring-2 focus:ring-ring"
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <Field label="Klasse filtern (optional)">
+                <select
+                  value={filterClassId}
+                  onChange={(e) => onPickFilterClass(e.target.value)}
+                  className="h-12 w-full rounded-xl border border-input bg-background px-3 text-base text-foreground outline-none focus:ring-2 focus:ring-ring"
+                >
+                  <option value="">Alle Klassen</option>
+                  {Object.values(state.classes)
+                    .filter((c) => c.students.length > 0)
+                    .map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name}
+                      </option>
+                    ))}
+                </select>
+              </Field>
+              <Field
+                label={
+                  filterClassId
+                    ? `Schüler aus ${state.classes[filterClassId as keyof typeof state.classes]?.name ?? "Klasse"} wählen`
+                    : "Schüler aus Liste übernehmen (optional)"
+                }
               >
-                <option value="">— bitte wählen —</option>
-                {allStudents.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.name} · {s.className}
-                  </option>
-                ))}
-              </select>
-            </Field>
+                <select
+                  onChange={(e) => onPickStudent(e.target.value)}
+                  defaultValue={initialStudent?.id ?? ""}
+                  key={filterClassId} // reset Auswahl bei Filterwechsel
+                  className="h-12 w-full rounded-xl border border-input bg-background px-3 text-base text-foreground outline-none focus:ring-2 focus:ring-ring"
+                >
+                  <option value="">— bitte wählen —</option>
+                  {filteredStudents.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.name}
+                      {filterClassId ? "" : ` · ${s.className}`}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+            </div>
           )}
 
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
