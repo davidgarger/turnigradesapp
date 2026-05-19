@@ -574,13 +574,24 @@ const ALL_RESOLVED: Exclude<TaskType, "zufaellig">[] = [
   "sportgeschichte",
 ];
 
-export function generateAssignment(sport: Sport, taskType: TaskType): GeneratedAssignment {
+export function generateAssignment(
+  sport: Sport,
+  taskType: TaskType,
+  difficulty: Difficulty = "mittel",
+): GeneratedAssignment {
   const resolved: Exclude<TaskType, "zufaellig"> =
     taskType === "zufaellig" ? pickRandom(ALL_RESOLVED) : taskType;
 
+  // Anzahl je Auftragstyp nach Schwierigkeit
+  const counts = {
+    leicht: { pool: 2, quiz: 2, cloze: 3 },
+    mittel: { pool: 3, quiz: 3, cloze: 5 },
+    schwer: { pool: 4, quiz: 5, cloze: 5 },
+  }[difficulty];
+
   if (resolved === "lueckentext") {
     const cloze = pickRandom(CLOZE[sport]);
-    const picked = shuffle(cloze.sentences).slice(0, 5);
+    const picked = shuffle(cloze.sentences).slice(0, counts.cloze);
     const solutions: string[] = [];
     const tasks = picked.map((sentence, i) => {
       let n = 0;
@@ -591,16 +602,25 @@ export function generateAssignment(sport: Sport, taskType: TaskType): GeneratedA
       });
       return `${i + 1}) ${blanked}`;
     });
+    const intro =
+      difficulty === "leicht"
+        ? "Setze die fehlenden Wörter in die Lücken ein:"
+        : difficulty === "schwer"
+          ? "Setze die fehlenden Wörter ein und schreibe danach zu zwei Sätzen eine kurze Erklärung in eigenen Worten:"
+          : "Setze die fehlenden Wörter in die Lücken ein:";
     return {
-      tasks: [`Thema: ${cloze.topic}`, "Setze die fehlenden Wörter in die Lücken ein:", ...tasks],
-      closing: "Lies deinen ganzen Text am Ende noch einmal laut für dich durch.",
+      tasks: [`Thema: ${cloze.topic}`, intro, ...tasks],
+      closing:
+        difficulty === "schwer"
+          ? "Erkläre eines der Fachwörter aus deinem Text in 2–3 Sätzen."
+          : "Lies deinen ganzen Text am Ende noch einmal laut für dich durch.",
       resolvedTaskType: resolved,
       answerKey: solutions.join("   ·   "),
     };
   }
 
   if (resolved === "quiz") {
-    const picked = shuffle(QUIZ[sport]).slice(0, 3);
+    const picked = shuffle(QUIZ[sport]).slice(0, counts.quiz);
     const tasks: string[] = ["Kreuze bei jeder Frage die richtige Antwort an:"];
     const letters = ["A", "B", "C"] as const;
     const solutions: string[] = [];
@@ -609,6 +629,10 @@ export function generateAssignment(sport: Sport, taskType: TaskType): GeneratedA
       q.options.forEach((opt, j) => tasks.push(`   ${letters[j]}) ${opt}`));
       solutions.push(`${i + 1}: ${letters[q.correctIndex]}`);
     });
+    if (difficulty === "schwer") {
+      tasks.push("");
+      tasks.push("Zusatzaufgabe: Begründe bei zwei Antworten kurz, warum sie richtig sind.");
+    }
     return {
       tasks,
       closing: "Welche Frage fandest du am schwierigsten? Warum?",
@@ -619,20 +643,36 @@ export function generateAssignment(sport: Sport, taskType: TaskType): GeneratedA
 
   if (resolved === "steckbrief") {
     const p = pickRandom(PEOPLE[sport]);
+    const baseTasks = [
+      `Persönlichkeit: ${p.name}`,
+      `Sportart: ${p.sport}`,
+      `Land: ${p.nation}`,
+      `Geboren: ${p.geboren}`,
+      `Bekannt für: ${p.bekanntFuer}`,
+      `Wusstest du schon? ${p.funFact}`,
+      "",
+      "Aufgaben:",
+    ];
+    const aufgaben =
+      difficulty === "leicht"
+        ? [
+            `1) Schreibe zwei Sätze über ${p.name}.`,
+            `2) Möchtest du diese Sportart auch ausprobieren? Warum?`,
+          ]
+        : difficulty === "schwer"
+          ? [
+              `1) Schreibe einen kurzen Text (mindestens 6 Sätze) über ${p.name}.`,
+              `2) Welche Eigenschaften braucht jemand, um in „${p.sport}“ Spitzensportler/in zu werden?`,
+              `3) Vergleiche „${p.sport}“ mit einer anderen Sportart deiner Wahl.`,
+              `4) Was kann man von ${p.name} für die eigene Disziplin und Motivation lernen?`,
+            ]
+          : [
+              `1) Schreibe drei Sätze über ${p.name} mit eigenen Worten.`,
+              `2) Welche Eigenschaften braucht jemand, um in „${p.sport}“ so erfolgreich zu werden?`,
+              `3) Würdest du diese Sportart auch gerne ausprobieren? Begründe.`,
+            ];
     return {
-      tasks: [
-        `Persönlichkeit: ${p.name}`,
-        `Sportart: ${p.sport}`,
-        `Land: ${p.nation}`,
-        `Geboren: ${p.geboren}`,
-        `Bekannt für: ${p.bekanntFuer}`,
-        `Wusstest du schon? ${p.funFact}`,
-        "",
-        "Aufgaben:",
-        `1) Schreibe drei Sätze über ${p.name} mit eigenen Worten.`,
-        `2) Welche Eigenschaften braucht jemand, um in „${p.sport}“ so erfolgreich zu werden?`,
-        `3) Würdest du diese Sportart auch gerne ausprobieren? Begründe.`,
-      ],
+      tasks: [...baseTasks, ...aufgaben],
       closing: `Was bewundert man deiner Meinung nach an ${p.name} am meisten?`,
       resolvedTaskType: resolved,
     };
@@ -640,22 +680,36 @@ export function generateAssignment(sport: Sport, taskType: TaskType): GeneratedA
 
   if (resolved === "sportgeschichte") {
     const h = pickRandom(HISTORY[sport]);
+    const fragen =
+      difficulty === "leicht"
+        ? h.questions.slice(0, 2)
+        : difficulty === "schwer"
+          ? [...h.questions, "Was hätte sich anders entwickelt, wenn es diesen Sport nicht gäbe? Begründe."]
+          : h.questions;
     return {
       tasks: [
         `Text: ${h.title}`,
         h.text,
         "",
-        "Beantworte die folgenden Fragen in ganzen Sätzen:",
-        ...h.questions.map((q, i) => `${i + 1}) ${q}`),
+        difficulty === "leicht"
+          ? "Beantworte die folgenden Fragen in kurzen Sätzen:"
+          : "Beantworte die folgenden Fragen in ganzen Sätzen:",
+        ...fragen.map((q, i) => `${i + 1}) ${q}`),
       ],
-      closing: "Was ist das Interessanteste, das du in diesem Text neu erfahren hast?",
+      closing:
+        difficulty === "schwer"
+          ? "Was bedeutet die Geschichte dieses Sports für die heutige Zeit?"
+          : "Was ist das Interessanteste, das du in diesem Text neu erfahren hast?",
       resolvedTaskType: resolved,
     };
   }
 
   // Standard-Pools (Beobachtung / Regeln / Technik / Reflexion)
   const set = pickRandom(POOL[sport][resolved]);
-  const tasks = shuffle(set.tasks).slice(0, 3);
+  const tasks = shuffle(set.tasks).slice(0, counts.pool);
+  if (difficulty === "schwer") {
+    tasks.push("Zusatzaufgabe: Begründe deine wichtigste Beobachtung oder Antwort in 2–3 Sätzen.");
+  }
   return { tasks, closing: set.closing, resolvedTaskType: resolved };
 }
 
