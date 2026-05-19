@@ -188,12 +188,18 @@ function ClassPage() {
       toast.error("Bitte einen Namen angeben.");
       return;
     }
-    turnActions.addDiscipline(cls.id, discName.trim(), discWeight);
+    turnActions.addDiscipline(cls.id, discName.trim(), discWeight, {
+      scoreMode: discMode,
+      scoreMax: discMode === "points" ? Math.max(1, discMax) : undefined,
+    });
     setDiscName("");
     setDiscWeight(10);
+    setDiscMode("percent");
+    setDiscMax(10);
     setDiscOpen(false);
     toast.success("Disziplin hinzugefügt");
   };
+
 
   const handleExport = () => {
     const csv = exportClassCsv(cls, settings);
