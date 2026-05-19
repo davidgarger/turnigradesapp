@@ -393,90 +393,13 @@ function ClassPage() {
 
         {/* Aktionen unterhalb der Tabelle */}
         <div className="mt-4 flex flex-wrap items-center gap-2">
-          <Dialog open={discOpen} onOpenChange={setDiscOpen}>
-            <DialogTrigger asChild>
-              <Button variant="outline">
-                <Plus className="h-4 w-4" /> Disziplin
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Disziplin hinzufügen</DialogTitle>
-              </DialogHeader>
-              <div className="grid gap-3">
-                <div className="grid gap-1.5">
-                  <Label htmlFor="dn">Name</Label>
-                  <Input
-                    id="dn"
-                    value={discName}
-                    onChange={(e) => setDiscName(e.target.value)}
-                    placeholder="z. B. Weitsprung"
-                  />
-                </div>
-                <div className="grid gap-1.5">
-                  <Label htmlFor="dw">Gewichtung (%)</Label>
-                  <Input
-                    id="dw"
-                    type="number"
-                    min={0}
-                    max={100}
-                    value={discWeight}
-                    onChange={(e) => setDiscWeight(Number(e.target.value))}
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Die Gewichtungen aller Disziplinen werden im Verhältnis zueinander gewertet.
-                  </p>
-                </div>
-                <div className="grid gap-1.5">
-                  <Label>Bewertung</Label>
-                  <div className="grid grid-cols-2 gap-1 rounded-md bg-muted p-1 text-sm">
-                    <button
-                      type="button"
-                      onClick={() => setDiscMode("percent")}
-                      className={`rounded px-2 py-1.5 transition ${discMode === "percent" ? "bg-background font-semibold text-foreground shadow-sm" : "text-muted-foreground"}`}
-                    >
-                      Prozent (0–100 %)
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setDiscMode("points")}
-                      className={`rounded px-2 py-1.5 transition ${discMode === "points" ? "bg-background font-semibold text-foreground shadow-sm" : "text-muted-foreground"}`}
-                    >
-                      Punkte / Zahl
-                    </button>
-                  </div>
-                  {discMode === "points" ? (
-                    <div className="grid gap-1.5">
-                      <Label htmlFor="dmax">Maximaler Wert (= 100 %)</Label>
-                      <Input
-                        id="dmax"
-                        type="number"
-                        min={1}
-                        max={1000}
-                        value={discMax}
-                        onChange={(e) => setDiscMax(Math.max(1, Number(e.target.value) || 1))}
-                      />
-                      <p className="text-xs text-muted-foreground">
-                        Eingabe pro Schüler:in als Zahl 0–{discMax}. Wird intern auf Prozent
-                        normalisiert (z. B. {Math.round(discMax / 2)} = 50 %).
-                      </p>
-                    </div>
-                  ) : (
-                    <p className="text-xs text-muted-foreground">
-                      Eingabe direkt als Prozentwert 0–100.
-                    </p>
-                  )}
-                </div>
-
-              </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setDiscOpen(false)}>
-                  Abbrechen
-                </Button>
-                <Button onClick={handleAddDiscipline}>Hinzufügen</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+          <Link
+            to="/klasse/$classId/disziplinen"
+            params={{ classId: cls.id }}
+            className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+          >
+            <Dumbbell className="h-4 w-4" /> Disziplinen verwalten
+          </Link>
 
           <Button variant="outline" onClick={handleExport}>
             <Download className="h-4 w-4" /> Export CSV
