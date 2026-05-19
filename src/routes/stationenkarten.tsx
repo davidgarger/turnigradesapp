@@ -1,18 +1,20 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
-import { ArrowLeft, Printer, RefreshCw, LayoutGrid } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { ArrowLeft, Printer, LayoutGrid, Target, ArrowRight } from "lucide-react";
 import {
   DISCIPLINE_LABEL,
   LEVEL_LABEL,
   SPORT_LABEL,
   SPORT_TO_DISCIPLINES,
   buildVideoQrUrl,
-  generateStationCards,
-  type StationCard,
+  listProgressions,
+  type Progression,
+  type ProgressionStep,
   type StationDiscipline,
   type StationLevel,
   type StationSport,
 } from "@/lib/station-cards";
+import { StationGraphic } from "@/components/StationGraphic";
 
 export const Route = createFileRoute("/stationenkarten")({
   component: StationenkartenPage,
@@ -22,7 +24,7 @@ export const Route = createFileRoute("/stationenkarten")({
       {
         name: "description",
         content:
-          "Druckfertige Stationenkarten mit Vorübungen für Leichtathletik und Geräteturnen — inkl. QR-Code für Video.",
+          "Druckfertige Stationenkarten als Übungsreihe: Vorübungen, die schrittweise zur Zielübung führen — inkl. Grafiken und QR-Code für Video.",
       },
     ],
   }),
@@ -33,14 +35,26 @@ const LEVELS: StationLevel[] = ["unterstufe", "mittelstufe", "oberstufe"];
 
 function StationenkartenPage() {
   const navigate = useNavigate();
-  const [sport, setSport] = useState<StationSport>("leichtathletik");
-  const [discipline, setDiscipline] = useState<StationDiscipline>("sprint");
+  const [sport, setSport] = useState<StationSport>("geraeteturnen");
+  const [discipline, setDiscipline] = useState<StationDiscipline>("reck");
   const [level, setLevel] = useState<StationLevel>("mittelstufe");
-  const [count, setCount] = useState<number>(4);
-  const [seed, setSeed] = useState<number>(0);
+  const [progressionId, setProgressionId] = useState<string>("reck-aufschwung");
   const [videoOverrides, setVideoOverrides] = useState<Record<number, string>>({});
 
   const disciplines = useMemo(() => SPORT_TO_DISCIPLINES[sport], [sport]);
+  const progressions = useMemo(
+    () => listProgressions(sport, discipline, level),
+    [sport, discipline, level],
+  );
+
+  // Auto-select first progression when filters change.
+  useEffect(() => {
+    if (progressions.length === 0) return;
+    if (!progressions.find((p) => p.id === progressionId)) {
+      setProgressionId(progressions[0].id);
+      setVideoOverrides({});
+    }
+  }, [progressions, progressionId]);
 
   const onSportChange = (s: StationSport) => {
     setSport(s);
@@ -48,16 +62,8 @@ function StationenkartenPage() {
     if (first) setDiscipline(first);
   };
 
-  const set = useMemo(
-    () => generateStationCards({ sport, discipline, level, count, seed }),
-    [sport, discipline, level, count, seed],
-  );
-
+  const progression = progressions.find((p) => p.id === progressionId) ?? progressions[0];
   const onPrint = () => window.print();
-  const onRegenerate = () => {
-    setSeed((s) => s + 1);
-    setVideoOverrides({});
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50 print:bg-white">
@@ -82,7 +88,7 @@ function StationenkartenPage() {
           <div className="min-w-0 flex-1">
             <h1 className="truncate text-lg font-semibold sm:text-xl">Stationenkarten-Generator</h1>
             <p className="truncate text-xs text-muted-foreground sm:text-sm">
-              Vorübungen für Leichtathletik & Geräteturnen — druckfertig mit QR-Code
+              Übungsreihe Vorübung → Zielübung, mit Grafiken & QR-Code
             </p>
           </div>
           <button
@@ -95,7 +101,7 @@ function StationenkartenPage() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-5xl px-3 py-6 space-y-6">
+      <main className="mx-auto max-w-5xl space-y-6 px-3 py-6">
         {/* Steuerung */}
         <section className="no-print rounded-lg border border-border bg-card p-4 shadow-sm">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -106,7 +112,9 @@ function StationenkartenPage() {
                 className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
               >
                 {SPORTS.map((s) => (
-                  <option key={s} value={s}>{SPORT_LABEL[s]}</option>
+                  <option key={s} value={s}>
+                    {SPORT_LABEL[s]}
+                  </option>
                 ))}
               </select>
             </Field>
@@ -117,7 +125,9 @@ function StationenkartenPage() {
                 className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
               >
                 {disciplines.map((d) => (
-                  <option key={d} value={d}>{DISCIPLINE_LABEL[d]}</option>
+                  <option key={d} value={d}>
+                    {DISCIPLINE_LABEL[d]}
+                  </option>
                 ))}
               </select>
             </Field>
@@ -128,64 +138,73 @@ function StationenkartenPage() {
                 className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
               >
                 {LEVELS.map((l) => (
-                  <option key={l} value={l}>{LEVEL_LABEL[l]}</option>
+                  <option key={l} value={l}>
+                    {LEVEL_LABEL[l]}
+                  </option>
                 ))}
               </select>
             </Field>
-            <Field label="Anzahl Stationen">
-              <input
-                type="number"
-                min={1}
-                max={8}
-                value={count}
-                onChange={(e) => setCount(Math.max(1, Math.min(8, Number(e.target.value) || 1)))}
-                className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-              />
+            <Field label="Zielübung">
+              <select
+                value={progression?.id ?? ""}
+                onChange={(e) => {
+                  setProgressionId(e.target.value);
+                  setVideoOverrides({});
+                }}
+                disabled={progressions.length === 0}
+                className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm disabled:opacity-50"
+              >
+                {progressions.length === 0 ? (
+                  <option value="">— keine verfügbar —</option>
+                ) : (
+                  progressions.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.target}
+                    </option>
+                  ))
+                )}
+              </select>
             </Field>
-          </div>
-          <div className="mt-4 flex flex-wrap gap-2">
-            <button
-              onClick={onRegenerate}
-              className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm hover:bg-accent"
-            >
-              <RefreshCw className="h-4 w-4" /> Andere Auswahl
-            </button>
-            <div className="text-xs text-muted-foreground self-center">
-              Tipp: Pro Karte kannst du den QR-Code auf ein eigenes Video umlenken.
-            </div>
           </div>
         </section>
 
         {/* Hinweis */}
         <section className="no-print rounded-lg border border-dashed border-border bg-muted/30 p-3 text-xs text-muted-foreground">
-          Inhalte sind didaktische Vorschläge (Standard-Vorübungen). Bitte vor Einsatz fachlich prüfen.
-          QR-Code zeigt standardmäßig auf eine YouTube-Suche — eigene Video-URL pro Karte möglich.
+          Die Karten sind als Übungsreihe aufgebaut: jede Karte = ein Schritt näher zur Zielübung. Die
+          letzte Karte ist die fertige Zielübung. Inhalte sind didaktische Vorschläge — bitte vor
+          Einsatz fachlich prüfen.
         </section>
 
         {/* Karten */}
-        <section className="grid gap-4 sm:grid-cols-1">
-          {set.cards.length === 0 ? (
-            <div className="rounded-lg border border-border bg-card p-6 text-sm text-muted-foreground">
-              Für diese Kombination sind noch keine Karten vorhanden.
-            </div>
-          ) : (
-            set.cards.map((card, idx) => (
-              <CardView
-                key={`${card.title}-${idx}`}
-                index={idx + 1}
-                total={set.cards.length}
-                sport={sport}
-                discipline={discipline}
-                level={level}
-                card={card}
-                videoUrl={videoOverrides[idx] ?? ""}
-                onVideoUrlChange={(v) =>
-                  setVideoOverrides((prev) => ({ ...prev, [idx]: v }))
-                }
-              />
-            ))
-          )}
-        </section>
+        {!progression ? (
+          <div className="rounded-lg border border-border bg-card p-6 text-sm text-muted-foreground">
+            Für diese Kombination ist noch keine Übungsreihe hinterlegt. Wähle eine andere Disziplin
+            oder Stufe.
+          </div>
+        ) : (
+          <>
+            <ProgressionOverview progression={progression} />
+            <section className="grid gap-4">
+              {progression.steps.map((s, idx) => (
+                <CardView
+                  key={`${progression.id}-${idx}`}
+                  index={idx + 1}
+                  total={progression.steps.length}
+                  step={s}
+                  sport={sport}
+                  discipline={discipline}
+                  level={level}
+                  target={progression.target}
+                  videoSearch={progression.videoSearch}
+                  videoUrl={videoOverrides[idx] ?? ""}
+                  onVideoUrlChange={(v) =>
+                    setVideoOverrides((prev) => ({ ...prev, [idx]: v }))
+                  }
+                />
+              ))}
+            </section>
+          </>
+        )}
       </main>
     </div>
   );
@@ -200,33 +219,72 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   );
 }
 
+function ProgressionOverview({ progression }: { progression: Progression }) {
+  return (
+    <section className="no-print rounded-lg border border-border bg-card p-4 shadow-sm">
+      <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-foreground">
+        <Target className="h-4 w-4 text-primary" />
+        Zielübung: <span className="text-primary">{progression.target}</span>
+      </div>
+      <ol className="flex flex-wrap items-center gap-2">
+        {progression.steps.map((s, i) => {
+          const isLast = i === progression.steps.length - 1;
+          return (
+            <li key={i} className="flex items-center gap-2">
+              <span
+                className={`rounded-md border px-2.5 py-1 text-xs ${
+                  isLast
+                    ? "border-primary bg-primary/10 font-semibold text-primary"
+                    : "border-border bg-background text-foreground/80"
+                }`}
+              >
+                {i + 1}. {s.title}
+              </span>
+              {!isLast ? <ArrowRight className="h-3.5 w-3.5 text-muted-foreground" /> : null}
+            </li>
+          );
+        })}
+      </ol>
+    </section>
+  );
+}
+
 function CardView({
   index,
   total,
+  step,
   sport,
   discipline,
   level,
-  card,
+  target,
+  videoSearch,
   videoUrl,
   onVideoUrlChange,
 }: {
   index: number;
   total: number;
+  step: ProgressionStep;
   sport: StationSport;
   discipline: StationDiscipline;
   level: StationLevel;
-  card: StationCard;
+  target: string;
+  videoSearch: string;
   videoUrl: string;
   onVideoUrlChange: (v: string) => void;
 }) {
-  const qr = buildVideoQrUrl(card.videoSearch, videoUrl);
+  const isTarget = index === total;
+  const qr = buildVideoQrUrl(videoSearch, videoUrl);
   const targetUrl =
     videoUrl.trim().length > 0
       ? videoUrl.trim()
-      : `https://www.youtube.com/results?search_query=${encodeURIComponent(card.videoSearch)}`;
+      : `https://www.youtube.com/results?search_query=${encodeURIComponent(videoSearch)}`;
 
   return (
-    <article className="card-print rounded-xl border-2 border-border bg-white p-5 shadow-sm print:shadow-none">
+    <article
+      className={`card-print rounded-xl border-2 bg-white p-5 shadow-sm print:shadow-none ${
+        isTarget ? "border-primary" : "border-border"
+      }`}
+    >
       <header className="flex items-start justify-between gap-4 border-b border-border pb-3">
         <div className="min-w-0">
           <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-muted-foreground">
@@ -238,64 +296,67 @@ function CardView({
             <span>{LEVEL_LABEL[level]}</span>
           </div>
           <h2 className="mt-1 text-xl font-bold leading-tight text-foreground">
-            Station {index}/{total}: {card.title}
+            {isTarget ? (
+              <span className="inline-flex items-center gap-2">
+                <Target className="h-5 w-5 text-primary" />
+                Zielübung {index}/{total}: {step.title}
+              </span>
+            ) : (
+              <>
+                Vorübung {index}/{total}: {step.title}
+              </>
+            )}
           </h2>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Hinführung zu: <strong className="text-foreground/80">{target}</strong>
+          </p>
         </div>
         <div className="shrink-0 text-center">
-          <img
-            src={qr}
-            alt="QR-Code zum Video"
-            className="h-24 w-24 rounded border border-border"
-          />
+          <img src={qr} alt="QR-Code zum Video" className="h-24 w-24 rounded border border-border" />
           <div className="mt-1 text-[10px] text-muted-foreground">Video scannen</div>
         </div>
       </header>
 
-      <div className="mt-4 grid gap-4 sm:grid-cols-2">
-        <div>
-          <h3 className="text-sm font-semibold text-foreground">Ziel</h3>
-          <p className="mt-1 text-sm text-foreground/80">{card.ziel}</p>
+      <div className="mt-4 grid gap-4 sm:grid-cols-[160px_1fr]">
+        <div className="flex items-start justify-center">
+          {step.graphicKey ? (
+            <StationGraphic kind={step.graphicKey} />
+          ) : (
+            <div className="flex aspect-square w-full max-w-[160px] items-center justify-center rounded-md border border-dashed border-border bg-muted/30 text-[10px] text-muted-foreground">
+              keine Grafik
+            </div>
+          )}
         </div>
-        <div>
-          <h3 className="text-sm font-semibold text-foreground">Material</h3>
-          <ul className="mt-1 list-disc pl-5 text-sm text-foreground/80">
-            {card.material.map((m, i) => (
-              <li key={i}>{m}</li>
-            ))}
-          </ul>
+        <div className="space-y-3">
+          <div>
+            <h3 className="text-sm font-semibold text-foreground">Ziel</h3>
+            <p className="mt-1 text-sm text-foreground/80">{step.ziel}</p>
+          </div>
+          <div>
+            <h3 className="text-sm font-semibold text-foreground">Bewegung</h3>
+            <p className="mt-1 text-sm text-foreground/90">{step.beschreibung}</p>
+          </div>
+          {step.material && step.material.length > 0 ? (
+            <div>
+              <h3 className="text-sm font-semibold text-foreground">Material</h3>
+              <ul className="mt-1 list-disc pl-5 text-sm text-foreground/80">
+                {step.material.map((m, i) => (
+                  <li key={i}>{m}</li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
         </div>
       </div>
 
-      <div className="mt-4">
-        <h3 className="text-sm font-semibold text-foreground">Ablauf</h3>
-        <ol className="mt-1 list-decimal pl-5 text-sm text-foreground/90">
-          {card.ablauf.map((s, i) => (
-            <li key={i} className="mb-0.5">{s}</li>
-          ))}
-        </ol>
-      </div>
-
-      <div className="mt-4 grid gap-4 sm:grid-cols-2">
-        <div className="rounded-md border border-emerald-200 bg-emerald-50 p-3">
-          <h3 className="text-xs font-semibold uppercase tracking-wide text-emerald-800">
-            Leichter
+      {step.sicherheit ? (
+        <div className="mt-4 rounded-md border border-rose-200 bg-rose-50 p-3">
+          <h3 className="text-xs font-semibold uppercase tracking-wide text-rose-800">
+            Sicherheit
           </h3>
-          <p className="mt-1 text-sm text-emerald-950">{card.variationLeichter}</p>
+          <p className="mt-1 text-sm text-rose-950">{step.sicherheit}</p>
         </div>
-        <div className="rounded-md border border-amber-200 bg-amber-50 p-3">
-          <h3 className="text-xs font-semibold uppercase tracking-wide text-amber-800">
-            Schwerer
-          </h3>
-          <p className="mt-1 text-sm text-amber-950">{card.variationSchwerer}</p>
-        </div>
-      </div>
-
-      <div className="mt-4 rounded-md border border-rose-200 bg-rose-50 p-3">
-        <h3 className="text-xs font-semibold uppercase tracking-wide text-rose-800">
-          Sicherheit
-        </h3>
-        <p className="mt-1 text-sm text-rose-950">{card.sicherheit}</p>
-      </div>
+      ) : null}
 
       {/* Lehrer-Feld: eigene Video-URL — wird nicht gedruckt */}
       <div className="no-print mt-4 rounded-md border border-dashed border-border bg-muted/30 p-3">
@@ -304,13 +365,16 @@ function CardView({
         </label>
         <input
           type="url"
-          placeholder={`Standard: YouTube-Suche „${card.videoSearch}"`}
+          placeholder={`Standard: YouTube-Suche „${videoSearch}"`}
           value={videoUrl}
           onChange={(e) => onVideoUrlChange(e.target.value)}
           className="mt-1 h-9 w-full rounded-md border border-input bg-background px-3 text-sm"
         />
         <div className="mt-1 truncate text-[11px] text-muted-foreground">
-          QR-Code zeigt auf: <a href={targetUrl} target="_blank" rel="noreferrer" className="underline">{targetUrl}</a>
+          QR-Code zeigt auf:{" "}
+          <a href={targetUrl} target="_blank" rel="noreferrer" className="underline">
+            {targetUrl}
+          </a>
         </div>
       </div>
     </article>
