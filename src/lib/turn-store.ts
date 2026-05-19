@@ -202,9 +202,10 @@ function seedStudents(classId: ClassId): Student[] {
     lastName: ln,
     classId,
     scores: {
-      shuttle: 60 + ((i * 7) % 35),
+      shuttle: 8 + ((i * 3) % 8),    // 8–15 Stufen
       cooper: 55 + ((i * 11) % 40),
     },
+
     forgottenKit: i % 3 === 0 ? 1 : 0,
     excusedNotParticipating: i % 4 === 0 ? 1 : 0,
     unexcusedNotParticipating: i === 1 ? 1 : 0,
