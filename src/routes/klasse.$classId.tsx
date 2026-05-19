@@ -367,17 +367,11 @@ function ClassPage() {
                   {mode === "points" ? (
                     <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
                       max
-                      <input
-                        type="number"
-                        min={1}
-                        max={1000}
+                      <MaxInput
                         value={max}
-                        onChange={(e) =>
-                          turnActions.updateDiscipline(cls.id, d.id, {
-                            scoreMax: Math.max(1, Number(e.target.value) || 1),
-                          })
+                        onCommit={(v) =>
+                          turnActions.updateDiscipline(cls.id, d.id, { scoreMax: v })
                         }
-                        className="h-7 w-16 rounded border border-input bg-background px-1 text-right text-xs"
                       />
                     </span>
                   ) : null}
