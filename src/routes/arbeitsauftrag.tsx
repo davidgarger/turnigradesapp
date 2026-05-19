@@ -46,7 +46,17 @@ export const Route = createFileRoute("/arbeitsauftrag")({
 });
 
 const SPORTS: Sport[] = ["basketball", "fussball", "geraeteturnen", "leichtathletik", "allgemein"];
-const TASK_TYPES: TaskType[] = ["beobachtung", "regeln", "technik", "reflexion", "zufaellig"];
+const TASK_TYPES: TaskType[] = [
+  "beobachtung",
+  "regeln",
+  "technik",
+  "reflexion",
+  "lueckentext",
+  "quiz",
+  "steckbrief",
+  "sportgeschichte",
+  "zufaellig",
+];
 const STATUSES: Status[] = ["entschuldigt", "unentschuldigt", "turnzeug_vergessen"];
 
 function todayIso() {
@@ -374,14 +384,33 @@ function ArbeitsauftragPage() {
               </dl>
 
               <h3 className="mt-6 text-lg font-bold">Deine Aufgaben</h3>
-              <ol className="mt-2 list-decimal space-y-2 pl-6 text-base leading-relaxed">
-                {assignment.tasks.map((t, i) => (
-                  <li key={i}>{t}</li>
-                ))}
-              </ol>
+              {["beobachtung", "regeln", "technik", "reflexion"].includes(
+                assignment.resolvedTaskType,
+              ) ? (
+                <ol className="mt-2 list-decimal space-y-2 pl-6 text-base leading-relaxed">
+                  {assignment.tasks.map((t, i) => (
+                    <li key={i}>{t}</li>
+                  ))}
+                </ol>
+              ) : (
+                <div className="mt-2 space-y-1 text-base leading-relaxed">
+                  {assignment.tasks.map((t, i) => (
+                    <p key={i} className="whitespace-pre-wrap">
+                      {t === "" ? "\u00A0" : t}
+                    </p>
+                  ))}
+                </div>
+              )}
 
               <h3 className="mt-6 text-lg font-bold">Abschlussfrage</h3>
               <p className="mt-1 text-base leading-relaxed">{assignment.closing}</p>
+
+              {assignment.answerKey && (
+                <div className="mt-6 rounded-lg border border-dashed border-slate-400 bg-slate-50 p-3 text-sm text-slate-700 print:bg-white">
+                  <span className="font-semibold">Lösung (für die Lehrperson):</span>{" "}
+                  {assignment.answerKey}
+                </div>
+              )}
 
               <h3 className="mt-6 text-lg font-bold">Antwort</h3>
               <div className="mt-2 space-y-4">
