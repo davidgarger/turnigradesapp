@@ -650,9 +650,12 @@ function StudentRow({
         <td key={d.id} className="px-1 py-1 text-center">
           <ScoreInput
             value={student.scores[d.id]}
+            max={getDisciplineMax(d)}
+            unit={getDisciplineUnit(d)}
             onChange={(v) => turnActions.setScore(classId, student.id, d.id, v)}
           />
         </td>
+
       ))}
       <StatusCell
         value={student.forgottenKit}
