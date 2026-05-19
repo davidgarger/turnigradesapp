@@ -368,4 +368,169 @@ const POOL: Record<StationDiscipline, Record<StationLevel, StationCard[]>> = {
     unterstufe: [
       mk("Aufknien und Aufhocken auf Kasten", "Sprung über Hindernis mit Aufstütz",
         ["Kasten 3 Teile", "Sprungbrett", "Matte"],
-        ["Anlauf 5 Schritte.", "Mit Sprungbrett auf Kasten knien.", "Aufrichten, in den Stand springen, Landung mit Kn
+        ["Anlauf 5 Schritte.", "Mit Sprungbrett auf Kasten knien.", "Aufrichten, in Stand springen, Landung mit Knie federn.", "5 Versuche."],
+        "Niedrigerer Kasten, kein Brett.",
+        "Hocke auf Kasten statt Knien.",
+        "Helfer steht seitlich am Kasten.",
+        "Aufknien Kasten Grundschule"),
+    ],
+    mittelstufe: [
+      mk("Sprunghocke über Kasten quer", "Hocksprung mit Stütz",
+        ["Kasten 4 Teile quer", "Sprungbrett", "2 Matten"],
+        ["Anlauf 7 Schritte.", "Brett kraftvoll abdrücken.", "Hände auf Kasten, Hocke darüber.", "Landung in Knie federn.", "5 Versuche."],
+        "Kasten niedriger, längs.",
+        "Kasten höher, Sprunggrätsche.",
+        "Helfer am Oberarm, Mattenlandung weich.",
+        "Sprunghocke Kasten Schule"),
+    ],
+    oberstufe: [
+      mk("Sprunggrätsche über Bock", "Saubere Grätsche mit Stütz",
+        ["Bock oder Kasten 4 Teile", "Sprungbrett", "Matten"],
+        ["Anlauf 9 Schritte.", "Beidbeiniger Absprung vom Brett.", "Hände stützen, Beine grätschen über Bock.", "Landung beidbeinig, ausstrecken.", "5 saubere Sprünge."],
+        "Bock niedriger, Sprunghocke statt Grätsche.",
+        "Höherer Bock, Sprunghocke + Grätsche kombinieren.",
+        "Helfer am Oberarm, niemals am Hals greifen.",
+        "Sprunggrätsche Bock Oberstufe"),
+    ],
+  },
+  schwebebalken: {
+    unterstufe: [
+      mk("Gehen und Drehen auf der Bank", "Gleichgewicht entwickeln",
+        ["Lange Bank umgedreht (schmale Seite)", "Matten beidseitig"],
+        ["Auf Bank gehen, Arme seitlich.", "In der Mitte 180°-Drehung.", "Rückwärts zurück.", "3 Durchgänge."],
+        "Bank breite Seite oben, Drehung auf Bodenmarkierung.",
+        "Mit Augen halb geschlossen, Tempo erhöhen.",
+        "Beidseitig Matten, kein Schubsen.",
+        "Gleichgewicht Bank Grundschule"),
+    ],
+    mittelstufe: [
+      mk("Standwaage auf Balken", "Statisches Gleichgewicht",
+        ["Schwebebalken niedrig oder Bank schmal", "Matten"],
+        ["Auf Balken stehen.", "Standwaage 5 s halten je Bein.", "Sauber landen.", "3 Versuche pro Seite."],
+        "Auf Bank breit, kürzere Haltezeit.",
+        "Standwaage mit Armen über Kopf, 10 s halten.",
+        "Helfer in Reichweite, Matten unter Balken.",
+        "Standwaage Schwebebalken Schule"),
+    ],
+    oberstufe: [
+      mk("Strecksprung mit Drehung auf Balken", "Dynamisches Gleichgewicht",
+        ["Schwebebalken", "Weichbodenmatte"],
+        ["Aus Stand auf Balken Strecksprung.", "180°-Drehung in der Luft.", "Sauber auf Balken landen.", "5 Versuche."],
+        "Sprung ohne Drehung, nur Strecksprung.",
+        "360°-Drehung, anschließend Standwaage.",
+        "Weichbodenmatte unter Balken Pflicht.",
+        "Sprung Drehung Schwebebalken"),
+    ],
+  },
+  ringe: {
+    unterstufe: [
+      mk("Hängen und Schaukeln in den Ringen", "Griffkraft und Bewegungsfreude",
+        ["Ringe auf Brusthöhe", "Matte darunter"],
+        ["In Ringen hängen.", "Vor- und zurückschaukeln.", "3-mal 10 s."],
+        "Ringe tiefer, Füße kurz am Boden.",
+        "Im Hang Knie hochziehen.",
+        "Matte unter Ringen, Helfer in der Nähe.",
+        "Ringe Schaukeln Grundschule"),
+    ],
+    mittelstufe: [
+      mk("Sturzhang", "Körperspannung in der Inversion",
+        ["Ringe schulterhoch", "Matte"],
+        ["In den Hang, Beine zwischen Ringen hochziehen.", "Beine durch Ringe nach hinten oben strecken.", "5 s Sturzhang halten.", "3 Versuche."],
+        "Mit Helfer, der Beine führt.",
+        "Sturzhang 10 s, ablassen in Streckhang.",
+        "Helfer steht hinter Schüler, Matten unter Ringen.",
+        "Sturzhang Ringe Schule"),
+    ],
+    oberstufe: [
+      mk("Schwingen mit Felgaufschwung", "Schwung kontrollieren, in Stütz aufschwingen",
+        ["Ringe hochgehängt", "2 Matten"],
+        ["Im Hang vor- und zurückschwingen.", "Im Vorschwung Beine hochziehen, Felgaufschwung.", "In Stütz halten, dann ablassen.", "3 Versuche."],
+        "Nur Schwingen ohne Aufschwung.",
+        "Aufschwung + Senken in Sturzhang.",
+        "Helfer am Rücken, Magnesia bei Bedarf.",
+        "Felgaufschwung Ringe Oberstufe"),
+    ],
+  },
+  minitramp: {
+    unterstufe: [
+      mk("Strecksprünge auf Minitramp", "Beidbeiniger Absprung, sichere Landung",
+        ["Minitrampolin", "Weichbodenmatte"],
+        ["Anlauf 5 Schritte.", "Beidbeinig auf Tramp, Strecksprung.", "Landung auf Weichbodenmatte in Knie federn.", "5 Sprünge."],
+        "Aus Stand auf Tramp springen.",
+        "Mit Drehung 180° in der Luft.",
+        "Nur Weichbodenmatte als Landung, Helfer am Mattenrand.",
+        "Minitramp Strecksprung Schule"),
+    ],
+    mittelstufe: [
+      mk("Hocksprung über Kasten mit Minitramp", "Sprungkraft und Stützsprung",
+        ["Minitrampolin", "Kasten 3 Teile quer", "Weichbodenmatte dahinter"],
+        ["Anlauf 7 Schritte.", "Beidbeiniger Absprung vom Tramp.", "Hocksprung über Kasten.", "Sichere Landung.", "5 Versuche."],
+        "Niedriger Kasten, ohne Stütz drüber.",
+        "Höherer Kasten, Grätsche statt Hocke.",
+        "Helfer am Kasten, Weichbodenmatte direkt dahinter.",
+        "Hocksprung Minitramp Kasten"),
+    ],
+    oberstufe: [
+      mk("Salto vorwärts in Weichbodenmatte", "Drehimpuls über Minitramp",
+        ["Minitrampolin", "Weichbodenmatte (groß)", "2 Helfer"],
+        ["Anlauf 9 Schritte.", "Vom Tramp abdrücken, Knie zur Brust ziehen.", "Rolle/Salto vorwärts in Weichbodenmatte.", "3 saubere Versuche."],
+        "Nur Hocksprung in Weichbodenmatte.",
+        "Salto mit ausgestreckter Landung.",
+        "Pflicht: 2 Helfer seitlich, große Weichbodenmatte, Lehrperson sichert mit.",
+        "Salto vorwärts Minitramp Schule"),
+    ],
+  },
+};
+
+export type StationCardSet = {
+  sport: StationSport;
+  discipline: StationDiscipline;
+  level: StationLevel;
+  cards: StationCard[];
+};
+
+export function listDisciplinesForSport(sport: StationSport): StationDiscipline[] {
+  return SPORT_TO_DISCIPLINES[sport];
+}
+
+// Hilfsfunktion: Mische Karten deterministisch via Index-Rotation,
+// damit „neu generieren" andere Reihenfolgen ergibt.
+function rotate<T>(arr: T[], offset: number): T[] {
+  if (arr.length === 0) return arr;
+  const i = ((offset % arr.length) + arr.length) % arr.length;
+  return [...arr.slice(i), ...arr.slice(0, i)];
+}
+
+export function generateStationCards(opts: {
+  sport: StationSport;
+  discipline: StationDiscipline;
+  level: StationLevel;
+  count: number;
+  seed?: number;
+}): StationCardSet {
+  const all = POOL[opts.discipline]?.[opts.level] ?? [];
+  const rotated = rotate(all, opts.seed ?? 0);
+  // Wiederhole, falls weniger Karten als gewünscht im Pool sind.
+  const cards: StationCard[] = [];
+  for (let i = 0; i < opts.count; i++) {
+    if (rotated.length === 0) break;
+    cards.push(rotated[i % rotated.length]);
+  }
+  return {
+    sport: opts.sport,
+    discipline: opts.discipline,
+    level: opts.level,
+    cards,
+  };
+}
+
+// Liefert URL zu einer QR-Code-Grafik (kein zusätzliches NPM-Package nötig).
+// Verweist standardmäßig auf YouTube-Suche mit dem videoSearch-Text.
+export function buildVideoQrUrl(videoSearch: string, override?: string): string {
+  const target =
+    override && override.trim().length > 0
+      ? override.trim()
+      : `https://www.youtube.com/results?search_query=${encodeURIComponent(videoSearch)}`;
+  const encoded = encodeURIComponent(target);
+  return `https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=0&data=${encoded}`;
+}
