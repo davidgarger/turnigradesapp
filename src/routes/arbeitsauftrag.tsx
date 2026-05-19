@@ -61,6 +61,7 @@ const TASK_TYPES: TaskType[] = [
   "zufaellig",
 ];
 const STATUSES: Status[] = ["entschuldigt", "unentschuldigt", "turnzeug_vergessen"];
+const DIFFICULTIES: Difficulty[] = ["leicht", "mittel", "schwer"];
 
 function todayIso() {
   const d = new Date();
