@@ -621,6 +621,42 @@ const PEOPLE: Record<Sport, Person[]> = {
     { name: "Serena Williams", sport: "Tennis", nation: "USA", geboren: "1981", bekanntFuer: "23 Grand-Slam-Titel im Einzel", funFact: "Sie trainierte zusammen mit ihrer Schwester Venus." },
     { name: "Michael Phelps", sport: "Schwimmen", nation: "USA", geboren: "1985", bekanntFuer: "23 Olympiagoldmedaillen – Rekord", funFact: "Er begann mit dem Schwimmen, weil er als Kind sehr energiegeladen war." },
   ],
+  volleyball: [
+    { name: "Karch Kiraly", sport: "Volleyball / Beachvolleyball", nation: "USA", geboren: "1960", bekanntFuer: "Olympiagold in Halle und am Strand", funFact: "Er ist der bisher einzige Spieler mit Olympia-Gold in beiden Volleyball-Varianten." },
+    { name: "Giba (Gilberto Godoy Filho)", sport: "Volleyball", nation: "Brasilien", geboren: "1976", bekanntFuer: "Weltmeister und Olympiasieger mit Brasilien", funFact: "Bekannt für seine Sprungkraft und lautstarke Motivation seines Teams." },
+  ],
+  handball: [
+    { name: "Mikkel Hansen", sport: "Handball", nation: "Dänemark", geboren: "1987", bekanntFuer: "Mehrfacher Welthandballer, Olympiasieger", funFact: "Er ist Linkshänder und gefürchtet für seine Sprungwürfe." },
+    { name: "Nikola Karabatić", sport: "Handball", nation: "Frankreich", geboren: "1984", bekanntFuer: "Mehrfacher Weltmeister und Olympiasieger", funFact: "Sein Bruder Luka spielt ebenfalls in der französischen Nationalmannschaft." },
+  ],
+  unihockey: [
+    { name: "Kim Nilsson", sport: "Unihockey / Floorball", nation: "Schweden", geboren: "1988", bekanntFuer: "Mehrfacher Weltmeister mit Schweden", funFact: "Er gilt vielen Fans als bester Floorballer aller Zeiten." },
+    { name: "Matthias Hofbauer", sport: "Unihockey", nation: "Schweiz", geboren: "1981", bekanntFuer: "Topskorer der Schweizer Nationalmannschaft", funFact: "Spielte über 200 Länderspiele für die Schweiz." },
+  ],
+  badminton: [
+    { name: "Lin Dan", sport: "Badminton", nation: "China", geboren: "1983", bekanntFuer: "2× Olympiasieger im Einzel", funFact: "Bekannt als „Super Dan“ wegen seiner Dominanz." },
+    { name: "Carolina Marín", sport: "Badminton", nation: "Spanien", geboren: "1993", bekanntFuer: "Olympiasiegerin 2016, mehrfache Weltmeisterin", funFact: "Sie ist berühmt für ihre lauten Anfeuerungsrufe nach jedem Punkt." },
+  ],
+  schwimmen: [
+    { name: "Michael Phelps", sport: "Schwimmen", nation: "USA", geboren: "1985", bekanntFuer: "23 Olympiagoldmedaillen – Rekord aller Zeiten", funFact: "Er hat überdurchschnittlich lange Arme und große Füße." },
+    { name: "Katie Ledecky", sport: "Schwimmen", nation: "USA", geboren: "1997", bekanntFuer: "Dominante Langstreckenschwimmerin, mehrfache Olympiasiegerin", funFact: "Sie hält mehrere Weltrekorde im Freistil." },
+  ],
+  olympia: [
+    { name: "Pierre de Coubertin", sport: "Olympische Bewegung", nation: "Frankreich", geboren: "1863", bekanntFuer: "Gründer der modernen Olympischen Spiele (1896)", funFact: "Von ihm stammt der Spruch „Dabei sein ist alles“." },
+    { name: "Jesse Owens", sport: "Leichtathletik / Olympia", nation: "USA", geboren: "1913", bekanntFuer: "4 Goldmedaillen bei Olympia 1936 in Berlin", funFact: "Er setzte ein wichtiges Zeichen gegen den damaligen Rassismus." },
+  ],
+  fairplay: [
+    { name: "Andrés Iniesta", sport: "Fußball", nation: "Spanien", geboren: "1984", bekanntFuer: "Weltmeister 2010, gilt als Vorbild für Fairness", funFact: "Er wechselte nach einem Foul oft das Trikot mit dem Gegenspieler." },
+    { name: "Roger Federer", sport: "Tennis", nation: "Schweiz", geboren: "1981", bekanntFuer: "20 Grand-Slam-Titel, Fairplay-Ikone des Tennis", funFact: "Er gewann mehrfach den ATP-Sportsmanship-Award." },
+  ],
+  anatomie: [
+    { name: "Andreas Vesalius", sport: "Anatomie der Medizin", nation: "Flandern (heute Belgien)", geboren: "1514", bekanntFuer: "Begründer der modernen Anatomie", funFact: "Sein Buch „De humani corporis fabrica“ veränderte die Medizin." },
+    { name: "Galen von Pergamon", sport: "Antike Anatomie", nation: "Griechenland/Römisches Reich", geboren: "ca. 129 n. Chr.", bekanntFuer: "Wichtigster antiker Arzt, untersuchte Muskeln und Knochen", funFact: "Er war auch Arzt der Gladiatoren in Pergamon." },
+  ],
+  aufwaermen: [
+    { name: "Jürgen Weineck", sport: "Sportwissenschaft", nation: "Deutschland", geboren: "1942", bekanntFuer: "Wichtiger Autor zur Trainingslehre, u. a. zum Aufwärmen", funFact: "Sein Buch „Optimales Training“ ist Standardliteratur im Sportstudium." },
+    { name: "Hans Selye", sport: "Stress- und Trainingsforschung", nation: "Österreich/Kanada", geboren: "1907", bekanntFuer: "Forschte zur Anpassung des Körpers an Belastung", funFact: "Er prägte den Begriff „Stress“ in der Medizin." },
+  ],
 };
 
 // ────────────────────────────────────────────────────────────────────────────
