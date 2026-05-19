@@ -64,8 +64,8 @@ const POOL: Record<Sport, Record<Exclude<TaskType, "zufaellig">, TaskSet[]>> = {
       {
         tasks: [
           "Schreibe drei wichtige Regeln im Basketball auf.",
-          "Erkläre kurz, was ein „Foul" ist.",
-          "Was bedeutet „Schrittfehler"? Schreibe es in eigenen Worten.",
+          "Erkläre kurz, was ein „Foul“ ist.",
+          "Was bedeutet „Schrittfehler“? Schreibe es in eigenen Worten.",
           "Wie viele Spieler einer Mannschaft sind gleichzeitig auf dem Feld?",
           "Was zählt mehr: ein Korb von weit weg oder ein Korb von nah? Warum?",
         ],
@@ -114,7 +114,7 @@ const POOL: Record<Sport, Record<Exclude<TaskType, "zufaellig">, TaskSet[]>> = {
       {
         tasks: [
           "Schreibe drei wichtige Fußball-Regeln auf.",
-          "Was bedeutet „Abseits"? Erkläre kurz.",
+          "Was bedeutet „Abseits“? Erkläre kurz.",
           "Wann gibt es einen Eckball?",
           "Wann gibt es einen Elfmeter?",
           "Welche Aufgabe hat der Schiedsrichter?",
@@ -166,7 +166,7 @@ const POOL: Record<Sport, Record<Exclude<TaskType, "zufaellig">, TaskSet[]>> = {
           "Schreibe drei Sicherheitsregeln im Geräteturnen auf.",
           "Warum müssen Matten richtig liegen?",
           "Warum darf man Geräte nicht alleine aufbauen?",
-          "Was bedeutet „Hilfestellung"?",
+          "Was bedeutet „Hilfestellung“?",
           "Welche Kleidung ist beim Turnen sinnvoll?",
         ],
         closing: "Welche Regel ist dir am wichtigsten? Warum?",
@@ -214,7 +214,7 @@ const POOL: Record<Sport, Record<Exclude<TaskType, "zufaellig">, TaskSet[]>> = {
       {
         tasks: [
           "Wie ist der Start beim Sprint? Schreibe es auf.",
-          "Was bedeutet „Fehlstart"?",
+          "Was bedeutet „Fehlstart“?",
           "Wie wird die Weite beim Weitsprung gemessen?",
           "Welche Wurfgeräte kennst du? Nenne drei.",
           "Warum gibt es Bahnen beim Laufen?",
@@ -265,7 +265,7 @@ const POOL: Record<Sport, Record<Exclude<TaskType, "zufaellig">, TaskSet[]>> = {
         tasks: [
           "Schreibe drei Regeln auf, die im Sportunterricht immer gelten.",
           "Warum gibt es Sicherheitsregeln im Sport?",
-          "Was bedeutet „Fairplay"?",
+          "Was bedeutet „Fairplay“?",
           "Warum sollte man auf die Lehrperson hören?",
           "Welche Regel hilft, dass niemand verletzt wird?",
         ],
