@@ -533,7 +533,13 @@ export const turnActions = {
         ...s,
         classes: {
           ...s.classes,
-          [classId]: { ...cls, lessons: [...(cls.lessons ?? []), lesson] },
+          [classId]: {
+            ...cls,
+            lessons: [...(cls.lessons ?? []), lesson],
+            // Manuelle Gesamtzahl mitführen, damit "Stunden gesamt"
+            // automatisch wächst, wenn kein Stundenplan hinterlegt ist.
+            totalLessons: cls.schedule ? cls.totalLessons : (cls.totalLessons ?? 0) + 1,
+          },
         },
       };
     });
