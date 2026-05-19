@@ -327,36 +327,76 @@ function ClassPage() {
             <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
               Disziplinen
             </span>
-            {cls.disciplines.map((d) => (
-              <div
-                key={d.id}
-                className="flex items-center gap-2 rounded-md border border-border bg-background px-2 py-1 text-sm"
-              >
-                <span className="font-medium text-foreground">{d.name}</span>
-                <input
-                  type="number"
-                  min={0}
-                  max={100}
-                  value={d.weight}
-                  onChange={(e) =>
-                    turnActions.updateDiscipline(cls.id, d.id, { weight: Number(e.target.value) })
-                  }
-                  className="h-7 w-14 rounded border border-input bg-background px-1 text-right text-xs"
-                />
-                <span className="text-xs text-muted-foreground">%</span>
-                <button
-                  onClick={() => {
-                    if (confirm(`Disziplin „${d.name}“ wirklich löschen?`)) {
-                      turnActions.deleteDiscipline(cls.id, d.id);
-                    }
-                  }}
-                  className="text-muted-foreground hover:text-destructive"
-                  aria-label="Disziplin löschen"
+            {cls.disciplines.map((d) => {
+              const mode = d.scoreMode ?? "percent";
+              const max = getDisciplineMax(d);
+              return (
+                <div
+                  key={d.id}
+                  className="flex flex-wrap items-center gap-2 rounded-md border border-border bg-background px-2 py-1 text-sm"
                 >
-                  <Trash2 className="h-3.5 w-3.5" />
-                </button>
-              </div>
-            ))}
+                  <span className="font-medium text-foreground">{d.name}</span>
+                  <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+                    Gewichtung
+                    <input
+                      type="number"
+                      min={0}
+                      max={100}
+                      value={d.weight}
+                      onChange={(e) =>
+                        turnActions.updateDiscipline(cls.id, d.id, { weight: Number(e.target.value) })
+                      }
+                      className="h-7 w-14 rounded border border-input bg-background px-1 text-right text-xs"
+                    />
+                    %
+                  </span>
+                  <select
+                    value={mode}
+                    onChange={(e) => {
+                      const next = e.target.value as DisciplineScoreMode;
+                      turnActions.updateDiscipline(cls.id, d.id, {
+                        scoreMode: next,
+                        scoreMax: next === "points" ? (d.scoreMax ?? 10) : undefined,
+                      });
+                    }}
+                    className="h-7 rounded border border-input bg-background px-1 text-xs"
+                    title="Bewertungsmodus"
+                  >
+                    <option value="percent">%</option>
+                    <option value="points">Punkte/Zahl</option>
+                  </select>
+                  {mode === "points" ? (
+                    <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+                      max
+                      <input
+                        type="number"
+                        min={1}
+                        max={1000}
+                        value={max}
+                        onChange={(e) =>
+                          turnActions.updateDiscipline(cls.id, d.id, {
+                            scoreMax: Math.max(1, Number(e.target.value) || 1),
+                          })
+                        }
+                        className="h-7 w-16 rounded border border-input bg-background px-1 text-right text-xs"
+                      />
+                    </span>
+                  ) : null}
+                  <button
+                    onClick={() => {
+                      if (confirm(`Disziplin „${d.name}“ wirklich löschen?`)) {
+                        turnActions.deleteDiscipline(cls.id, d.id);
+                      }
+                    }}
+                    className="text-muted-foreground hover:text-destructive"
+                    aria-label="Disziplin löschen"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              );
+            })}
+
           </div>
         )}
 
