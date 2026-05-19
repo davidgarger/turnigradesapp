@@ -22,23 +22,16 @@ function ArchivPage() {
   const navigate = useNavigate();
   const state = useTurnState();
 
-  if (!VALID.includes(raw as ClassId)) {
-    return (
-      <div className="p-6">
-        <p className="text-sm text-muted-foreground">Unbekannte Klasse.</p>
-        <Link to="/" className="text-primary underline">Zurück</Link>
-      </div>
-    );
-  }
+  const isValid = VALID.includes(raw as ClassId);
   const classId = raw as ClassId;
-  const cls = state.classes[classId];
+  const cls = isValid ? state.classes[classId] : undefined;
 
   const snapshots = useMemo(
     () =>
-      [...(cls.snapshots ?? [])].sort((a, b) =>
+      [...(cls?.snapshots ?? [])].sort((a, b) =>
         a.date === b.date ? b.createdAt.localeCompare(a.createdAt) : b.date.localeCompare(a.date),
       ),
-    [cls.snapshots],
+    [cls?.snapshots],
   );
 
   // Gruppieren nach Disziplin (Name als Schlüssel, da disciplineId nach Löschung evtl. weg)
