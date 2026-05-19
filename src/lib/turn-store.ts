@@ -735,21 +735,34 @@ export const turnActions = {
       };
     });
   },
-  addDiscipline(classId: ClassId, name: string, weight = 1) {
+  addDiscipline(
+    classId: ClassId,
+    name: string,
+    weight = 1,
+    extra?: { scoreMode?: DisciplineScoreMode; scoreMax?: number },
+  ) {
     setState((s) => {
       const cls = s.classes[classId];
+      const d: Discipline = {
+        id: genId(),
+        name,
+        weight,
+        scoreMode: extra?.scoreMode ?? "percent",
+        scoreMax: extra?.scoreMode === "points" ? Math.max(1, extra.scoreMax ?? 10) : undefined,
+      };
       return {
         ...s,
         classes: {
           ...s.classes,
           [classId]: {
             ...cls,
-            disciplines: [...cls.disciplines, { id: genId(), name, weight }],
+            disciplines: [...cls.disciplines, d],
           },
         },
       };
     });
   },
+
   updateDiscipline(classId: ClassId, disciplineId: string, patch: Partial<Discipline>) {
     setState((s) => {
       const cls = s.classes[classId];
