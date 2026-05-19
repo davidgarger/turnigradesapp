@@ -246,8 +246,10 @@ function ClassPage() {
             <Link
               to="/klasse/$classId/disziplinen"
               params={{ classId: cls.id }}
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
-              title="Disziplinen verwalten"
+              title="Disziplinen verwalten (neues Fenster)"
             >
               <Dumbbell className="h-4 w-4" />
               <span className="hidden sm:inline">Disziplinen</span>
@@ -409,18 +411,11 @@ function ClassPage() {
 
         {/* Aktionen unterhalb der Tabelle */}
         <div className="mt-4 flex flex-wrap items-center gap-2">
-          <Link
-            to="/klasse/$classId/disziplinen"
-            params={{ classId: cls.id }}
-            className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
-          >
-            <Dumbbell className="h-4 w-4" /> Disziplinen verwalten
-          </Link>
-
           <Button variant="outline" onClick={handleExport}>
             <Download className="h-4 w-4" /> Export CSV
           </Button>
         </div>
+
 
 
 
