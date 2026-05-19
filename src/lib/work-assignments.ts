@@ -16,7 +16,7 @@ export type TaskType =
   | "reflexion"
   | "zufaellig";
 
-export type Status = "verletzt" | "entschuldigt" | "teilbefreit";
+export type Status = "entschuldigt" | "unentschuldigt" | "turnzeug_vergessen";
 
 export const SPORT_LABEL: Record<Sport, string> = {
   basketball: "Basketball",
@@ -35,9 +35,9 @@ export const TASK_LABEL: Record<TaskType, string> = {
 };
 
 export const STATUS_LABEL: Record<Status, string> = {
-  verletzt: "verletzt",
   entschuldigt: "entschuldigt",
-  teilbefreit: "teilbefreit",
+  unentschuldigt: "nicht entschuldigt",
+  turnzeug_vergessen: "Turnzeug vergessen",
 };
 
 type TaskSet = {
