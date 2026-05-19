@@ -46,7 +46,17 @@ export const Route = createFileRoute("/arbeitsauftrag")({
 });
 
 const SPORTS: Sport[] = ["basketball", "fussball", "geraeteturnen", "leichtathletik", "allgemein"];
-const TASK_TYPES: TaskType[] = ["beobachtung", "regeln", "technik", "reflexion", "zufaellig"];
+const TASK_TYPES: TaskType[] = [
+  "beobachtung",
+  "regeln",
+  "technik",
+  "reflexion",
+  "lueckentext",
+  "quiz",
+  "steckbrief",
+  "sportgeschichte",
+  "zufaellig",
+];
 const STATUSES: Status[] = ["entschuldigt", "unentschuldigt", "turnzeug_vergessen"];
 
 function todayIso() {
