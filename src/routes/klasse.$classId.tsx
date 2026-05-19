@@ -341,11 +341,12 @@ function ClassPage() {
                 </th>
                 {cls.disciplines.map((d) => {
                   const isPoints = (d.scoreMode ?? "percent") === "points";
+                  const unit = getDisciplineUnit(d);
                   return (
                     <th key={d.id} className="px-2 py-3 text-center font-semibold">
                       <div className="text-xs">{d.name}</div>
                       <div className="text-[10px] font-normal text-muted-foreground">
-                        {d.weight}% · {isPoints ? `0–${getDisciplineMax(d)} Pkt` : "0–100 %"}
+                        {d.weight}% · {isPoints ? `0–${getDisciplineMax(d)} ${unit}` : `0–100 ${unit}`}
                       </div>
                     </th>
                   );
