@@ -406,6 +406,28 @@ function ArbeitsauftragPage() {
                 ))}
               </select>
             </Field>
+            <Field
+              label={
+                difficultyManual
+                  ? "Schwierigkeit (manuell)"
+                  : "Schwierigkeit (automatisch aus Klasse)"
+              }
+            >
+              <select
+                value={difficulty}
+                onChange={(e) => {
+                  setDifficulty(e.target.value as Difficulty);
+                  setDifficultyManual(true);
+                }}
+                className="h-12 w-full rounded-xl border border-input bg-background px-3 text-base text-foreground outline-none focus:ring-2 focus:ring-ring"
+              >
+                {DIFFICULTIES.map((d) => (
+                  <option key={d} value={d}>
+                    {DIFFICULTY_LABEL[d]}
+                  </option>
+                ))}
+              </select>
+            </Field>
           </div>
 
           <button
