@@ -13,7 +13,7 @@ import {
   Zap,
   Undo2,
   Upload,
-  History,
+  Dumbbell,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -110,11 +110,6 @@ function ClassPage() {
   const [studentOpen, setStudentOpen] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
 
-  const [discName, setDiscName] = useState("");
-  const [discWeight, setDiscWeight] = useState(10);
-  const [discMode, setDiscMode] = useState<DisciplineScoreMode>("percent");
-  const [discMax, setDiscMax] = useState<number>(10);
-  const [discOpen, setDiscOpen] = useState(false);
 
 
   const rows = useMemo(() => {
@@ -182,22 +177,6 @@ function ClassPage() {
     toast.success(`${list.length} Schüler importiert`);
   };
 
-  const handleAddDiscipline = () => {
-    if (!discName.trim()) {
-      toast.error("Bitte einen Namen angeben.");
-      return;
-    }
-    turnActions.addDiscipline(cls.id, discName.trim(), discWeight, {
-      scoreMode: discMode,
-      scoreMax: discMode === "points" ? Math.max(1, discMax) : undefined,
-    });
-    setDiscName("");
-    setDiscWeight(10);
-    setDiscMode("percent");
-    setDiscMax(10);
-    setDiscOpen(false);
-    toast.success("Disziplin hinzugefügt");
-  };
 
 
   const handleExport = () => {
