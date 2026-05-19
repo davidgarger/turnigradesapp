@@ -250,6 +250,16 @@ function ClassPage() {
               <span className="hidden sm:inline">Arbeitsauftrag</span>
             </Link>
             <Link
+              to="/klasse/$classId/archiv"
+              params={{ classId: cls.id }}
+              className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+              title="Disziplin-Archiv"
+            >
+              <History className="h-4 w-4" />
+              <span className="hidden sm:inline">Archiv</span>
+            </Link>
+
+            <Link
               to="/einstellungen"
               className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
             >
@@ -377,7 +387,18 @@ function ClassPage() {
                   ) : null}
                   <button
                     onClick={() => {
-                      if (confirm(`Disziplin „${d.name}“ wirklich löschen?`)) {
+                      const id = turnActions.saveDisciplineSnapshot(cls.id, d.id);
+                      if (id) toast.success(`„${d.name}" archiviert (${new Date().toLocaleDateString("de-DE")})`);
+                    }}
+                    className="text-muted-foreground hover:text-primary"
+                    aria-label="Disziplin-Resultate archivieren"
+                    title="Aktuelle Resultate als Snapshot speichern"
+                  >
+                    <History className="h-3.5 w-3.5" />
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (confirm(`Disziplin „${d.name}" wirklich löschen?`)) {
                         turnActions.deleteDiscipline(cls.id, d.id);
                       }
                     }}
@@ -386,6 +407,7 @@ function ClassPage() {
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                   </button>
+
                 </div>
               );
             })}
