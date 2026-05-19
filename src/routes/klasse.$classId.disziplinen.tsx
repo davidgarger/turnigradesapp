@@ -6,6 +6,7 @@ import {
   turnActions,
   useTurnState,
   getDisciplineMax,
+  suggestUnit,
   type ClassId,
   type DisciplineScoreMode,
 } from "@/lib/turn-store";
@@ -47,6 +48,8 @@ function DisziplinenPage() {
   const [weight, setWeight] = useState(10);
   const [mode, setMode] = useState<DisciplineScoreMode>("percent");
   const [max, setMax] = useState<number>(10);
+  const [unit, setUnit] = useState<string>("");
+  const [unitTouched, setUnitTouched] = useState(false);
 
   if (!isValid || !cls) {
     return (
