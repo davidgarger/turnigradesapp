@@ -473,6 +473,8 @@ const CLOZE: Record<Sport, Cloze[]> = {
   fairplay: [{ topic: "Fairplay im Sport", sentences: ["Fairplay heißt, sich an die [Regeln] zu halten.", "Eine wichtige Person, die das Spiel überwacht, ist die [Schiedsrichterin].", "Wer einen Fehler offen zugibt, zeigt [Ehrlichkeit].", "Nach dem Spiel reicht man dem Gegner die [Hand].", "Auch nach einer Niederlage bleibt man [fair]."] }],
   anatomie: [{ topic: "Anatomie & Muskulatur", sentences: ["Der Muskel an der Vorderseite des Oberarms heißt [Bizeps].", "Der Gegenspieler an der Rückseite heißt [Trizeps].", "Das größte Gelenk im Körper ist das [Knie].", "Das Herz ist ein [Muskel].", "Bei Anstrengung wird die [Atmung] schneller."] }],
   aufwaermen: [{ topic: "Aufwärmen & Cool-down", sentences: ["Aufwärmen schützt vor [Verletzungen].", "Ein gutes Warm-up dauert etwa [10] Minuten.", "Man beginnt mit allgemeinen Übungen und wird dann [spezifischer].", "Zum Aufwärmen gehört auch das Mobilisieren der [Gelenke].", "Nach dem Sport hilft ein ruhiges [Cool-down]."] }],
+};
+
 
 // ────────────────────────────────────────────────────────────────────────────
 // Quiz: 3 Fragen mit je 3 Optionen, richtige Antwort markiert
