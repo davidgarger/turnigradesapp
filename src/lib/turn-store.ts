@@ -816,11 +816,13 @@ export function computeGrade(
   for (const d of disciplines) {
     const v = student.scores[d.id];
     if (typeof v === "number" && !Number.isNaN(v)) {
-      weightedSum += v * d.weight;
+      const pct = scoreToPercent(d, v);
+      weightedSum += pct * d.weight;
       weightTotal += d.weight;
       measuredCount++;
     }
   }
+
   const hasDisciplineData = weightTotal > 0;
   const disciplineAverage = hasDisciplineData ? weightedSum / weightTotal : 100;
 
