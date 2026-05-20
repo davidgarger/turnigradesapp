@@ -59,7 +59,7 @@ const FEATURES: Array<{
   },
   {
     icon: Shuffle,
-    title: "Faire Teams automatisch",
+    title: "Faire Teams erstellen",
     desc: "Ausgewogene Mannschaften mit einem Klick generieren.",
   },
   {
