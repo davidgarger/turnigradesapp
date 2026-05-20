@@ -645,4 +645,50 @@ export const CARD_SETS: DisciplineCardSet[] = [
           "5 Rollen abwärts",
         ],
         daraufAchten: ["Kinn auf Brust", "Hände schulterbreit", "Über Nacken abrollen"],
-        sicherheit: ["Nie
+        sicherheit: ["Nie auf den Kopf abstützen", "Helfer:in stützt Nacken leicht"],
+        material: ["2 Matten", "Kleiner Kasten"],
+        sozialform: "paar",
+        fokus: "technik",
+      }),
+      c({
+        level: 3,
+        levelLabel: LEVEL_LABEL[3],
+        title: "Rolle auf gerader Bahn",
+        graphicKey: "boden-rolle-mitte",
+        soGehts: [
+          "Aus Hocke abrollen",
+          "Über Nacken und Rücken",
+          "Weich landen — 5 Versuche",
+        ],
+        daraufAchten: ["Runder Rücken", "Kinn auf Brust", "Hände aktiv"],
+        sicherheit: ["Nie auf Kopf abstützen"],
+        material: ["2 Turnmatten"],
+        sozialform: "einzel",
+        fokus: "technik",
+      }),
+      c({
+        level: 4,
+        levelLabel: LEVEL_LABEL[4],
+        title: "Rolle vorwärts in den Stand",
+        graphicKey: "boden-rolle-stand",
+        soGehts: [
+          "Aus Hocke abrollen",
+          "Beine eng anziehen, Armschwung",
+          "Ohne Aufstützen in den Stand",
+        ],
+        daraufAchten: ["Runder Rücken", "Aktiver Armschwung", "Saubere Endposition"],
+        sicherheit: ["Genug Matten", "Kein Aufstützen auf Kopf"],
+        material: ["2 Turnmatten"],
+        sozialform: "paar",
+        fokus: "technik",
+      }),
+    ],
+  },
+];
+
+export function getCardSet(
+  sport: CardSport,
+  discipline: CardDiscipline,
+): DisciplineCardSet | undefined {
+  return CARD_SETS.find((s) => s.sport === sport && s.discipline === discipline);
+}
