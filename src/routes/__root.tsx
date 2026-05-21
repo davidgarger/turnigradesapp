@@ -160,9 +160,10 @@ function RootComponent() {
     return () => sub.subscription.unsubscribe();
   }, []);
 
-  // Login-Seite immer durchlassen – falls bereits eingeloggt, weiterleiten
-  if (pathname === "/login") {
-    if (authState === "in") {
+  // Öffentliche Seiten immer durchlassen – falls bereits eingeloggt, weiterleiten
+  const publicPaths = ["/login", "/impressum", "/datenschutz"];
+  if (publicPaths.includes(pathname)) {
+    if (authState === "in" && pathname === "/login") {
       return <RedirectTo to="/" />;
     }
     return (
