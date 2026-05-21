@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useRouterState } from "@tanstack/react-router";
+import { useRouterState, Link } from "@tanstack/react-router";
 import { Heart, MessageSquarePlus, X, Send, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -20,7 +20,7 @@ export function SiteFooter() {
     <>
       <footer className="no-print mt-16 border-t border-border/60 bg-background/60 backdrop-blur">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-4 py-5 text-xs text-muted-foreground sm:flex-row">
-          <div className="flex flex-wrap items-center justify-center gap-1 text-center">
+          <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-center">
             <span>© {year} Turni</span>
             <span aria-hidden>·</span>
             <span>
@@ -39,6 +39,14 @@ export function SiteFooter() {
               </a>
               <Heart className="h-3 w-3 fill-rose-500 text-rose-500" aria-hidden />
             </span>
+            <span aria-hidden>·</span>
+            <Link to="/impressum" className="hover:text-foreground hover:underline">
+              Impressum
+            </Link>
+            <span aria-hidden>·</span>
+            <Link to="/datenschutz" className="hover:text-foreground hover:underline">
+              Datenschutz
+            </Link>
           </div>
           <button
             onClick={() => setOpen(true)}

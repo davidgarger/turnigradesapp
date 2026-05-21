@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import {
   LogIn,
@@ -415,9 +415,18 @@ function LoginPage() {
               </div>
             </div>
 
-            <p className="mt-4 text-center text-xs" style={{ color: `${BRAND_DARK}99` }}>
-              Gemacht für Sportlehrkräfte · DSGVO-konform · Cloud-Sync
-            </p>
+            <div className="mt-4 flex flex-col items-center gap-1 text-center text-xs" style={{ color: `${BRAND_DARK}99` }}>
+              <span>Gemacht für Sportlehrkräfte · DSGVO-konform · Cloud-Sync</span>
+              <div className="flex items-center gap-2">
+                <Link to="/impressum" className="underline transition hover:opacity-70" style={{ color: BRAND_DARK }}>
+                  Impressum
+                </Link>
+                <span aria-hidden>·</span>
+                <Link to="/datenschutz" className="underline transition hover:opacity-70" style={{ color: BRAND_DARK }}>
+                  Datenschutz
+                </Link>
+              </div>
+            </div>
           </div>
         </section>
       </main>

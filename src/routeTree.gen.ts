@@ -11,7 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as StationenkartenRouteImport } from './routes/stationenkarten'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as ImpressumRouteImport } from './routes/impressum'
 import { Route as EinstellungenRouteImport } from './routes/einstellungen'
+import { Route as DatenschutzRouteImport } from './routes/datenschutz'
 import { Route as ArbeitsauftragRouteImport } from './routes/arbeitsauftrag'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as KlasseClassIdRouteImport } from './routes/klasse.$classId'
@@ -28,9 +30,19 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ImpressumRoute = ImpressumRouteImport.update({
+  id: '/impressum',
+  path: '/impressum',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EinstellungenRoute = EinstellungenRouteImport.update({
   id: '/einstellungen',
   path: '/einstellungen',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DatenschutzRoute = DatenschutzRouteImport.update({
+  id: '/datenschutz',
+  path: '/datenschutz',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ArbeitsauftragRoute = ArbeitsauftragRouteImport.update({
@@ -63,7 +75,9 @@ const KlasseClassIdDisziplinenRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/arbeitsauftrag': typeof ArbeitsauftragRoute
+  '/datenschutz': typeof DatenschutzRoute
   '/einstellungen': typeof EinstellungenRoute
+  '/impressum': typeof ImpressumRoute
   '/login': typeof LoginRoute
   '/stationenkarten': typeof StationenkartenRoute
   '/klasse/$classId': typeof KlasseClassIdRouteWithChildren
@@ -73,7 +87,9 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/arbeitsauftrag': typeof ArbeitsauftragRoute
+  '/datenschutz': typeof DatenschutzRoute
   '/einstellungen': typeof EinstellungenRoute
+  '/impressum': typeof ImpressumRoute
   '/login': typeof LoginRoute
   '/stationenkarten': typeof StationenkartenRoute
   '/klasse/$classId': typeof KlasseClassIdRouteWithChildren
@@ -84,7 +100,9 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/arbeitsauftrag': typeof ArbeitsauftragRoute
+  '/datenschutz': typeof DatenschutzRoute
   '/einstellungen': typeof EinstellungenRoute
+  '/impressum': typeof ImpressumRoute
   '/login': typeof LoginRoute
   '/stationenkarten': typeof StationenkartenRoute
   '/klasse/$classId': typeof KlasseClassIdRouteWithChildren
@@ -96,7 +114,9 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/arbeitsauftrag'
+    | '/datenschutz'
     | '/einstellungen'
+    | '/impressum'
     | '/login'
     | '/stationenkarten'
     | '/klasse/$classId'
@@ -106,7 +126,9 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/arbeitsauftrag'
+    | '/datenschutz'
     | '/einstellungen'
+    | '/impressum'
     | '/login'
     | '/stationenkarten'
     | '/klasse/$classId'
@@ -116,7 +138,9 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/arbeitsauftrag'
+    | '/datenschutz'
     | '/einstellungen'
+    | '/impressum'
     | '/login'
     | '/stationenkarten'
     | '/klasse/$classId'
@@ -127,7 +151,9 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ArbeitsauftragRoute: typeof ArbeitsauftragRoute
+  DatenschutzRoute: typeof DatenschutzRoute
   EinstellungenRoute: typeof EinstellungenRoute
+  ImpressumRoute: typeof ImpressumRoute
   LoginRoute: typeof LoginRoute
   StationenkartenRoute: typeof StationenkartenRoute
   KlasseClassIdRoute: typeof KlasseClassIdRouteWithChildren
@@ -149,11 +175,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/impressum': {
+      id: '/impressum'
+      path: '/impressum'
+      fullPath: '/impressum'
+      preLoaderRoute: typeof ImpressumRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/einstellungen': {
       id: '/einstellungen'
       path: '/einstellungen'
       fullPath: '/einstellungen'
       preLoaderRoute: typeof EinstellungenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/datenschutz': {
+      id: '/datenschutz'
+      path: '/datenschutz'
+      fullPath: '/datenschutz'
+      preLoaderRoute: typeof DatenschutzRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/arbeitsauftrag': {
@@ -211,7 +251,9 @@ const KlasseClassIdRouteWithChildren = KlasseClassIdRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ArbeitsauftragRoute: ArbeitsauftragRoute,
+  DatenschutzRoute: DatenschutzRoute,
   EinstellungenRoute: EinstellungenRoute,
+  ImpressumRoute: ImpressumRoute,
   LoginRoute: LoginRoute,
   StationenkartenRoute: StationenkartenRoute,
   KlasseClassIdRoute: KlasseClassIdRouteWithChildren,
@@ -219,3 +261,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
