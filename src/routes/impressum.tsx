@@ -99,7 +99,7 @@ function ImpressumPage() {
               <p className="mt-3 text-sm" style={{ color: `${BRAND_DARK}cc` }}>
                 David Garger
                 <br />
-                Am Dorfgraben 25 · 91054 Erlangen
+                Am Kapellenfeld 3 · 7540 Güssing
               </p>
             </section>
 
@@ -109,11 +109,11 @@ function ImpressumPage() {
               </h2>
               <p className="mt-3 text-sm leading-relaxed" style={{ color: `${BRAND_DARK}cc` }}>
                 Die Inhalte unserer Seiten wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit
-                und Aktualität der Inhalte können wir jedoch keine Gewähr übernehmen. Als Diensteanbieter sind wir
-                gemäß § 7 Abs.1 TMG für eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen
-                verantwortlich. Nach §§ 8 bis 10 TMG sind wir als Diensteanbieter jedoch nicht verpflichtet,
-                übermittelte oder gespeicherte fremde Informationen zu überwachen oder nach Umständen zu forschen, die
-                auf eine rechtswidrige Tätigkeit hinweisen.
+                und Aktualität der Inhalte können wir jedoch keine Gewähr übernehmen. Als Diensteanbieter sind wir gemäß
+                § 7 Abs.1 TMG für eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich. Nach §§
+                8 bis 10 TMG sind wir als Diensteanbieter jedoch nicht verpflichtet, übermittelte oder gespeicherte
+                fremde Informationen zu überwachen oder nach Umständen zu forschen, die auf eine rechtswidrige Tätigkeit
+                hinweisen.
               </p>
             </section>
 
@@ -147,7 +147,7 @@ function ImpressumPage() {
                 Streitbeilegung
               </h2>
               <p className="mt-3 text-sm leading-relaxed" style={{ color: `${BRAND_DARK}cc` }}>
-                Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:{' '}
+                Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:{" "}
                 <a
                   href="https://ec.europa.eu/consumers/odr"
                   target="_blank"
@@ -166,7 +166,7 @@ function ImpressumPage() {
         </div>
 
         <p className="mt-6 text-center text-xs" style={{ color: `${BRAND_DARK}99` }}>
-          © {new Date().getFullYear()} Turni ·{' '}
+          © {new Date().getFullYear()} Turni ·{" "}
           <Link to="/datenschutz" className="underline" style={{ color: BRAND_DARK }}>
             Datenschutzerklärung
           </Link>
