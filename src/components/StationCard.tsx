@@ -3,31 +3,82 @@ import {
   type StationCard as StationCardType,
   type CardSport,
   type CardFokus,
-  type CardDiscipline,
   type DisciplineCardSet,
   SPORT_COLORS,
   SPORT_LABEL,
   LEVEL_TINT,
 } from "@/lib/station-cards-v2";
-import sprintImg from "@/assets/stations/sprint.jpg";
-import weitsprungImg from "@/assets/stations/weitsprung.jpg";
-import kugelstossenImg from "@/assets/stations/kugelstossen.jpg";
-import staffelImg from "@/assets/stations/staffel.jpg";
-import reckImg from "@/assets/stations/reck.jpg";
-import barrenImg from "@/assets/stations/barren.jpg";
-import balkenImg from "@/assets/stations/balken.jpg";
-import bodenImg from "@/assets/stations/boden.jpg";
 
-const DISCIPLINE_IMAGE: Record<CardDiscipline, string> = {
-  sprint: sprintImg,
-  weitsprung: weitsprungImg,
-  kugelstossen: kugelstossenImg,
-  staffel: staffelImg,
-  reck: reckImg,
-  barren: barrenImg,
-  balken: balkenImg,
-  boden: bodenImg,
+// Leichtathletik
+import sprintStand from "@/assets/stations/sprint-stand.jpg";
+import sprintSkipping from "@/assets/stations/sprint-skipping.jpg";
+import sprintTiefstart from "@/assets/stations/sprint-tiefstart.jpg";
+import sprintZiel from "@/assets/stations/sprint-ziel.jpg";
+import weitStand from "@/assets/stations/weit-stand.jpg";
+import weitAbsprung from "@/assets/stations/weit-absprung.jpg";
+import weitFlug from "@/assets/stations/weit-flug.jpg";
+import weitLandung from "@/assets/stations/weit-landung.jpg";
+import kugelGriff from "@/assets/stations/kugel-griff.jpg";
+import kugelStand from "@/assets/stations/kugel-stand.jpg";
+import kugelDrehung from "@/assets/stations/kugel-drehung.jpg";
+import kugelStoss from "@/assets/stations/kugel-stoss.jpg";
+import staffelHalten from "@/assets/stations/staffel-halten.jpg";
+import staffelStand from "@/assets/stations/staffel-stand.jpg";
+import staffelUebergabe from "@/assets/stations/staffel-uebergabe.jpg";
+import staffelZiel from "@/assets/stations/staffel-ziel.jpg";
+// Geräteturnen
+import reckHang from "@/assets/stations/reck-hang.jpg";
+import reckKnee from "@/assets/stations/reck-knee.jpg";
+import reckHilfe from "@/assets/stations/reck-hilfe.jpg";
+import reckStuetz from "@/assets/stations/reck-stuetz.jpg";
+import barrenStuetz from "@/assets/stations/barren-stuetz.jpg";
+import barrenSchwungKlein from "@/assets/stations/barren-schwung-klein.jpg";
+import barrenSchwungGross from "@/assets/stations/barren-schwung-gross.jpg";
+import barrenZiel from "@/assets/stations/barren-ziel.jpg";
+import balkenGehen from "@/assets/stations/balken-gehen.jpg";
+import balkenWaage from "@/assets/stations/balken-waage.jpg";
+import balkenStrecksprung from "@/assets/stations/balken-strecksprung.jpg";
+import balkenZiel from "@/assets/stations/balken-ziel.jpg";
+import bodenWiege from "@/assets/stations/boden-wiege.jpg";
+import bodenRolleAnsatz from "@/assets/stations/boden-rolle-ansatz.jpg";
+import bodenRolleMitte from "@/assets/stations/boden-rolle-mitte.jpg";
+import bodenRolleStand from "@/assets/stations/boden-rolle-stand.jpg";
+
+const GRAPHIC_IMAGE: Record<string, string> = {
+  "sprint-stand": sprintStand,
+  "sprint-skipping": sprintSkipping,
+  "sprint-tiefstart": sprintTiefstart,
+  "sprint-ziel": sprintZiel,
+  "weit-stand": weitStand,
+  "weit-absprung": weitAbsprung,
+  "weit-flug": weitFlug,
+  "weit-landung": weitLandung,
+  "kugel-griff": kugelGriff,
+  "kugel-stand": kugelStand,
+  "kugel-drehung": kugelDrehung,
+  "kugel-stoss": kugelStoss,
+  "staffel-halten": staffelHalten,
+  "staffel-stand": staffelStand,
+  "staffel-uebergabe": staffelUebergabe,
+  "staffel-ziel": staffelZiel,
+  "reck-hang": reckHang,
+  "reck-knee": reckKnee,
+  "reck-hilfe": reckHilfe,
+  "reck-stuetz": reckStuetz,
+  "barren-stuetz": barrenStuetz,
+  "barren-schwung-klein": barrenSchwungKlein,
+  "barren-schwung-gross": barrenSchwungGross,
+  "barren-ziel": barrenZiel,
+  "balken-gehen": balkenGehen,
+  "balken-waage": balkenWaage,
+  "balken-strecksprung": balkenStrecksprung,
+  "balken-ziel": balkenZiel,
+  "boden-wiege": bodenWiege,
+  "boden-rolle-ansatz": bodenRolleAnsatz,
+  "boden-rolle-mitte": bodenRolleMitte,
+  "boden-rolle-stand": bodenRolleStand,
 };
+
 
 
 const FOKUS_TIPP: Record<CardFokus, string> = {
@@ -105,8 +156,9 @@ export function StationCard({ card, set, index }: Props) {
         style={{ background: sportColor.soft + "55" }}
       >
         <img
-          src={DISCIPLINE_IMAGE[set.discipline]}
-          alt={`${SPORT_LABEL[set.sport]} – ${set.title}`}
+          src={GRAPHIC_IMAGE[card.graphicKey]}
+          alt={card.title}
+
           loading="lazy"
           className="h-full w-full object-contain"
         />
