@@ -3,11 +3,32 @@ import {
   type StationCard as StationCardType,
   type CardSport,
   type CardFokus,
+  type CardDiscipline,
   type DisciplineCardSet,
   SPORT_COLORS,
   SPORT_LABEL,
   LEVEL_TINT,
 } from "@/lib/station-cards-v2";
+import sprintImg from "@/assets/stations/sprint.jpg";
+import weitsprungImg from "@/assets/stations/weitsprung.jpg";
+import kugelstossenImg from "@/assets/stations/kugelstossen.jpg";
+import staffelImg from "@/assets/stations/staffel.jpg";
+import reckImg from "@/assets/stations/reck.jpg";
+import barrenImg from "@/assets/stations/barren.jpg";
+import balkenImg from "@/assets/stations/balken.jpg";
+import bodenImg from "@/assets/stations/boden.jpg";
+
+const DISCIPLINE_IMAGE: Record<CardDiscipline, string> = {
+  sprint: sprintImg,
+  weitsprung: weitsprungImg,
+  kugelstossen: kugelstossenImg,
+  staffel: staffelImg,
+  reck: reckImg,
+  barren: barrenImg,
+  balken: balkenImg,
+  boden: bodenImg,
+};
+
 
 const FOKUS_TIPP: Record<CardFokus, string> = {
   kraft: "Spannung halten – Kraft kommt aus der Mitte.",
