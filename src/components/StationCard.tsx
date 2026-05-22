@@ -156,8 +156,9 @@ export function StationCard({ card, set, index }: Props) {
         style={{ background: sportColor.soft + "55" }}
       >
         <img
-          src={DISCIPLINE_IMAGE[set.discipline]}
-          alt={`${SPORT_LABEL[set.sport]} – ${set.title}`}
+          src={GRAPHIC_IMAGE[card.graphicKey]}
+          alt={card.title}
+
           loading="lazy"
           className="h-full w-full object-contain"
         />
