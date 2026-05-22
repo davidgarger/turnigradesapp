@@ -99,6 +99,22 @@ export function StationCard({ card, set, index }: Props) {
         <p className="mt-0.5 text-xs text-slate-500">{set.subtitle}</p>
       </header>
 
+      {/* KI-generierte Disziplin-Illustration */}
+      <div
+        className="relative flex aspect-[5/3] items-center justify-center overflow-hidden border-b border-slate-100"
+        style={{ background: sportColor.soft + "55" }}
+      >
+        <img
+          src={DISCIPLINE_IMAGE[set.discipline]}
+          alt={`${SPORT_LABEL[set.sport]} – ${set.title}`}
+          loading="lazy"
+          className="h-full w-full object-contain"
+        />
+        <span className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-white text-[11px] font-bold text-slate-700 shadow-sm">
+          {index}/4
+        </span>
+      </div>
+
       {/* Einfacher Tipp-Streifen */}
       <div
         className="relative flex items-center gap-3 border-b border-slate-100 px-5 py-3"
