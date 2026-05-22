@@ -1,47 +1,22 @@
-import {
-  Backpack,
-  Dumbbell,
-  Lightbulb,
-  ShieldAlert,
-  Target,
-  Users,
-  Zap,
-} from "lucide-react";
+import { Lightbulb, ShieldAlert, Target } from "lucide-react";
 import {
   type StationCard as StationCardType,
   type CardSport,
   type CardFokus,
   type DisciplineCardSet,
-  SOZIALFORM_LABEL,
-  FOKUS_LABEL,
   SPORT_COLORS,
   SPORT_LABEL,
   LEVEL_TINT,
 } from "@/lib/station-cards-v2";
 
 const FOKUS_TIPP: Record<CardFokus, string> = {
-  kraft: "Spann den Bauch fest an – Kraft kommt aus der Mitte, nicht aus den Armen allein.",
-  technik: "Lieber langsam und sauber als schnell und schlampig. Technik schlägt Tempo.",
-  koordination: "Schau dorthin, wo du hin willst. Dein Blick führt deinen Körper.",
-  ausdauer: "Atme ruhig durch die Nase ein und durch den Mund aus – nicht hetzen.",
-  mut: "Erst probieren, dann bewerten. Eine kleine Hilfestellung reicht oft schon.",
+  kraft: "Spannung halten – Kraft kommt aus der Mitte.",
+  technik: "Langsam und sauber statt schnell und schlampig.",
+  koordination: "Schau dorthin, wo du hin willst.",
+  ausdauer: "Ruhig atmen, gleichmäßig laufen.",
+  mut: "Erst probieren, dann bewerten.",
 };
 
-const LEVEL_TIPP: Record<number, string> = {
-  1: "Starte ohne Druck – erst das Gefühl, dann die Leistung.",
-  2: "Wiederhole die Bewegung mindestens 5× bewusst, bevor du steigerst.",
-  3: "Achte auf den Übergang: weicher Übergang = bessere Bewegung.",
-  4: "Hier zählt's: einmal mit voller Konzentration ist mehr wert als zehnmal nebenbei.",
-};
-
-const MERKE: Record<CardFokus, string> = {
-  kraft: "Stark werden heißt: viele saubere Wiederholungen, kein Show-Off.",
-  technik: "Profis üben das Einfache so lange, bis es perfekt aussieht.",
-  koordination: "Erst der Kopf, dann der Körper – Bewegung vorstellen, dann ausführen.",
-  ausdauer: "Gleichmäßig ist schneller als ungleichmäßig schnell.",
-  mut: "Mut ist nicht keine Angst – Mut ist trotzdem starten.",
-};
-import { TurniLogo } from "./TurniLogo";
 
 type Props = {
   card: StationCardType;
