@@ -127,9 +127,8 @@ export function StationCard({ card, set, index }: Props) {
         <p className="text-[13px] font-medium leading-snug text-slate-800">
           {FOKUS_TIPP[card.fokus]}
         </p>
-        <span className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white text-[10px] font-bold text-slate-600 shadow-sm">
-          {index}/4
-        </span>
+
+
       </div>
 
       {/* Inhalt: nur So geht's + Sicherheit, je max. 3 Punkte */}
