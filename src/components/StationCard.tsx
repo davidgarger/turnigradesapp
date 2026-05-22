@@ -3,11 +3,32 @@ import {
   type StationCard as StationCardType,
   type CardSport,
   type CardFokus,
+  type CardDiscipline,
   type DisciplineCardSet,
   SPORT_COLORS,
   SPORT_LABEL,
   LEVEL_TINT,
 } from "@/lib/station-cards-v2";
+import sprintImg from "@/assets/stations/sprint.jpg";
+import weitsprungImg from "@/assets/stations/weitsprung.jpg";
+import kugelstossenImg from "@/assets/stations/kugelstossen.jpg";
+import staffelImg from "@/assets/stations/staffel.jpg";
+import reckImg from "@/assets/stations/reck.jpg";
+import barrenImg from "@/assets/stations/barren.jpg";
+import balkenImg from "@/assets/stations/balken.jpg";
+import bodenImg from "@/assets/stations/boden.jpg";
+
+const DISCIPLINE_IMAGE: Record<CardDiscipline, string> = {
+  sprint: sprintImg,
+  weitsprung: weitsprungImg,
+  kugelstossen: kugelstossenImg,
+  staffel: staffelImg,
+  reck: reckImg,
+  barren: barrenImg,
+  balken: balkenImg,
+  boden: bodenImg,
+};
+
 
 const FOKUS_TIPP: Record<CardFokus, string> = {
   kraft: "Spannung halten – Kraft kommt aus der Mitte.",
@@ -78,6 +99,22 @@ export function StationCard({ card, set, index }: Props) {
         <p className="mt-0.5 text-xs text-slate-500">{set.subtitle}</p>
       </header>
 
+      {/* KI-generierte Disziplin-Illustration */}
+      <div
+        className="relative flex aspect-[5/3] items-center justify-center overflow-hidden border-b border-slate-100"
+        style={{ background: sportColor.soft + "55" }}
+      >
+        <img
+          src={DISCIPLINE_IMAGE[set.discipline]}
+          alt={`${SPORT_LABEL[set.sport]} – ${set.title}`}
+          loading="lazy"
+          className="h-full w-full object-contain"
+        />
+        <span className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-white text-[11px] font-bold text-slate-700 shadow-sm">
+          {index}/4
+        </span>
+      </div>
+
       {/* Einfacher Tipp-Streifen */}
       <div
         className="relative flex items-center gap-3 border-b border-slate-100 px-5 py-3"
@@ -90,9 +127,8 @@ export function StationCard({ card, set, index }: Props) {
         <p className="text-[13px] font-medium leading-snug text-slate-800">
           {FOKUS_TIPP[card.fokus]}
         </p>
-        <span className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white text-[10px] font-bold text-slate-600 shadow-sm">
-          {index}/4
-        </span>
+
+
       </div>
 
       {/* Inhalt: nur So geht's + Sicherheit, je max. 3 Punkte */}
