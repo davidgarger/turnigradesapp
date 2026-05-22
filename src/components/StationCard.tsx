@@ -148,25 +148,7 @@ function Section({
   );
 }
 
-function FooterItem({
-  icon,
-  label,
-  children,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="flex items-center gap-1.5">
-      <span className="text-slate-500">{icon}</span>
-      <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
-        {label}:
-      </span>
-      <span className="font-medium text-slate-700">{children}</span>
-    </div>
-  );
-}
+
 
 function DisciplineIcon({
   sport,
