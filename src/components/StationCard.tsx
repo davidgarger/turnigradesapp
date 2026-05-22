@@ -103,19 +103,47 @@ export function StationCard({ card, set, index }: Props) {
         <p className="mt-0.5 text-xs text-slate-500">{set.subtitle}</p>
       </header>
 
-      {/* Hauptgrafik */}
+      {/* Profi-Tipp Block (ersetzt frühere Grafik) */}
       <div
-        className="relative flex aspect-[5/3] items-center justify-center border-b border-slate-100 px-6 py-4"
+        className="relative border-b border-slate-100 px-5 py-4"
         style={{ background: sportColor.soft + "55" }}
       >
-        <div
-          className="h-full w-full max-w-[260px]"
-          style={{ color: sportColor.ink }}
-        >
-          <StationCardGraphic kind={card.graphicKey} />
-        </div>
         <div className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-white text-[11px] font-bold text-slate-700 shadow-sm">
           {index}/4
+        </div>
+        <div className="flex items-start gap-3 pr-10">
+          <div
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-white shadow-sm"
+            style={{ background: sportColor.base }}
+          >
+            <Lightbulb className="h-4.5 w-4.5" />
+          </div>
+          <div className="min-w-0">
+            <div
+              className="text-[10px] font-bold uppercase tracking-[0.16em]"
+              style={{ color: sportColor.ink }}
+            >
+              Profi-Tipp · Level {card.level}
+            </div>
+            <p className="mt-1 text-[13px] font-semibold leading-snug text-slate-900">
+              {LEVEL_TIPP[card.level]}
+            </p>
+            <p className="mt-1.5 text-[12px] leading-snug text-slate-600">
+              {FOKUS_TIPP[card.fokus]}
+            </p>
+          </div>
+        </div>
+        <div
+          className="mt-3 flex items-start gap-2 rounded-lg border bg-white/70 px-3 py-2 text-[11px] italic text-slate-700"
+          style={{ borderColor: sportColor.soft }}
+        >
+          <span
+            className="mt-[1px] text-[10px] font-bold uppercase tracking-wider"
+            style={{ color: sportColor.base }}
+          >
+            Merke:
+          </span>
+          <span>{MERKE[card.fokus]}</span>
         </div>
       </div>
 
