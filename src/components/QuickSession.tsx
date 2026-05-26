@@ -157,6 +157,26 @@ export default function QuickSession({ classId, onClose }: Props) {
           <Undo2 className="h-3.5 w-3.5" />
           Undo
         </button>
+        {started && lessonId && (
+          <button
+            type="button"
+            onClick={() => {
+              if (
+                !window.confirm(
+                  "Stunde wirklich abbrechen? Alle Eintragungen dieser Stunde werden verworfen.",
+                )
+              )
+                return;
+              turnActions.cancelLesson(classId, lessonId);
+              toast.success("Stunde abgebrochen");
+              onClose();
+            }}
+            className="inline-flex items-center gap-1.5 rounded-md border border-rose-300 bg-rose-50 px-2.5 py-1.5 text-xs font-semibold text-rose-700 transition hover:bg-rose-100"
+          >
+            <X className="h-3.5 w-3.5" />
+            Abbrechen
+          </button>
+        )}
       </div>
 
       <div className="h-1 w-full bg-muted">
