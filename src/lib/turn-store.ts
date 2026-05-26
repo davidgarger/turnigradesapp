@@ -599,6 +599,57 @@ export const turnActions = {
     });
     return id;
   },
+  cancelLesson(classId: ClassId, lessonId: string) {
+    setState((s) => {
+      const cls = s.classes[classId];
+      if (!cls) return s;
+      const lessons = cls.lessons ?? [];
+      const lesson = lessons.find((l) => l.id === lessonId);
+      if (!lesson) return s;
+      // Stats aus den Entries dieser Stunde zurückrechnen
+      const deltas: Record<string, Partial<Student>> = {};
+      for (const e of lesson.entries) {
+        const d = (deltas[e.studentId] ??= {});
+        if (e.type === "attended") d.attended = (d.attended ?? 0) - 1;
+        else if (e.type === "forgottenKit") d.forgottenKit = (d.forgottenKit ?? 0) - 1;
+        else if (e.type === "excused")
+          d.excusedNotParticipating = (d.excusedNotParticipating ?? 0) - 1;
+        else if (e.type === "unexcused")
+          d.unexcusedNotParticipating = (d.unexcusedNotParticipating ?? 0) - 1;
+      }
+      const students = cls.students.map((st) => {
+        const d = deltas[st.id];
+        if (!d) return st;
+        return {
+          ...st,
+          attended: Math.max(0, st.attended + (d.attended ?? 0)),
+          forgottenKit: Math.max(0, st.forgottenKit + (d.forgottenKit ?? 0)),
+          excusedNotParticipating: Math.max(
+            0,
+            st.excusedNotParticipating + (d.excusedNotParticipating ?? 0),
+          ),
+          unexcusedNotParticipating: Math.max(
+            0,
+            st.unexcusedNotParticipating + (d.unexcusedNotParticipating ?? 0),
+          ),
+        };
+      });
+      return {
+        ...s,
+        classes: {
+          ...s.classes,
+          [classId]: {
+            ...cls,
+            students,
+            lessons: lessons.filter((l) => l.id !== lessonId),
+            totalLessons: cls.schedule
+              ? cls.totalLessons
+              : Math.max(0, (cls.totalLessons ?? 0) - 1),
+          },
+        },
+      };
+    });
+  },
   updateLessonTopic(classId: ClassId, lessonId: string, topic: string) {
     setState((s) => {
       const cls = s.classes[classId];
