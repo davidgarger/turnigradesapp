@@ -43,6 +43,11 @@ import bodenWiege from "@/assets/stations/boden-wiege.jpg";
 import bodenRolleAnsatz from "@/assets/stations/boden-rolle-ansatz.jpg";
 import bodenRolleMitte from "@/assets/stations/boden-rolle-mitte.jpg";
 import bodenRolleStand from "@/assets/stations/boden-rolle-stand.jpg";
+import sprintTiefstartVideo from "@/assets/stations/sprint-tiefstart.mp4.asset.json";
+
+const GRAPHIC_VIDEO: Record<string, string> = {
+  "sprint-tiefstart": sprintTiefstartVideo.url,
+};
 
 const GRAPHIC_IMAGE: Record<string, string> = {
   "sprint-stand": sprintStand,
@@ -155,12 +160,22 @@ export function StationCard({ card, set, index }: Props) {
         className="relative flex aspect-[5/3] items-center justify-center overflow-hidden border-b border-slate-100"
         style={{ background: sportColor.soft + "55" }}
       >
+        {GRAPHIC_VIDEO[card.graphicKey] ? (
+          <video
+            src={GRAPHIC_VIDEO[card.graphicKey]}
+            poster={GRAPHIC_IMAGE[card.graphicKey]}
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="h-full w-full object-contain print:hidden"
+          />
+        ) : null}
         <img
           src={GRAPHIC_IMAGE[card.graphicKey]}
           alt={card.title}
-
           loading="lazy"
-          className="h-full w-full object-contain"
+          className={`h-full w-full object-contain ${GRAPHIC_VIDEO[card.graphicKey] ? "hidden print:block" : ""}`}
         />
         <span className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-white text-[11px] font-bold text-slate-700 shadow-sm">
           {index}/4
