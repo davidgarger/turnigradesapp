@@ -43,6 +43,11 @@ import bodenWiege from "@/assets/stations/boden-wiege.jpg";
 import bodenRolleAnsatz from "@/assets/stations/boden-rolle-ansatz.jpg";
 import bodenRolleMitte from "@/assets/stations/boden-rolle-mitte.jpg";
 import bodenRolleStand from "@/assets/stations/boden-rolle-stand.jpg";
+import sprintTiefstartVideo from "@/assets/stations/sprint-tiefstart.mp4.asset.json";
+
+const GRAPHIC_VIDEO: Record<string, string> = {
+  "sprint-tiefstart": sprintTiefstartVideo.url,
+};
 
 const GRAPHIC_IMAGE: Record<string, string> = {
   "sprint-stand": sprintStand,
