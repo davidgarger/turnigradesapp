@@ -66,9 +66,9 @@ function ImpressumPage() {
               </h2>
               <div className="mt-3 space-y-1 text-sm" style={{ color: `${BRAND_DARK}cc` }}>
                 <p className="font-medium text-foreground">David Garger</p>
-                <p>Am Dorfgraben 25</p>
-                <p>91054 Erlangen</p>
-                <p>Deutschland</p>
+                <p>Am Kapellenfeld 3</p>
+                <p>7540 Güssing</p>
+                <p>Österreich</p>
               </div>
             </section>
 
