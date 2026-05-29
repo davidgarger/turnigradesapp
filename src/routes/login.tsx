@@ -164,8 +164,136 @@ function LoginPage() {
         />
       </div>
 
+      {/* Hero "Wir sind online" — Storytelling Intro */}
+      <section className="relative mx-auto flex min-h-[100svh] max-w-3xl flex-col items-center justify-center px-6 pt-10 pb-16 text-center">
+        <div
+          className="pointer-events-none absolute inset-0 -z-10 opacity-[0.5]"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 1px 1px, #04231b22 1px, transparent 0)",
+            backgroundSize: "6px 6px",
+          }}
+        />
+
+        <div className="mb-6 flex items-center gap-2.5">
+          <div
+            className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white shadow-md ring-1"
+            style={{ borderColor: `${BRAND_DARK}22`, boxShadow: `0 8px 24px -12px ${BRAND_DARK}55` }}
+          >
+            <TurniLogo className="h-7 w-7" />
+          </div>
+          <div className="text-left leading-tight">
+            <div className="text-base font-bold tracking-tight" style={{ color: BRAND_DARK }}>
+              turni.live
+            </div>
+            <div className="text-[10px] font-semibold uppercase tracking-[0.18em]" style={{ color: BRAND_DARK, opacity: 0.6 }}>
+              Sportunterricht
+            </div>
+          </div>
+        </div>
+
+        <h1 className="leading-[0.95]" style={{ color: BRAND_DARK }}>
+          <span
+            className="block text-5xl sm:text-6xl md:text-7xl"
+            style={{ fontFamily: '"Dancing Script", cursive', fontWeight: 700 }}
+          >
+            Wir sind
+          </span>
+          <span
+            className="mt-1 block text-6xl tracking-tight sm:text-7xl md:text-8xl"
+            style={{ fontFamily: '"Archivo Black", system-ui, sans-serif', letterSpacing: "-0.02em" }}
+          >
+            ONLINE
+          </span>
+        </h1>
+
+        {/* Domain pill */}
+        <a
+          href="https://turni.live"
+          className="mt-6 inline-flex items-center gap-2 rounded-full border bg-white/80 px-5 py-2.5 text-sm font-medium shadow-sm backdrop-blur transition hover:bg-white sm:text-base"
+          style={{ borderColor: `${BRAND_DARK}55`, color: BRAND_DARK }}
+        >
+          <span className="opacity-60">www.</span>
+          <span className="font-semibold">turni.live</span>
+          <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="7" />
+            <path d="m20 20-3.5-3.5" />
+          </svg>
+        </a>
+
+        {/* Laptop + Phone mockup */}
+        <div className="relative mt-10 w-full max-w-lg">
+          {/* Laptop */}
+          <div className="relative mx-auto w-[88%]">
+            <div
+              className="rounded-[14px] border-[6px] border-slate-900 bg-slate-900 shadow-2xl"
+              style={{ boxShadow: `0 30px 60px -20px ${BRAND_DARK}66` }}
+            >
+              <div className="overflow-hidden rounded-[6px]">
+                <MiniTurniDashboard />
+              </div>
+            </div>
+            {/* Laptop base */}
+            <div className="relative mx-auto h-[10px] w-[112%] -translate-x-[5%] rounded-b-2xl bg-slate-800" />
+            <div className="mx-auto h-[3px] w-[40%] rounded-b-md bg-slate-700/80" />
+          </div>
+
+          {/* Phone overlay */}
+          <div className="absolute -bottom-6 right-2 w-[34%] sm:right-6">
+            <div
+              className="rounded-[26px] border-[5px] border-slate-900 bg-slate-900 shadow-2xl"
+              style={{ boxShadow: `0 24px 40px -16px ${BRAND_DARK}88` }}
+            >
+              <div className="relative overflow-hidden rounded-[18px]">
+                <div className="absolute left-1/2 top-1 z-10 h-1 w-10 -translate-x-1/2 rounded-full bg-slate-700" />
+                <MiniTurniPhone />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Tagline */}
+        <p
+          className="mt-14 max-w-md text-base font-medium leading-snug sm:text-lg"
+          style={{ color: BRAND_DARK }}
+        >
+          Moderner Turnunterricht — Anwesenheit, Noten & faire Teams
+          auf einen Blick.
+        </p>
+
+        {/* Hand-drawn arrow */}
+        <svg
+          viewBox="0 0 80 90"
+          className="mt-8 h-16 w-14"
+          fill="none"
+          stroke={BRAND_DARK}
+          strokeWidth="2.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M40 5 C 18 25, 18 55, 38 78" />
+          <path d="M28 66 L 38 80 L 50 70" />
+        </svg>
+
+        {/* CTA */}
+        <a
+          href="#anmelden"
+          onClick={(e) => {
+            e.preventDefault();
+            document.getElementById("anmelden")?.scrollIntoView({ behavior: "smooth", block: "start" });
+          }}
+          className="mt-6 inline-flex items-center justify-center rounded-full px-12 py-4 text-sm font-bold uppercase tracking-[0.18em] text-white shadow-xl transition hover:scale-[1.02] active:scale-[0.99]"
+          style={{
+            background: "#0a0a0a",
+            boxShadow: `0 20px 40px -16px ${BRAND_DARK}aa`,
+          }}
+        >
+          Jetzt besuchen
+        </a>
+      </section>
+
       {/* Top nav */}
-      <header className="mx-auto flex max-w-7xl items-center justify-between px-6 pt-6">
+      <header id="anmelden" className="mx-auto flex max-w-7xl scroll-mt-6 items-center justify-between px-6 pt-6">
         <div className="flex items-center gap-2.5">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-md ring-1 ring-emerald-100" style={{ boxShadow: `0 8px 24px -12px ${BRAND_DARK}33` }}>
             <TurniLogo className="h-7 w-7" />
