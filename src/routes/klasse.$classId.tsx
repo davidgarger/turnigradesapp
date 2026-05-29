@@ -42,6 +42,7 @@ import QuickSession from "@/components/QuickSession";
 import ImportStudentsDialog, { type ParsedStudent } from "@/components/ImportStudentsDialog";
 import TeamGenerator from "@/components/TeamGenerator";
 import ExcusesDialog from "@/components/ExcusesDialog";
+import { useScrollLock } from "@/hooks/use-scroll-lock";
 import { Camera } from "lucide-react";
 import { StudentAvatar, fileToResizedDataUrl } from "@/components/StudentAvatar";
 import { Button } from "@/components/ui/button";
@@ -1191,6 +1192,7 @@ function SummaryTile({
 function ExcusePhotosSection({ studentExcuses, open }: { studentExcuses: Excuse[]; open: boolean }) {
   const [urls, setUrls] = useState<Record<string, string>>({});
   const [zoom, setZoom] = useState<string | null>(null);
+  useScrollLock(!!zoom);
   const withPhoto = useMemo(
     () => studentExcuses.filter((e) => e.photoPath).sort((a, b) => b.date.localeCompare(a.date)),
     [studentExcuses],

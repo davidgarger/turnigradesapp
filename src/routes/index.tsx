@@ -6,6 +6,7 @@ import { schoolYearLabel } from "@/routes/klasse.$classId";
 import { TurniLogo } from "@/components/TurniLogo";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useScrollLock } from "@/hooks/use-scroll-lock";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -189,6 +190,7 @@ function Index() {
   const [visible, setVisible] = useState<string[]>(["1", "2", "3", "4"]);
   const [userId, setUserId] = useState<string | null>(null);
   const [endYearOpen, setEndYearOpen] = useState(false);
+  useScrollLock(!!openPicker || endYearOpen);
 
   useEffect(() => {
     // Sofort lokalen Cache anzeigen, dann Cloud-Werte nachladen
@@ -718,6 +720,7 @@ function EndSchoolYearDialog({
   onClose: () => void;
   onConfirm: (decisions: Decision[]) => void;
 }) {
+  useScrollLock(true);
   const state = useTurnState();
   const [choices, setChoices] = useState<Record<string, EndYearAction>>(() => {
     const init: Record<string, EndYearAction> = {};

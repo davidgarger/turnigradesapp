@@ -3,6 +3,7 @@ import { Camera, Image as ImageIcon, Plus, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { turnActions, type ClassId, type Excuse, type Student } from "@/lib/turn-store";
+import { useScrollLock } from "@/hooks/use-scroll-lock";
 import {
   Dialog,
   DialogContent,
@@ -60,6 +61,7 @@ export default function ExcusesDialog({
   const fileRef = useRef<HTMLInputElement>(null);
   const [previews, setPreviews] = useState<Record<string, string>>({});
   const [zoom, setZoom] = useState<string | null>(null);
+  useScrollLock(!!zoom);
 
   const excuses = student.excuses ?? [];
 

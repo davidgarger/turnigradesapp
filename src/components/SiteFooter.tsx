@@ -3,6 +3,7 @@ import { useRouterState, Link } from "@tanstack/react-router";
 import { Heart, MessageSquarePlus, X, Send, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useScrollLock } from "@/hooks/use-scroll-lock";
 
 type FeedbackKind = "verbesserung" | "fehler" | "sonstiges";
 
@@ -63,6 +64,7 @@ export function SiteFooter() {
 }
 
 function FeedbackDialog({ onClose }: { onClose: () => void }) {
+  useScrollLock(true);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [kind, setKind] = useState<FeedbackKind>("verbesserung");
   const [message, setMessage] = useState("");
