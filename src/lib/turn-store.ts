@@ -140,9 +140,19 @@ export interface GradingSettings {
   gradeThresholds: { grade: number; min: number }[];
 }
 
+export interface ArchivedClass {
+  id: string;
+  archivedAt: string; // ISO timestamp
+  schoolYear: string | null; // z.B. "2024/25"
+  reason: "advanced" | "removed";
+  originalClassId: ClassId;
+  data: ClassData;
+}
+
 export interface TurnState {
   classes: Record<ClassId, ClassData>;
   settings: GradingSettings;
+  archive?: ArchivedClass[];
 }
 
 // Zählt die Termine im Datumsbereich, die auf einen der Wochentage fallen,
