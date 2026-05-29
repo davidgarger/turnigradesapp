@@ -183,8 +183,19 @@ function StudentCard({
 }) {
   const eff = getEffectiveTotalLessons(cls);
   const g = computeGrade(student, cls.disciplines, settings, eff);
-  const initials = `${student.firstName[0] ?? ""}${student.lastName[0] ?? ""}`.toUpperCase();
   const grad = gradeColor(g.grade);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const onPickFile = async (file: File | undefined) => {
+    if (!file) return;
+    try {
+      const dataUrl = await fileToResizedDataUrl(file, 320, 0.78);
+      turnActions.updateStudent(cls.id, student.id, { photo: dataUrl });
+      toast.success("Foto aktualisiert");
+    } catch {
+      toast.error("Foto konnte nicht geladen werden");
+    }
+  };
 
   return (
     <div className="relative overflow-hidden rounded-3xl border border-border bg-card shadow-2xl">
@@ -194,8 +205,37 @@ function StudentCard({
         <div className="pointer-events-none absolute -bottom-16 -left-10 h-40 w-40 rounded-full bg-black/10 blur-2xl" />
 
         <div className="relative flex items-center gap-5">
-          <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-white/25 text-3xl font-black backdrop-blur-sm ring-2 ring-white/40">
-            {initials || <User className="h-8 w-8" />}
+          <div className="group relative">
+            <button
+              type="button"
+              onClick={() => fileRef.current?.click()}
+              className="relative block h-20 w-20 overflow-hidden rounded-2xl bg-white/25 ring-2 ring-white/40 backdrop-blur-sm transition hover:ring-white/80"
+              aria-label="Foto auswählen"
+            >
+              <StudentAvatar student={student} size={80} rounded="2xl" className="!ring-0" />
+              <span className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition group-hover:opacity-100">
+                <Camera className="h-6 w-6 text-white" />
+              </span>
+            </button>
+            {student.photo && (
+              <button
+                type="button"
+                onClick={() => turnActions.updateStudent(cls.id, student.id, { photo: undefined })}
+                className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-white text-rose-600 shadow ring-1 ring-black/10 hover:bg-rose-50"
+                aria-label="Foto entfernen"
+                title="Foto entfernen"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </button>
+            )}
+            <input
+              ref={fileRef}
+              type="file"
+              accept="image/*"
+              capture="environment"
+              className="hidden"
+              onChange={(e) => onPickFile(e.target.files?.[0])}
+            />
           </div>
           <div className="min-w-0 flex-1">
             <div className="text-xs font-semibold uppercase tracking-wider text-white/85">
