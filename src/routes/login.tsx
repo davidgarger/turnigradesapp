@@ -362,19 +362,28 @@ function LoginPage() {
             </div>
           </div>
 
-          <h1
-            className="text-4xl font-black leading-[1.05] tracking-tight sm:text-5xl"
-            style={{ color: BRAND_DARK }}
-          >
-            Sportunterricht{" "}
-            <span className="relative inline-block">
-              <span className="relative z-10">klar organisiert.</span>
-              <span
-                className="absolute bottom-1 left-0 -z-0 h-3 w-full rounded-md"
-                style={{ background: BRAND_MINT, opacity: 0.7 }}
-              />
+          <h1 className="leading-[0.95]" style={{ color: BRAND_DARK }}>
+            <span
+              className="block text-3xl sm:text-4xl"
+              style={{ fontFamily: '"Dancing Script", cursive', fontWeight: 700 }}
+            >
+              Sportunterricht
             </span>
+            <span
+              className="mt-1 block text-4xl tracking-tight sm:text-5xl"
+              style={{ fontFamily: '"Archivo Black", system-ui, sans-serif', letterSpacing: "-0.02em" }}
+            >
+              KLAR ORGANISIERT
+            </span>
+            <span
+              className="absolute"
+              style={{ display: "none" }}
+            />
           </h1>
+          <div
+            className="mt-4 h-1 w-24 rounded-full"
+            style={{ background: `linear-gradient(90deg, ${BRAND_DARK}, ${BRAND_MINT})` }}
+          />
 
           {/* Feature grid — 6 cards including "Bis zu 10 Klassen" + "Stationenkarten coming soon" */}
           <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
