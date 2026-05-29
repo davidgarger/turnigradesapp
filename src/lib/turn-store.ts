@@ -140,9 +140,19 @@ export interface GradingSettings {
   gradeThresholds: { grade: number; min: number }[];
 }
 
+export interface ArchivedClass {
+  id: string;
+  archivedAt: string; // ISO timestamp
+  schoolYear: string | null; // z.B. "2024/25"
+  reason: "advanced" | "removed";
+  originalClassId: ClassId;
+  data: ClassData;
+}
+
 export interface TurnState {
   classes: Record<ClassId, ClassData>;
   settings: GradingSettings;
+  archive?: ArchivedClass[];
 }
 
 // Zählt die Termine im Datumsbereich, die auf einen der Wochentage fallen,
@@ -942,7 +952,105 @@ export const turnActions = {
       };
     });
   },
+
+  endSchoolYear(decisions: { classId: ClassId; action: "advance" | "archive" }[]) {
+    setState((s) => {
+      const nowIso = new Date().toISOString();
+      const newArchive: ArchivedClass[] = [...(s.archive ?? [])];
+      const nextClasses = { ...s.classes };
+
+      for (const dec of decisions) {
+        const cls = s.classes[dec.classId];
+        if (!cls) continue;
+        const year = schoolYearOf(cls);
+
+        // Snapshot der Klasse ins Archiv legen (tiefe Kopie)
+        newArchive.push({
+          id: genId(),
+          archivedAt: nowIso,
+          schoolYear: year,
+          reason: dec.action === "advance" ? "advanced" : "removed",
+          originalClassId: dec.classId,
+          data: JSON.parse(JSON.stringify(cls)) as ClassData,
+        });
+
+        if (dec.action === "advance") {
+          // Stunden, Anwesenheiten, Disziplin-Punkte & Snapshots zurücksetzen.
+          // Schüler & Disziplinen bleiben, Schulstufe wird im Namen +1, Stundenplan +1 Jahr.
+          const advancedSchedule: ClassSchedule | undefined = cls.schedule
+            ? {
+                ...cls.schedule,
+                startDate: shiftDateByYears(cls.schedule.startDate, 1),
+                endDate: shiftDateByYears(cls.schedule.endDate, 1),
+                cancelled: 0,
+              }
+            : undefined;
+          nextClasses[dec.classId] = {
+            ...cls,
+            name: bumpClassName(cls.name),
+            totalLessons: DEFAULT_TOTAL_LESSONS,
+            schedule: advancedSchedule,
+            lessons: [],
+            snapshots: [],
+            students: cls.students.map((st) => ({
+              ...st,
+              scores: {},
+              forgottenKit: 0,
+              excusedNotParticipating: 0,
+              unexcusedNotParticipating: 0,
+              attended: 0,
+              redPoints: 0,
+              greenPoints: 0,
+              excuses: [],
+            })),
+          };
+        } else {
+          // Klasse vollständig leeren (Slot bleibt)
+          nextClasses[dec.classId] = {
+            id: cls.id,
+            name: `${cls.id}. Klasse`,
+            disciplines: [],
+            students: [],
+            totalLessons: DEFAULT_TOTAL_LESSONS,
+          };
+        }
+      }
+
+      return { ...s, classes: nextClasses, archive: newArchive };
+    });
+  },
+
+  removeFromArchive(archiveId: string) {
+    setState((s) => ({
+      ...s,
+      archive: (s.archive ?? []).filter((a) => a.id !== archiveId),
+    }));
+  },
 };
+
+function schoolYearOf(cls: ClassData): string | null {
+  const start = cls.schedule?.startDate;
+  if (!start) return null;
+  const y = new Date(start + "T00:00:00").getFullYear();
+  if (Number.isNaN(y)) return null;
+  return `${y}/${String((y + 1) % 100).padStart(2, "0")}`;
+}
+
+function shiftDateByYears(iso: string, years: number): string {
+  if (!iso) return iso;
+  const d = new Date(iso + "T00:00:00");
+  if (Number.isNaN(d.getTime())) return iso;
+  d.setFullYear(d.getFullYear() + years);
+  return d.toISOString().slice(0, 10);
+}
+
+function bumpClassName(name: string): string {
+  const m = name.match(/^(\d+)(\s*[.]?\s*)(.*)$/);
+  if (!m) return name;
+  const n = parseInt(m[1], 10);
+  if (Number.isNaN(n)) return name;
+  return `${n + 1}${m[2]}${m[3]}`.trim();
+}
 
 
 // ---------- Grading logic ----------
