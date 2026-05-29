@@ -462,7 +462,34 @@ function StudentRow({
   return (
     <tr className="border-t border-border hover:bg-muted/30">
       <td className="sticky left-0 z-[1] bg-card px-2 py-2 font-medium text-foreground">
-        <div className="flex gap-0 sm:gap-1">
+        <div className="flex items-center gap-1 sm:gap-2">
+          <label
+            className="group relative inline-flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-full ring-1 ring-border hover:ring-ring"
+            title={student.photo ? "Foto ändern" : "Foto hinzufügen"}
+          >
+            <StudentAvatar student={student} size={36} rounded="full" className="!ring-0" />
+            <span className="absolute inset-0 flex items-center justify-center bg-black/40 text-white opacity-0 transition group-hover:opacity-100">
+              <Camera className="h-3.5 w-3.5" />
+            </span>
+            <input
+              type="file"
+              accept="image/*"
+              capture="environment"
+              className="hidden"
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                try {
+                  const dataUrl = await fileToResizedDataUrl(file, 320, 0.78);
+                  turnActions.updateStudent(classId, student.id, { photo: dataUrl });
+                  toast.success("Foto aktualisiert");
+                } catch {
+                  toast.error("Foto konnte nicht geladen werden");
+                }
+                e.target.value = "";
+              }}
+            />
+          </label>
           <input
             value={student.lastName}
             onChange={(e) => turnActions.updateStudent(classId, student.id, { lastName: e.target.value })}
