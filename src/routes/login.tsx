@@ -13,6 +13,11 @@ import {
   Sparkles,
   ShieldCheck,
   LayoutGrid,
+  Check,
+  Backpack,
+  Slash,
+  FileCheck,
+  FileX,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { TurniLogo } from "@/components/TurniLogo";
@@ -194,16 +199,22 @@ function LoginPage() {
 
         <h1 className="leading-[0.95]" style={{ color: BRAND_DARK }}>
           <span
-            className="block text-5xl sm:text-6xl md:text-7xl"
+            className="block text-4xl sm:text-5xl md:text-6xl"
             style={{ fontFamily: '"Dancing Script", cursive', fontWeight: 700 }}
           >
-            Wir sind
+            Moderner
           </span>
           <span
-            className="mt-1 block text-6xl tracking-tight sm:text-7xl md:text-8xl"
+            className="mt-1 block text-5xl tracking-tight sm:text-6xl md:text-7xl"
             style={{ fontFamily: '"Archivo Black", system-ui, sans-serif', letterSpacing: "-0.02em" }}
           >
-            ONLINE
+            TURNUNTERRICHT
+          </span>
+          <span
+            className="mt-3 block text-2xl sm:text-3xl md:text-4xl"
+            style={{ fontFamily: '"Dancing Script", cursive', fontWeight: 600, opacity: 0.9 }}
+          >
+            auf einen Blick
           </span>
         </h1>
 
@@ -252,14 +263,13 @@ function LoginPage() {
           </div>
         </div>
 
-        {/* Tagline */}
         <p
-          className="mt-14 max-w-md text-base font-medium leading-snug sm:text-lg"
-          style={{ color: BRAND_DARK }}
+          className="mt-14 max-w-md text-sm leading-snug"
+          style={{ color: BRAND_DARK, opacity: 0.75 }}
         >
-          Moderner Turnunterricht — Anwesenheit, Noten & faire Teams
-          auf einen Blick.
+          Anwesenheit, Noten, Teams &amp; Arbeitsaufträge — alles an einem Ort.
         </p>
+
 
         {/* Hand-drawn arrow */}
         <svg
@@ -352,19 +362,28 @@ function LoginPage() {
             </div>
           </div>
 
-          <h1
-            className="text-4xl font-black leading-[1.05] tracking-tight sm:text-5xl"
-            style={{ color: BRAND_DARK }}
-          >
-            Sportunterricht{" "}
-            <span className="relative inline-block">
-              <span className="relative z-10">klar organisiert.</span>
-              <span
-                className="absolute bottom-1 left-0 -z-0 h-3 w-full rounded-md"
-                style={{ background: BRAND_MINT, opacity: 0.7 }}
-              />
+          <h1 className="leading-[0.95]" style={{ color: BRAND_DARK }}>
+            <span
+              className="block text-3xl sm:text-4xl"
+              style={{ fontFamily: '"Dancing Script", cursive', fontWeight: 700 }}
+            >
+              Sportunterricht
             </span>
+            <span
+              className="mt-1 block text-4xl tracking-tight sm:text-5xl"
+              style={{ fontFamily: '"Archivo Black", system-ui, sans-serif', letterSpacing: "-0.02em" }}
+            >
+              KLAR ORGANISIERT
+            </span>
+            <span
+              className="absolute"
+              style={{ display: "none" }}
+            />
           </h1>
+          <div
+            className="mt-4 h-1 w-24 rounded-full"
+            style={{ background: `linear-gradient(90deg, ${BRAND_DARK}, ${BRAND_MINT})` }}
+          />
 
           {/* Feature grid — 6 cards including "Bis zu 10 Klassen" + "Stationenkarten coming soon" */}
           <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -439,10 +458,19 @@ function LoginPage() {
               </div>
 
               <div className="mb-5">
-                <h2 className="text-2xl font-bold tracking-tight" style={{ color: BRAND_DARK }}>
-                  {mode === "signup" ? "Konto erstellen" : "Anmelden"}
+                <div
+                  className="text-lg leading-none"
+                  style={{ fontFamily: '"Dancing Script", cursive', fontWeight: 700, color: BRAND_DARK, opacity: 0.85 }}
+                >
+                  {mode === "signup" ? "Schön, dass du da bist —" : "Willkommen zurück —"}
+                </div>
+                <h2
+                  className="mt-1 text-3xl tracking-tight"
+                  style={{ fontFamily: '"Archivo Black", system-ui, sans-serif', color: BRAND_DARK, letterSpacing: "-0.02em" }}
+                >
+                  {mode === "signup" ? "KONTO ERSTELLEN" : "ANMELDEN"}
                 </h2>
-                <p className="mt-1 text-sm" style={{ color: `${BRAND_DARK}99` }}>
+                <p className="mt-2 text-sm" style={{ color: `${BRAND_DARK}99` }}>
                   Mit Benutzername und Passwort einloggen.
                 </p>
               </div>
@@ -699,27 +727,50 @@ function MiniTurniPhone() {
       </div>
 
       <div className="mt-2 space-y-1">
-        {["Anna", "Ben", "Clara", "David", "Eva", "Felix"].map((n, i) => (
-          <div
-            key={i}
-            className="flex items-center justify-between rounded-md border bg-white px-1.5 py-1"
-            style={{ borderColor: `${BRAND_DARK}22` }}
-          >
-            <div className="flex items-center gap-1">
-              <div
-                className="h-3 w-3 rounded-full"
-                style={{ background: BRAND_MINT, border: `1px solid ${BRAND_DARK}55` }}
-              />
-              <span style={{ color: BRAND_DARK, fontWeight: 600 }}>{n}</span>
-            </div>
-            <span
-              className="rounded px-1 text-white"
-              style={{ background: i % 3 === 0 ? "#dc2626" : BRAND_DARK, fontSize: 6 }}
+        {([
+          { n: "Anna", s: "present" },
+          { n: "Ben", s: "forgotten" },
+          { n: "Clara", s: "present" },
+          { n: "David", s: "excused" },
+          { n: "Eva", s: "present" },
+          { n: "Felix", s: "unexcused" },
+        ] as const).map(({ n, s }) => {
+          const cfg = {
+            present: { bg: "#16a34a", icon: <Check className="h-2.5 w-2.5" strokeWidth={3.5} /> },
+            forgotten: {
+              bg: "#ea580c",
+              icon: (
+                <span className="relative inline-flex h-2.5 w-2.5 items-center justify-center">
+                  <Backpack className="h-2.5 w-2.5" strokeWidth={2.75} />
+                  <Slash className="absolute inset-0 h-2.5 w-2.5" strokeWidth={3} />
+                </span>
+              ),
+            },
+            excused: { bg: "#d97706", icon: <FileCheck className="h-2.5 w-2.5" strokeWidth={2.75} /> },
+            unexcused: { bg: "#dc2626", icon: <FileX className="h-2.5 w-2.5" strokeWidth={2.75} /> },
+          }[s];
+          return (
+            <div
+              key={n}
+              className="flex items-center justify-between rounded-md border bg-white px-1.5 py-1"
+              style={{ borderColor: `${BRAND_DARK}22` }}
             >
-              {i % 3 === 0 ? "fehlt" : "da"}
-            </span>
-          </div>
-        ))}
+              <div className="flex items-center gap-1">
+                <div
+                  className="h-3 w-3 rounded-full"
+                  style={{ background: BRAND_MINT, border: `1px solid ${BRAND_DARK}55` }}
+                />
+                <span style={{ color: BRAND_DARK, fontWeight: 600 }}>{n}</span>
+              </div>
+              <span
+                className="flex h-4 w-4 items-center justify-center rounded-full text-white shadow-sm"
+                style={{ background: cfg.bg }}
+              >
+                {cfg.icon}
+              </span>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
