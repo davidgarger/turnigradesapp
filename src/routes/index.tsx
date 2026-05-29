@@ -705,3 +705,118 @@ function LogoutButton() {
     </button>
   );
 }
+
+type EndYearAction = "advance" | "archive";
+type Decision = { classId: string; action: EndYearAction };
+
+function EndSchoolYearDialog({
+  visibleClasses,
+  onClose,
+  onConfirm,
+}: {
+  visibleClasses: string[];
+  onClose: () => void;
+  onConfirm: (decisions: Decision[]) => void;
+}) {
+  const state = useTurnState();
+  const [choices, setChoices] = useState<Record<string, EndYearAction>>(() => {
+    const init: Record<string, EndYearAction> = {};
+    for (const id of visibleClasses) init[id] = "advance";
+    return init;
+  });
+
+  const decisions: Decision[] = visibleClasses.map((id) => ({ classId: id, action: choices[id] ?? "advance" }));
+  const advanceCount = decisions.filter((d) => d.action === "advance").length;
+  const archiveCount = decisions.filter((d) => d.action === "archive").length;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm" onClick={onClose}>
+      <div
+        className="w-full max-w-xl overflow-hidden rounded-2xl bg-background shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="bg-gradient-to-r from-emerald-500 to-teal-600 px-5 py-4 text-white">
+          <h3 className="text-lg font-bold flex items-center gap-2"><GraduationCap className="h-5 w-5" /> Schuljahr beenden</h3>
+          <p className="mt-1 text-xs text-white/90">
+            Wähle für jede Klasse: aufsteigen lassen (Schüler bleiben, Statistik wird zurückgesetzt) oder ins Archiv verschieben.
+          </p>
+        </div>
+
+        <div className="max-h-[60vh] space-y-2 overflow-y-auto p-4">
+          {visibleClasses.map((id) => {
+            const cls = state.classes[id as (typeof CLASSES)[number]];
+            if (!cls) return null;
+            const action = choices[id] ?? "advance";
+            return (
+              <div key={id} className="rounded-xl border border-border p-3">
+                <div className="mb-2 flex items-center justify-between">
+                  <div>
+                    <div className="font-semibold">{cls.name}</div>
+                    <div className="text-xs text-muted-foreground">{cls.students.length} Schüler · {cls.disciplines.length} Disziplinen</div>
+                  </div>
+                  <span className="text-xs font-mono text-muted-foreground">Slot {id}</span>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setChoices((c) => ({ ...c, [id]: "advance" }))}
+                    className={`rounded-lg border-2 p-2 text-left text-xs transition ${
+                      action === "advance"
+                        ? "border-emerald-500 bg-emerald-50 text-emerald-900"
+                        : "border-border hover:border-emerald-300"
+                    }`}
+                  >
+                    <div className="flex items-center gap-1.5 font-semibold">
+                      <GraduationCap className="h-3.5 w-3.5" /> Aufsteigen
+                    </div>
+                    <div className="mt-0.5 text-[11px] opacity-80">Schüler bleiben, Stunden + Punkte werden zurückgesetzt</div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setChoices((c) => ({ ...c, [id]: "archive" }))}
+                    className={`rounded-lg border-2 p-2 text-left text-xs transition ${
+                      action === "archive"
+                        ? "border-rose-500 bg-rose-50 text-rose-900"
+                        : "border-border hover:border-rose-300"
+                    }`}
+                  >
+                    <div className="flex items-center gap-1.5 font-semibold">
+                      <Archive className="h-3.5 w-3.5" /> Ins Archiv
+                    </div>
+                    <div className="mt-0.5 text-[11px] opacity-80">Klasse wird leer, alte Daten bleiben im Archiv</div>
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="flex items-center justify-between gap-2 border-t border-border bg-muted/40 px-4 py-3">
+          <div className="text-xs text-muted-foreground">
+            {advanceCount} aufsteigen · {archiveCount} archivieren
+          </div>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-md border border-input bg-background px-3 py-2 text-sm font-medium hover:bg-accent"
+            >
+              Abbrechen
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                if (window.confirm(`Schuljahr wirklich beenden?\n\n• ${advanceCount} Klasse(n) aufsteigen\n• ${archiveCount} Klasse(n) ins Archiv\n\nAlle aktuellen Klassen werden vorher im Archiv gesichert.`)) {
+                  onConfirm(decisions);
+                }
+              }}
+              className="rounded-md bg-gradient-to-r from-emerald-500 to-teal-600 px-4 py-2 text-sm font-semibold text-white shadow hover:opacity-95"
+            >
+              Schuljahr beenden
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
