@@ -520,7 +520,41 @@ function Index() {
             </button>
           )}
         </div>
+
+        <div className="mt-12 flex flex-col items-center gap-2 border-t border-border pt-8">
+          <button
+            type="button"
+            onClick={() => setEndYearOpen(true)}
+            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-500/30 transition hover:opacity-95"
+          >
+            <GraduationCap className="h-4 w-4" />
+            Schuljahr beenden
+          </button>
+          <p className="text-xs text-muted-foreground">
+            Klassen aufsteigen lassen oder ins Archiv verschieben
+          </p>
+        </div>
       </main>
+
+      {endYearOpen && (
+        <EndSchoolYearDialog
+          visibleClasses={visible}
+          onClose={() => setEndYearOpen(false)}
+          onConfirm={(decisions) => {
+            turnActions.endSchoolYear(
+              decisions.map((d) => ({ classId: d.classId as (typeof CLASSES)[number], action: d.action })),
+            );
+            // Entfernte Klassen ausblenden
+            const removedIds = decisions.filter((d) => d.action === "archive").map((d) => d.classId);
+            if (removedIds.length) {
+              const next = visible.filter((c) => !removedIds.includes(c));
+              persistVisible(next.length ? next : ["1"]);
+            }
+            setEndYearOpen(false);
+            toast.success("Schuljahr beendet");
+          }}
+        />
+      )}
     </div>
   );
 }
