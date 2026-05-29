@@ -70,6 +70,8 @@ export interface Student {
   skillLevel?: 1 | 2 | 3;
   // Entschuldigungen mit optionalem Foto. Wenn vorhanden, ersetzt diese Liste den Zähler oben.
   excuses?: Excuse[];
+  // Optionales Foto als Data-URL (klein skaliert, im JSON gespeichert)
+  photo?: string;
 }
 
 export function getExcusedCount(s: Student): number {
