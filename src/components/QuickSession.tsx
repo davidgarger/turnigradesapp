@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, Check, X, Backpack, Slash, FileCheck, FileX, Undo2 } from "lucide-react";
 import { turnActions, useTurnState, type ClassId, type Student, undo, canUndo } from "@/lib/turn-store";
+import { StudentAvatar } from "@/components/StudentAvatar";
 import { toast } from "sonner";
 
 const SWIPE_THRESHOLD = 90;
@@ -424,9 +425,13 @@ function StudentCard({
 
         <div className="bg-gradient-to-br from-indigo-500 via-violet-500 to-fuchsia-500 p-6 text-white">
           <div className="flex items-center gap-4">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 text-2xl font-black backdrop-blur-sm">
-              {initials}
-            </div>
+            {student.photo ? (
+              <StudentAvatar student={student} size={64} rounded="2xl" className="!ring-2 !ring-white/40" />
+            ) : (
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 text-2xl font-black backdrop-blur-sm">
+                {initials}
+              </div>
+            )}
             <div className="min-w-0 flex-1">
               <div className="truncate text-2xl font-bold leading-tight">{student.firstName}</div>
               <div className="truncate text-lg font-medium text-white/90">{student.lastName}</div>
