@@ -567,3 +567,161 @@ function LoginPage() {
     </div>
   );
 }
+
+/* ---------- Mini Turni Mockups for the hero ---------- */
+
+function MiniTurniDashboard() {
+  return (
+    <div className="aspect-[16/10] w-full bg-[#f6faf7] p-3 text-[8px] leading-tight">
+      {/* topbar */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-1.5">
+          <div
+            className="flex h-4 w-4 items-center justify-center rounded-md"
+            style={{ background: BRAND_DARK, color: BRAND_MINT, fontWeight: 800, fontSize: 6 }}
+          >
+            T
+          </div>
+          <span style={{ color: BRAND_DARK, fontWeight: 700 }}>turni.live</span>
+        </div>
+        <div className="flex gap-1">
+          <span className="rounded-sm px-1 py-[1px] text-white" style={{ background: BRAND_DARK, fontSize: 6 }}>
+            Klassen
+          </span>
+          <span className="rounded-sm bg-white px-1 py-[1px]" style={{ color: BRAND_DARK, fontSize: 6, border: `1px solid ${BRAND_DARK}33` }}>
+            Notenübersicht
+          </span>
+        </div>
+      </div>
+
+      {/* class cards grid */}
+      <div className="mt-2 grid grid-cols-4 gap-1.5">
+        {[
+          { c: "5a", k: 24 },
+          { c: "6b", k: 22 },
+          { c: "7c", k: 26 },
+          { c: "8a", k: 19 },
+          { c: "9b", k: 23 },
+          { c: "10", k: 21 },
+          { c: "5c", k: 25 },
+          { c: "6a", k: 20 },
+        ].map((it, i) => (
+          <div
+            key={i}
+            className="rounded-md p-1.5 text-white shadow-sm"
+            style={{
+              background: i % 2 === 0
+                ? `linear-gradient(135deg, ${BRAND_DARK}, #0a6e52)`
+                : `linear-gradient(135deg, #0a6e52, ${BRAND_DARK})`,
+            }}
+          >
+            <div className="font-black" style={{ fontSize: 10 }}>
+              {it.c}
+            </div>
+            <div className="opacity-80" style={{ fontSize: 6 }}>
+              {it.k} SuS
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* table preview */}
+      <div className="mt-2 rounded-md border bg-white p-1.5" style={{ borderColor: `${BRAND_DARK}22` }}>
+        <div className="flex items-center justify-between" style={{ color: BRAND_DARK }}>
+          <span style={{ fontWeight: 700, fontSize: 7 }}>Klasse 8a</span>
+          <span style={{ fontSize: 6, opacity: 0.6 }}>Anwesenheit · Noten</span>
+        </div>
+        <div className="mt-1 space-y-[3px]">
+          {["Anna M.", "Ben K.", "Clara R.", "David S."].map((n, i) => (
+            <div key={i} className="flex items-center gap-1.5">
+              <div
+                className="h-2.5 w-2.5 rounded-full"
+                style={{ background: BRAND_MINT, border: `1px solid ${BRAND_DARK}55` }}
+              />
+              <span style={{ color: BRAND_DARK, fontSize: 7 }}>{n}</span>
+              <div className="ml-auto flex gap-[2px]">
+                {[1, 2, 3, 4, 5].map((x) => (
+                  <div
+                    key={x}
+                    className="h-1.5 w-3 rounded-sm"
+                    style={{
+                      background: x <= 3 + (i % 2) ? BRAND_DARK : `${BRAND_DARK}22`,
+                    }}
+                  />
+                ))}
+                <span
+                  className="ml-1 rounded px-1 text-white"
+                  style={{ background: BRAND_DARK, fontSize: 6 }}
+                >
+                  {[1.7, 2.3, 1.3, 2.0][i]}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MiniTurniPhone() {
+  return (
+    <div className="aspect-[9/19] w-full bg-[#f6faf7] p-2 text-[7px] leading-tight">
+      <div className="mt-3 flex items-center gap-1">
+        <div
+          className="flex h-3.5 w-3.5 items-center justify-center rounded-md"
+          style={{ background: BRAND_DARK, color: BRAND_MINT, fontWeight: 800, fontSize: 5 }}
+        >
+          T
+        </div>
+        <span style={{ color: BRAND_DARK, fontWeight: 700, fontSize: 7 }}>Klasse 8a</span>
+      </div>
+
+      <div
+        className="mt-2 rounded-md p-1.5 text-white"
+        style={{ background: `linear-gradient(135deg, ${BRAND_DARK}, #0a6e52)` }}
+      >
+        <div style={{ fontSize: 6, opacity: 0.8 }}>Heute</div>
+        <div style={{ fontSize: 9, fontWeight: 800 }}>Anwesenheit</div>
+        <div className="mt-1 flex gap-[2px]">
+          {Array.from({ length: 12 }).map((_, i) => (
+            <div
+              key={i}
+              className="h-2 flex-1 rounded-sm"
+              style={{ background: i < 10 ? BRAND_MINT : "#ffffff33" }}
+            />
+          ))}
+        </div>
+        <div className="mt-1 flex justify-between" style={{ fontSize: 6 }}>
+          <span>10 / 12 da</span>
+          <span>schnelle Stunde</span>
+        </div>
+      </div>
+
+      <div className="mt-2 space-y-1">
+        {["Anna", "Ben", "Clara", "David", "Eva", "Felix"].map((n, i) => (
+          <div
+            key={i}
+            className="flex items-center justify-between rounded-md border bg-white px-1.5 py-1"
+            style={{ borderColor: `${BRAND_DARK}22` }}
+          >
+            <div className="flex items-center gap-1">
+              <div
+                className="h-3 w-3 rounded-full"
+                style={{ background: BRAND_MINT, border: `1px solid ${BRAND_DARK}55` }}
+              />
+              <span style={{ color: BRAND_DARK, fontWeight: 600 }}>{n}</span>
+            </div>
+            <span
+              className="rounded px-1 text-white"
+              style={{ background: i % 3 === 0 ? "#dc2626" : BRAND_DARK, fontSize: 6 }}
+            >
+              {i % 3 === 0 ? "fehlt" : "da"}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
