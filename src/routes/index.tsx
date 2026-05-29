@@ -296,6 +296,13 @@ function Index() {
               <span className="hidden sm:inline">Notenübersicht</span>
             </Link>
             <Link
+              to="/archiv"
+              className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+            >
+              <Archive className="h-4 w-4" />
+              <span className="hidden sm:inline">Archiv</span>
+            </Link>
+            <Link
               to="/arbeitsauftrag"
               className="inline-flex items-center gap-2 rounded-md bg-gradient-to-r from-indigo-500 to-fuchsia-500 px-3 py-2 text-sm font-semibold text-white shadow-md shadow-violet-500/30 transition hover:opacity-95"
             >
