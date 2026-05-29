@@ -263,14 +263,13 @@ function LoginPage() {
           </div>
         </div>
 
-        {/* Tagline */}
         <p
-          className="mt-14 max-w-md text-base font-medium leading-snug sm:text-lg"
-          style={{ color: BRAND_DARK }}
+          className="mt-14 max-w-md text-sm leading-snug"
+          style={{ color: BRAND_DARK, opacity: 0.75 }}
         >
-          Moderner Turnunterricht — Anwesenheit, Noten & faire Teams
-          auf einen Blick.
+          Anwesenheit, Noten, Teams &amp; Arbeitsaufträge — alles an einem Ort.
         </p>
+
 
         {/* Hand-drawn arrow */}
         <svg
