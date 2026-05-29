@@ -15,6 +15,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as ImpressumRouteImport } from './routes/impressum'
 import { Route as EinstellungenRouteImport } from './routes/einstellungen'
 import { Route as DatenschutzRouteImport } from './routes/datenschutz'
+import { Route as ArchivRouteImport } from './routes/archiv'
 import { Route as ArbeitsauftragRouteImport } from './routes/arbeitsauftrag'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as KlasseClassIdRouteImport } from './routes/klasse.$classId'
@@ -51,6 +52,11 @@ const DatenschutzRoute = DatenschutzRouteImport.update({
   path: '/datenschutz',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ArchivRoute = ArchivRouteImport.update({
+  id: '/archiv',
+  path: '/archiv',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ArbeitsauftragRoute = ArbeitsauftragRouteImport.update({
   id: '/arbeitsauftrag',
   path: '/arbeitsauftrag',
@@ -81,6 +87,7 @@ const KlasseClassIdDisziplinenRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/arbeitsauftrag': typeof ArbeitsauftragRoute
+  '/archiv': typeof ArchivRoute
   '/datenschutz': typeof DatenschutzRoute
   '/einstellungen': typeof EinstellungenRoute
   '/impressum': typeof ImpressumRoute
@@ -94,6 +101,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/arbeitsauftrag': typeof ArbeitsauftragRoute
+  '/archiv': typeof ArchivRoute
   '/datenschutz': typeof DatenschutzRoute
   '/einstellungen': typeof EinstellungenRoute
   '/impressum': typeof ImpressumRoute
@@ -108,6 +116,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/arbeitsauftrag': typeof ArbeitsauftragRoute
+  '/archiv': typeof ArchivRoute
   '/datenschutz': typeof DatenschutzRoute
   '/einstellungen': typeof EinstellungenRoute
   '/impressum': typeof ImpressumRoute
@@ -123,6 +132,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/arbeitsauftrag'
+    | '/archiv'
     | '/datenschutz'
     | '/einstellungen'
     | '/impressum'
@@ -136,6 +146,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/arbeitsauftrag'
+    | '/archiv'
     | '/datenschutz'
     | '/einstellungen'
     | '/impressum'
@@ -149,6 +160,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/arbeitsauftrag'
+    | '/archiv'
     | '/datenschutz'
     | '/einstellungen'
     | '/impressum'
@@ -163,6 +175,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ArbeitsauftragRoute: typeof ArbeitsauftragRoute
+  ArchivRoute: typeof ArchivRoute
   DatenschutzRoute: typeof DatenschutzRoute
   EinstellungenRoute: typeof EinstellungenRoute
   ImpressumRoute: typeof ImpressumRoute
@@ -214,6 +227,13 @@ declare module '@tanstack/react-router' {
       path: '/datenschutz'
       fullPath: '/datenschutz'
       preLoaderRoute: typeof DatenschutzRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/archiv': {
+      id: '/archiv'
+      path: '/archiv'
+      fullPath: '/archiv'
+      preLoaderRoute: typeof ArchivRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/arbeitsauftrag': {
@@ -271,6 +291,7 @@ const KlasseClassIdRouteWithChildren = KlasseClassIdRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ArbeitsauftragRoute: ArbeitsauftragRoute,
+  ArchivRoute: ArchivRoute,
   DatenschutzRoute: DatenschutzRoute,
   EinstellungenRoute: EinstellungenRoute,
   ImpressumRoute: ImpressumRoute,
