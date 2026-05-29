@@ -199,16 +199,22 @@ function LoginPage() {
 
         <h1 className="leading-[0.95]" style={{ color: BRAND_DARK }}>
           <span
-            className="block text-5xl sm:text-6xl md:text-7xl"
+            className="block text-4xl sm:text-5xl md:text-6xl"
             style={{ fontFamily: '"Dancing Script", cursive', fontWeight: 700 }}
           >
-            Wir sind
+            Moderner
           </span>
           <span
-            className="mt-1 block text-6xl tracking-tight sm:text-7xl md:text-8xl"
+            className="mt-1 block text-5xl tracking-tight sm:text-6xl md:text-7xl"
             style={{ fontFamily: '"Archivo Black", system-ui, sans-serif', letterSpacing: "-0.02em" }}
           >
-            ONLINE
+            TURNUNTERRICHT
+          </span>
+          <span
+            className="mt-3 block text-2xl sm:text-3xl md:text-4xl"
+            style={{ fontFamily: '"Dancing Script", cursive', fontWeight: 600, opacity: 0.9 }}
+          >
+            auf einen Blick
           </span>
         </h1>
 
