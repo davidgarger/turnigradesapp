@@ -64,6 +64,7 @@ export function SiteFooter() {
 }
 
 function FeedbackDialog({ onClose }: { onClose: () => void }) {
+  useScrollLock(true);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [kind, setKind] = useState<FeedbackKind>("verbesserung");
   const [message, setMessage] = useState("");
