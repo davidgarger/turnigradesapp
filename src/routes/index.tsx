@@ -321,10 +321,10 @@ function Index() {
             </Link>
             <Link
               to="/einstellungen"
-              className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-input bg-background text-foreground transition-colors hover:bg-accent"
+              aria-label="Einstellungen"
             >
               <Settings className="h-4 w-4" />
-              <span className="hidden sm:inline">Einstellungen</span>
             </Link>
             <LogoutButton />
           </div>
