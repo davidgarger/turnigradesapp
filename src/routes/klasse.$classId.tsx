@@ -43,6 +43,7 @@ import ImportStudentsDialog, { type ParsedStudent } from "@/components/ImportStu
 import TeamGenerator from "@/components/TeamGenerator";
 import ExcusesDialog from "@/components/ExcusesDialog";
 import { Camera } from "lucide-react";
+import { StudentAvatar, fileToResizedDataUrl } from "@/components/StudentAvatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
