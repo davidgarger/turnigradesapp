@@ -458,10 +458,19 @@ function LoginPage() {
               </div>
 
               <div className="mb-5">
-                <h2 className="text-2xl font-bold tracking-tight" style={{ color: BRAND_DARK }}>
-                  {mode === "signup" ? "Konto erstellen" : "Anmelden"}
+                <div
+                  className="text-lg leading-none"
+                  style={{ fontFamily: '"Dancing Script", cursive', fontWeight: 700, color: BRAND_DARK, opacity: 0.85 }}
+                >
+                  {mode === "signup" ? "Schön, dass du da bist —" : "Willkommen zurück —"}
+                </div>
+                <h2
+                  className="mt-1 text-3xl tracking-tight"
+                  style={{ fontFamily: '"Archivo Black", system-ui, sans-serif', color: BRAND_DARK, letterSpacing: "-0.02em" }}
+                >
+                  {mode === "signup" ? "KONTO ERSTELLEN" : "ANMELDEN"}
                 </h2>
-                <p className="mt-1 text-sm" style={{ color: `${BRAND_DARK}99` }}>
+                <p className="mt-2 text-sm" style={{ color: `${BRAND_DARK}99` }}>
                   Mit Benutzername und Passwort einloggen.
                 </p>
               </div>
