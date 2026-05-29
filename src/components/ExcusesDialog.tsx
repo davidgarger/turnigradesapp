@@ -61,6 +61,7 @@ export default function ExcusesDialog({
   const fileRef = useRef<HTMLInputElement>(null);
   const [previews, setPreviews] = useState<Record<string, string>>({});
   const [zoom, setZoom] = useState<string | null>(null);
+  useScrollLock(!!zoom);
 
   const excuses = student.excuses ?? [];
 
