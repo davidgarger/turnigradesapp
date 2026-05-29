@@ -190,6 +190,7 @@ function Index() {
   const [visible, setVisible] = useState<string[]>(["1", "2", "3", "4"]);
   const [userId, setUserId] = useState<string | null>(null);
   const [endYearOpen, setEndYearOpen] = useState(false);
+  useScrollLock(!!openPicker || endYearOpen);
 
   useEffect(() => {
     // Sofort lokalen Cache anzeigen, dann Cloud-Werte nachladen
