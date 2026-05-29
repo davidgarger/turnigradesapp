@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as StationenkartenRouteImport } from './routes/stationenkarten'
+import { Route as NotenuebersichtRouteImport } from './routes/notenuebersicht'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ImpressumRouteImport } from './routes/impressum'
 import { Route as EinstellungenRouteImport } from './routes/einstellungen'
@@ -23,6 +24,11 @@ import { Route as KlasseClassIdDisziplinenRouteImport } from './routes/klasse.$c
 const StationenkartenRoute = StationenkartenRouteImport.update({
   id: '/stationenkarten',
   path: '/stationenkarten',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotenuebersichtRoute = NotenuebersichtRouteImport.update({
+  id: '/notenuebersicht',
+  path: '/notenuebersicht',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -79,6 +85,7 @@ export interface FileRoutesByFullPath {
   '/einstellungen': typeof EinstellungenRoute
   '/impressum': typeof ImpressumRoute
   '/login': typeof LoginRoute
+  '/notenuebersicht': typeof NotenuebersichtRoute
   '/stationenkarten': typeof StationenkartenRoute
   '/klasse/$classId': typeof KlasseClassIdRouteWithChildren
   '/klasse/$classId/disziplinen': typeof KlasseClassIdDisziplinenRoute
@@ -91,6 +98,7 @@ export interface FileRoutesByTo {
   '/einstellungen': typeof EinstellungenRoute
   '/impressum': typeof ImpressumRoute
   '/login': typeof LoginRoute
+  '/notenuebersicht': typeof NotenuebersichtRoute
   '/stationenkarten': typeof StationenkartenRoute
   '/klasse/$classId': typeof KlasseClassIdRouteWithChildren
   '/klasse/$classId/disziplinen': typeof KlasseClassIdDisziplinenRoute
@@ -104,6 +112,7 @@ export interface FileRoutesById {
   '/einstellungen': typeof EinstellungenRoute
   '/impressum': typeof ImpressumRoute
   '/login': typeof LoginRoute
+  '/notenuebersicht': typeof NotenuebersichtRoute
   '/stationenkarten': typeof StationenkartenRoute
   '/klasse/$classId': typeof KlasseClassIdRouteWithChildren
   '/klasse/$classId/disziplinen': typeof KlasseClassIdDisziplinenRoute
@@ -118,6 +127,7 @@ export interface FileRouteTypes {
     | '/einstellungen'
     | '/impressum'
     | '/login'
+    | '/notenuebersicht'
     | '/stationenkarten'
     | '/klasse/$classId'
     | '/klasse/$classId/disziplinen'
@@ -130,6 +140,7 @@ export interface FileRouteTypes {
     | '/einstellungen'
     | '/impressum'
     | '/login'
+    | '/notenuebersicht'
     | '/stationenkarten'
     | '/klasse/$classId'
     | '/klasse/$classId/disziplinen'
@@ -142,6 +153,7 @@ export interface FileRouteTypes {
     | '/einstellungen'
     | '/impressum'
     | '/login'
+    | '/notenuebersicht'
     | '/stationenkarten'
     | '/klasse/$classId'
     | '/klasse/$classId/disziplinen'
@@ -155,6 +167,7 @@ export interface RootRouteChildren {
   EinstellungenRoute: typeof EinstellungenRoute
   ImpressumRoute: typeof ImpressumRoute
   LoginRoute: typeof LoginRoute
+  NotenuebersichtRoute: typeof NotenuebersichtRoute
   StationenkartenRoute: typeof StationenkartenRoute
   KlasseClassIdRoute: typeof KlasseClassIdRouteWithChildren
 }
@@ -166,6 +179,13 @@ declare module '@tanstack/react-router' {
       path: '/stationenkarten'
       fullPath: '/stationenkarten'
       preLoaderRoute: typeof StationenkartenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notenuebersicht': {
+      id: '/notenuebersicht'
+      path: '/notenuebersicht'
+      fullPath: '/notenuebersicht'
+      preLoaderRoute: typeof NotenuebersichtRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -255,6 +275,7 @@ const rootRouteChildren: RootRouteChildren = {
   EinstellungenRoute: EinstellungenRoute,
   ImpressumRoute: ImpressumRoute,
   LoginRoute: LoginRoute,
+  NotenuebersichtRoute: NotenuebersichtRoute,
   StationenkartenRoute: StationenkartenRoute,
   KlasseClassIdRoute: KlasseClassIdRouteWithChildren,
 }
