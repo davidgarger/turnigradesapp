@@ -287,7 +287,7 @@ function Index() {
             <TurniLogo className="h-10 w-10 rounded-lg shadow-md shadow-violet-500/20" />
             <div>
               <h1 className="text-xl font-semibold tracking-tight text-foreground">Turni</h1>
-              <p className="text-xs text-muted-foreground">Deine App für den Sportunterricht</p>
+              <p className="hidden text-xs text-muted-foreground lg:block">Deine App für den Sportunterricht</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
