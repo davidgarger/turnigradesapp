@@ -6,6 +6,7 @@ import { schoolYearLabel } from "@/routes/klasse.$classId";
 import { TurniLogo } from "@/components/TurniLogo";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useScrollLock } from "@/hooks/use-scroll-lock";
 
 export const Route = createFileRoute("/")({
   component: Index,
