@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, Check, X, Backpack, Slash, FileCheck, FileX, Undo2 } from "lucide-react";
 import { turnActions, useTurnState, type ClassId, type Student, undo, canUndo } from "@/lib/turn-store";
+import { StudentAvatar } from "@/components/StudentAvatar";
 import { toast } from "sonner";
 
 const SWIPE_THRESHOLD = 90;
