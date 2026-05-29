@@ -29,6 +29,12 @@ export const Route = createFileRoute("/login")({
           "turni.live hilft Sportlehrkräften, Anwesenheit, Leistungen, faire Teams und Arbeitsaufträge an einem Ort zu verwalten.",
       },
     ],
+    links: [
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Archivo+Black&display=swap",
+      },
+    ],
   }),
 });
 
