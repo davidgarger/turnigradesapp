@@ -691,20 +691,47 @@ function SchoolLogo() {
 
 function LogoutButton() {
   const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onClick = (e: MouseEvent) => {
+      if (!ref.current?.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", onClick);
+    return () => document.removeEventListener("mousedown", onClick);
+  }, [open]);
+
   const onLogout = async () => {
     await supabase.auth.signOut();
     navigate({ to: "/login" });
   };
+
   return (
-    <button
-      type="button"
-      onClick={onLogout}
-      className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
-      aria-label="Abmelden"
-    >
-      <LogOut className="h-4 w-4" />
-      <span className="hidden sm:inline">Abmelden</span>
-    </button>
+    <div ref={ref} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-input bg-background text-foreground transition-colors hover:bg-accent"
+        aria-label="Abmelden"
+        aria-expanded={open}
+      >
+        <LogOut className="h-4 w-4" />
+      </button>
+      {open && (
+        <div className="absolute right-0 top-10 z-50 w-40 rounded-lg border border-border bg-popover p-1 text-popover-foreground shadow-lg">
+          <button
+            type="button"
+            onClick={onLogout}
+            className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-destructive hover:bg-destructive/10"
+          >
+            <LogOut className="h-4 w-4" />
+            Abmelden
+          </button>
+        </div>
+      )}
+    </div>
   );
 }
 
