@@ -15,6 +15,7 @@ import {
   Upload,
   Dumbbell,
   Clock,
+  AlertTriangle,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
