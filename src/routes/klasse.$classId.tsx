@@ -15,6 +15,7 @@ import {
   Upload,
   Dumbbell,
   Clock,
+  AlertTriangle,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -570,8 +571,26 @@ function StudentRow({
           >
             +
           </button>
+          {(() => {
+            const sum =
+              student.attended +
+              student.forgottenKit +
+              student.excusedNotParticipating +
+              student.unexcusedNotParticipating;
+            if (sum === totalLessons) return null;
+            return (
+              <span
+                className="inline-flex h-5 w-5 items-center justify-center text-status-warning"
+                title="Summe der Turnstunden stimmt nicht überein"
+                aria-label="Summe der Turnstunden stimmt nicht überein"
+              >
+                <AlertTriangle className="h-4 w-4" />
+              </span>
+            );
+          })()}
         </div>
       </td>
+
       <td className="px-2 py-2 text-center">
         <span
           className={`inline-flex h-8 w-8 items-center justify-center rounded-md text-base font-bold ${gradeColor}`}
