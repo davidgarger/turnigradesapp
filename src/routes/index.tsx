@@ -286,7 +286,7 @@ function Index() {
           <div className="flex items-center gap-3">
             <TurniLogo className="h-10 w-10 rounded-lg shadow-md shadow-violet-500/20" />
             <div>
-              <h1 className="text-xl font-semibold tracking-tight text-foreground">Turni</h1>
+              <h1 className="hidden text-xl font-semibold tracking-tight text-foreground lg:block">Turni</h1>
               <p className="hidden text-xs text-muted-foreground lg:block">Deine App für den Sportunterricht</p>
             </div>
           </div>
