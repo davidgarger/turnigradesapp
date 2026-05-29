@@ -363,10 +363,7 @@ function LoginPage() {
           </div>
 
           <h1 className="leading-[0.95]" style={{ color: BRAND_DARK }}>
-            <span
-              className="block text-3xl sm:text-4xl"
-              style={{ fontFamily: '"Dancing Script", cursive', fontWeight: 700 }}
-            >
+            <span className="block text-3xl font-bold sm:text-4xl">
               Sportunterricht
             </span>
             <span
@@ -375,10 +372,6 @@ function LoginPage() {
             >
               KLAR ORGANISIERT
             </span>
-            <span
-              className="absolute"
-              style={{ display: "none" }}
-            />
           </h1>
           <div
             className="mt-4 h-1 w-24 rounded-full"
@@ -459,8 +452,8 @@ function LoginPage() {
 
               <div className="mb-5">
                 <div
-                  className="text-lg leading-none"
-                  style={{ fontFamily: '"Dancing Script", cursive', fontWeight: 700, color: BRAND_DARK, opacity: 0.85 }}
+                  className="text-lg font-semibold leading-none"
+                  style={{ color: BRAND_DARK, opacity: 0.85 }}
                 >
                   {mode === "signup" ? "Schön, dass du da bist —" : "Willkommen zurück —"}
                 </div>
