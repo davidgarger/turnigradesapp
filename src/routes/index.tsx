@@ -709,6 +709,8 @@ function LogoutButton() {
 type EndYearAction = "advance" | "archive";
 type Decision = { classId: string; action: EndYearAction };
 
+import { useScrollLock } from "@/hooks/use-scroll-lock";
+
 function EndSchoolYearDialog({
   visibleClasses,
   onClose,
@@ -718,6 +720,7 @@ function EndSchoolYearDialog({
   onClose: () => void;
   onConfirm: (decisions: Decision[]) => void;
 }) {
+  useScrollLock(true);
   const state = useTurnState();
   const [choices, setChoices] = useState<Record<string, EndYearAction>>(() => {
     const init: Record<string, EndYearAction> = {};
