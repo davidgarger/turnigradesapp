@@ -431,7 +431,7 @@ function LoginPage() {
         </section>
 
         {/* Right: login card */}
-        <section className="flex items-center lg:sticky lg:top-10 lg:self-start">
+        <section id="login-form" className="flex items-center lg:sticky lg:top-10 lg:self-start">
           <div className="relative w-full">
             <div
               className="absolute -inset-1 rounded-3xl blur-xl"
