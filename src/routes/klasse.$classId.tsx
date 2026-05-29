@@ -450,6 +450,7 @@ function StudentRow({
   disciplines: { id: string; name: string; weight: number }[];
   totalLessons: number;
 }) {
+  const [warningOpen, setWarningOpen] = useState(false);
 
   const gradeColor =
     grade.grade <= 2
@@ -460,6 +461,12 @@ function StudentRow({
           ? "bg-status-danger-bg text-status-danger"
           : "bg-status-danger-strong-bg text-status-danger-strong";
 
+  const attendedSum =
+    student.attended +
+    student.forgottenKit +
+    student.excusedNotParticipating +
+    student.unexcusedNotParticipating;
+  const showWarning = attendedSum !== totalLessons;
 
   return (
     <tr className="border-t border-border hover:bg-muted/30">
@@ -571,23 +578,38 @@ function StudentRow({
           >
             +
           </button>
-          {(() => {
-            const sum =
-              student.attended +
-              student.forgottenKit +
-              student.excusedNotParticipating +
-              student.unexcusedNotParticipating;
-            if (sum === totalLessons) return null;
-            return (
-              <span
-                className="inline-flex h-5 w-5 items-center justify-center text-status-warning"
-                title="Summe der Turnstunden stimmt nicht überein"
-                aria-label="Summe der Turnstunden stimmt nicht überein"
-              >
-                <AlertTriangle className="h-4 w-4" />
-              </span>
-            );
-          })()}
+          {showWarning && (
+            <Dialog open={warningOpen} onOpenChange={setWarningOpen}>
+              <DialogTrigger asChild>
+                <button
+                  className="inline-flex h-5 w-5 items-center justify-center text-status-warning"
+                  aria-label="Summe der Turnstunden stimmt nicht überein"
+                >
+                  <AlertTriangle className="h-4 w-4" />
+                </button>
+              </DialogTrigger>
+              <DialogContent className="max-w-sm">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2 text-status-warning">
+                    <AlertTriangle className="h-5 w-5" />
+                    Hinweis
+                  </DialogTitle>
+                </DialogHeader>
+                <p className="text-sm text-foreground">
+                  Summe der Turnstunden stimmt nicht überein.
+                  <br />
+                  <span className="text-muted-foreground">
+                    Mitgeturnt: {student.attended} · Turnzeug vergessen: {student.forgottenKit} · Entschuldigt: {student.excusedNotParticipating} · Nicht entschuldigt: {student.unexcusedNotParticipating}
+                    <br />
+                    Summe: {attendedSum} von {totalLessons}
+                  </span>
+                </p>
+                <DialogFooter>
+                  <Button onClick={() => setWarningOpen(false)}>OK</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          )}
         </div>
       </td>
 
