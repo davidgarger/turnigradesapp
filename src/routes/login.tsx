@@ -709,27 +709,50 @@ function MiniTurniPhone() {
       </div>
 
       <div className="mt-2 space-y-1">
-        {["Anna", "Ben", "Clara", "David", "Eva", "Felix"].map((n, i) => (
-          <div
-            key={i}
-            className="flex items-center justify-between rounded-md border bg-white px-1.5 py-1"
-            style={{ borderColor: `${BRAND_DARK}22` }}
-          >
-            <div className="flex items-center gap-1">
-              <div
-                className="h-3 w-3 rounded-full"
-                style={{ background: BRAND_MINT, border: `1px solid ${BRAND_DARK}55` }}
-              />
-              <span style={{ color: BRAND_DARK, fontWeight: 600 }}>{n}</span>
-            </div>
-            <span
-              className="rounded px-1 text-white"
-              style={{ background: i % 3 === 0 ? "#dc2626" : BRAND_DARK, fontSize: 6 }}
+        {([
+          { n: "Anna", s: "present" },
+          { n: "Ben", s: "forgotten" },
+          { n: "Clara", s: "present" },
+          { n: "David", s: "excused" },
+          { n: "Eva", s: "present" },
+          { n: "Felix", s: "unexcused" },
+        ] as const).map(({ n, s }) => {
+          const cfg = {
+            present: { bg: "#16a34a", icon: <Check className="h-2.5 w-2.5" strokeWidth={3.5} /> },
+            forgotten: {
+              bg: "#ea580c",
+              icon: (
+                <span className="relative inline-flex h-2.5 w-2.5 items-center justify-center">
+                  <Backpack className="h-2.5 w-2.5" strokeWidth={2.75} />
+                  <Slash className="absolute inset-0 h-2.5 w-2.5" strokeWidth={3} />
+                </span>
+              ),
+            },
+            excused: { bg: "#d97706", icon: <FileCheck className="h-2.5 w-2.5" strokeWidth={2.75} /> },
+            unexcused: { bg: "#dc2626", icon: <FileX className="h-2.5 w-2.5" strokeWidth={2.75} /> },
+          }[s];
+          return (
+            <div
+              key={n}
+              className="flex items-center justify-between rounded-md border bg-white px-1.5 py-1"
+              style={{ borderColor: `${BRAND_DARK}22` }}
             >
-              {i % 3 === 0 ? "fehlt" : "da"}
-            </span>
-          </div>
-        ))}
+              <div className="flex items-center gap-1">
+                <div
+                  className="h-3 w-3 rounded-full"
+                  style={{ background: BRAND_MINT, border: `1px solid ${BRAND_DARK}55` }}
+                />
+                <span style={{ color: BRAND_DARK, fontWeight: 600 }}>{n}</span>
+              </div>
+              <span
+                className="flex h-4 w-4 items-center justify-center rounded-full text-white shadow-sm"
+                style={{ background: cfg.bg }}
+              >
+                {cfg.icon}
+              </span>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
