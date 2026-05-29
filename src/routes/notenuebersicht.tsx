@@ -257,15 +257,21 @@ function StudentCard({
               const v = student.scores[d.id];
               const pct = typeof v === "number" ? scoreToPercent(d, v) : 0;
               const measured = typeof v === "number";
+              const ignored = d.weight <= 0;
               return (
-                <div key={d.id}>
+                <div key={d.id} className={ignored ? "opacity-50" : ""}>
                   <div className="mb-1 flex items-baseline justify-between gap-2">
-                    <span className="truncate text-sm font-semibold text-foreground">
-                      {d.name}
+                    <span className="flex min-w-0 items-center gap-2 truncate text-sm font-semibold text-foreground">
+                      <span className="truncate">{d.name}</span>
+                      {ignored && (
+                        <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                          zählt nicht
+                        </span>
+                      )}
                     </span>
                     <span className="text-sm tabular-nums text-muted-foreground">
                       {measured ? `${v} ${getDisciplineUnit(d)}` : "—"}
-                      {measured && (
+                      {measured && !ignored && (
                         <span className="ml-2 text-xs font-semibold text-foreground">
                           {Math.round(pct)}%
                         </span>
@@ -275,7 +281,7 @@ function StudentCard({
                   <div className="h-2 overflow-hidden rounded-full bg-secondary">
                     <div
                       className={`h-full rounded-full bg-gradient-to-r ${grad} transition-all`}
-                      style={{ width: `${measured ? pct : 0}%` }}
+                      style={{ width: `${measured && !ignored ? pct : 0}%` }}
                     />
                   </div>
                 </div>
