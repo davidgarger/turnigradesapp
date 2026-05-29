@@ -710,8 +710,6 @@ function LogoutButton() {
 type EndYearAction = "advance" | "archive";
 type Decision = { classId: string; action: EndYearAction };
 
-import { useScrollLock } from "@/hooks/use-scroll-lock";
-
 function EndSchoolYearDialog({
   visibleClasses,
   onClose,
