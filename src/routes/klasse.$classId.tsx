@@ -42,6 +42,7 @@ import QuickSession from "@/components/QuickSession";
 import ImportStudentsDialog, { type ParsedStudent } from "@/components/ImportStudentsDialog";
 import TeamGenerator from "@/components/TeamGenerator";
 import ExcusesDialog from "@/components/ExcusesDialog";
+import { useScrollLock } from "@/hooks/use-scroll-lock";
 import { Camera } from "lucide-react";
 import { StudentAvatar, fileToResizedDataUrl } from "@/components/StudentAvatar";
 import { Button } from "@/components/ui/button";
