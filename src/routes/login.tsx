@@ -287,10 +287,10 @@ function LoginPage() {
 
         {/* CTA */}
         <a
-          href="#anmelden"
+          href="#login-form"
           onClick={(e) => {
             e.preventDefault();
-            document.getElementById("anmelden")?.scrollIntoView({ behavior: "smooth", block: "start" });
+            document.getElementById("login-form")?.scrollIntoView({ behavior: "smooth", block: "center" });
           }}
           className="mt-6 inline-flex items-center justify-center rounded-full px-12 py-4 text-sm font-bold uppercase tracking-[0.18em] text-white shadow-xl transition hover:scale-[1.02] active:scale-[0.99]"
           style={{
@@ -298,7 +298,7 @@ function LoginPage() {
             boxShadow: `0 20px 40px -16px ${BRAND_DARK}aa`,
           }}
         >
-          Jetzt besuchen
+          Jetzt anmelden
         </a>
       </section>
 
@@ -431,7 +431,7 @@ function LoginPage() {
         </section>
 
         {/* Right: login card */}
-        <section className="flex items-center lg:sticky lg:top-10 lg:self-start">
+        <section id="login-form" className="flex items-center lg:sticky lg:top-10 lg:self-start">
           <div className="relative w-full">
             <div
               className="absolute -inset-1 rounded-3xl blur-xl"
