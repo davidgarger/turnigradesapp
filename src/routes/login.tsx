@@ -29,6 +29,12 @@ export const Route = createFileRoute("/login")({
           "turni.live hilft Sportlehrkräften, Anwesenheit, Leistungen, faire Teams und Arbeitsaufträge an einem Ort zu verwalten.",
       },
     ],
+    links: [
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Archivo+Black&display=swap",
+      },
+    ],
   }),
 });
 
@@ -158,8 +164,136 @@ function LoginPage() {
         />
       </div>
 
+      {/* Hero "Wir sind online" — Storytelling Intro */}
+      <section className="relative mx-auto flex min-h-[100svh] max-w-3xl flex-col items-center justify-center px-6 pt-10 pb-16 text-center">
+        <div
+          className="pointer-events-none absolute inset-0 -z-10 opacity-[0.5]"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 1px 1px, #04231b22 1px, transparent 0)",
+            backgroundSize: "6px 6px",
+          }}
+        />
+
+        <div className="mb-6 flex items-center gap-2.5">
+          <div
+            className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white shadow-md ring-1"
+            style={{ borderColor: `${BRAND_DARK}22`, boxShadow: `0 8px 24px -12px ${BRAND_DARK}55` }}
+          >
+            <TurniLogo className="h-7 w-7" />
+          </div>
+          <div className="text-left leading-tight">
+            <div className="text-base font-bold tracking-tight" style={{ color: BRAND_DARK }}>
+              turni.live
+            </div>
+            <div className="text-[10px] font-semibold uppercase tracking-[0.18em]" style={{ color: BRAND_DARK, opacity: 0.6 }}>
+              Sportunterricht
+            </div>
+          </div>
+        </div>
+
+        <h1 className="leading-[0.95]" style={{ color: BRAND_DARK }}>
+          <span
+            className="block text-5xl sm:text-6xl md:text-7xl"
+            style={{ fontFamily: '"Dancing Script", cursive', fontWeight: 700 }}
+          >
+            Wir sind
+          </span>
+          <span
+            className="mt-1 block text-6xl tracking-tight sm:text-7xl md:text-8xl"
+            style={{ fontFamily: '"Archivo Black", system-ui, sans-serif', letterSpacing: "-0.02em" }}
+          >
+            ONLINE
+          </span>
+        </h1>
+
+        {/* Domain pill */}
+        <a
+          href="https://turni.live"
+          className="mt-6 inline-flex items-center gap-2 rounded-full border bg-white/80 px-5 py-2.5 text-sm font-medium shadow-sm backdrop-blur transition hover:bg-white sm:text-base"
+          style={{ borderColor: `${BRAND_DARK}55`, color: BRAND_DARK }}
+        >
+          <span className="opacity-60">www.</span>
+          <span className="font-semibold">turni.live</span>
+          <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="11" cy="11" r="7" />
+            <path d="m20 20-3.5-3.5" />
+          </svg>
+        </a>
+
+        {/* Laptop + Phone mockup */}
+        <div className="relative mt-10 w-full max-w-lg">
+          {/* Laptop */}
+          <div className="relative mx-auto w-[88%]">
+            <div
+              className="rounded-[14px] border-[6px] border-slate-900 bg-slate-900 shadow-2xl"
+              style={{ boxShadow: `0 30px 60px -20px ${BRAND_DARK}66` }}
+            >
+              <div className="overflow-hidden rounded-[6px]">
+                <MiniTurniDashboard />
+              </div>
+            </div>
+            {/* Laptop base */}
+            <div className="relative mx-auto h-[10px] w-[112%] -translate-x-[5%] rounded-b-2xl bg-slate-800" />
+            <div className="mx-auto h-[3px] w-[40%] rounded-b-md bg-slate-700/80" />
+          </div>
+
+          {/* Phone overlay */}
+          <div className="absolute -bottom-6 right-2 w-[34%] sm:right-6">
+            <div
+              className="rounded-[26px] border-[5px] border-slate-900 bg-slate-900 shadow-2xl"
+              style={{ boxShadow: `0 24px 40px -16px ${BRAND_DARK}88` }}
+            >
+              <div className="relative overflow-hidden rounded-[18px]">
+                <div className="absolute left-1/2 top-1 z-10 h-1 w-10 -translate-x-1/2 rounded-full bg-slate-700" />
+                <MiniTurniPhone />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Tagline */}
+        <p
+          className="mt-14 max-w-md text-base font-medium leading-snug sm:text-lg"
+          style={{ color: BRAND_DARK }}
+        >
+          Moderner Turnunterricht — Anwesenheit, Noten & faire Teams
+          auf einen Blick.
+        </p>
+
+        {/* Hand-drawn arrow */}
+        <svg
+          viewBox="0 0 80 90"
+          className="mt-8 h-16 w-14"
+          fill="none"
+          stroke={BRAND_DARK}
+          strokeWidth="2.2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M40 5 C 18 25, 18 55, 38 78" />
+          <path d="M28 66 L 38 80 L 50 70" />
+        </svg>
+
+        {/* CTA */}
+        <a
+          href="#anmelden"
+          onClick={(e) => {
+            e.preventDefault();
+            document.getElementById("anmelden")?.scrollIntoView({ behavior: "smooth", block: "start" });
+          }}
+          className="mt-6 inline-flex items-center justify-center rounded-full px-12 py-4 text-sm font-bold uppercase tracking-[0.18em] text-white shadow-xl transition hover:scale-[1.02] active:scale-[0.99]"
+          style={{
+            background: "#0a0a0a",
+            boxShadow: `0 20px 40px -16px ${BRAND_DARK}aa`,
+          }}
+        >
+          Jetzt besuchen
+        </a>
+      </section>
+
       {/* Top nav */}
-      <header className="mx-auto flex max-w-7xl items-center justify-between px-6 pt-6">
+      <header id="anmelden" className="mx-auto flex max-w-7xl scroll-mt-6 items-center justify-between px-6 pt-6">
         <div className="flex items-center gap-2.5">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-md ring-1 ring-emerald-100" style={{ boxShadow: `0 8px 24px -12px ${BRAND_DARK}33` }}>
             <TurniLogo className="h-7 w-7" />
@@ -433,3 +567,161 @@ function LoginPage() {
     </div>
   );
 }
+
+/* ---------- Mini Turni Mockups for the hero ---------- */
+
+function MiniTurniDashboard() {
+  return (
+    <div className="aspect-[16/10] w-full bg-[#f6faf7] p-3 text-[8px] leading-tight">
+      {/* topbar */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-1.5">
+          <div
+            className="flex h-4 w-4 items-center justify-center rounded-md"
+            style={{ background: BRAND_DARK, color: BRAND_MINT, fontWeight: 800, fontSize: 6 }}
+          >
+            T
+          </div>
+          <span style={{ color: BRAND_DARK, fontWeight: 700 }}>turni.live</span>
+        </div>
+        <div className="flex gap-1">
+          <span className="rounded-sm px-1 py-[1px] text-white" style={{ background: BRAND_DARK, fontSize: 6 }}>
+            Klassen
+          </span>
+          <span className="rounded-sm bg-white px-1 py-[1px]" style={{ color: BRAND_DARK, fontSize: 6, border: `1px solid ${BRAND_DARK}33` }}>
+            Notenübersicht
+          </span>
+        </div>
+      </div>
+
+      {/* class cards grid */}
+      <div className="mt-2 grid grid-cols-4 gap-1.5">
+        {[
+          { c: "5a", k: 24 },
+          { c: "6b", k: 22 },
+          { c: "7c", k: 26 },
+          { c: "8a", k: 19 },
+          { c: "9b", k: 23 },
+          { c: "10", k: 21 },
+          { c: "5c", k: 25 },
+          { c: "6a", k: 20 },
+        ].map((it, i) => (
+          <div
+            key={i}
+            className="rounded-md p-1.5 text-white shadow-sm"
+            style={{
+              background: i % 2 === 0
+                ? `linear-gradient(135deg, ${BRAND_DARK}, #0a6e52)`
+                : `linear-gradient(135deg, #0a6e52, ${BRAND_DARK})`,
+            }}
+          >
+            <div className="font-black" style={{ fontSize: 10 }}>
+              {it.c}
+            </div>
+            <div className="opacity-80" style={{ fontSize: 6 }}>
+              {it.k} SuS
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* table preview */}
+      <div className="mt-2 rounded-md border bg-white p-1.5" style={{ borderColor: `${BRAND_DARK}22` }}>
+        <div className="flex items-center justify-between" style={{ color: BRAND_DARK }}>
+          <span style={{ fontWeight: 700, fontSize: 7 }}>Klasse 8a</span>
+          <span style={{ fontSize: 6, opacity: 0.6 }}>Anwesenheit · Noten</span>
+        </div>
+        <div className="mt-1 space-y-[3px]">
+          {["Anna M.", "Ben K.", "Clara R.", "David S."].map((n, i) => (
+            <div key={i} className="flex items-center gap-1.5">
+              <div
+                className="h-2.5 w-2.5 rounded-full"
+                style={{ background: BRAND_MINT, border: `1px solid ${BRAND_DARK}55` }}
+              />
+              <span style={{ color: BRAND_DARK, fontSize: 7 }}>{n}</span>
+              <div className="ml-auto flex gap-[2px]">
+                {[1, 2, 3, 4, 5].map((x) => (
+                  <div
+                    key={x}
+                    className="h-1.5 w-3 rounded-sm"
+                    style={{
+                      background: x <= 3 + (i % 2) ? BRAND_DARK : `${BRAND_DARK}22`,
+                    }}
+                  />
+                ))}
+                <span
+                  className="ml-1 rounded px-1 text-white"
+                  style={{ background: BRAND_DARK, fontSize: 6 }}
+                >
+                  {[1.7, 2.3, 1.3, 2.0][i]}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MiniTurniPhone() {
+  return (
+    <div className="aspect-[9/19] w-full bg-[#f6faf7] p-2 text-[7px] leading-tight">
+      <div className="mt-3 flex items-center gap-1">
+        <div
+          className="flex h-3.5 w-3.5 items-center justify-center rounded-md"
+          style={{ background: BRAND_DARK, color: BRAND_MINT, fontWeight: 800, fontSize: 5 }}
+        >
+          T
+        </div>
+        <span style={{ color: BRAND_DARK, fontWeight: 700, fontSize: 7 }}>Klasse 8a</span>
+      </div>
+
+      <div
+        className="mt-2 rounded-md p-1.5 text-white"
+        style={{ background: `linear-gradient(135deg, ${BRAND_DARK}, #0a6e52)` }}
+      >
+        <div style={{ fontSize: 6, opacity: 0.8 }}>Heute</div>
+        <div style={{ fontSize: 9, fontWeight: 800 }}>Anwesenheit</div>
+        <div className="mt-1 flex gap-[2px]">
+          {Array.from({ length: 12 }).map((_, i) => (
+            <div
+              key={i}
+              className="h-2 flex-1 rounded-sm"
+              style={{ background: i < 10 ? BRAND_MINT : "#ffffff33" }}
+            />
+          ))}
+        </div>
+        <div className="mt-1 flex justify-between" style={{ fontSize: 6 }}>
+          <span>10 / 12 da</span>
+          <span>schnelle Stunde</span>
+        </div>
+      </div>
+
+      <div className="mt-2 space-y-1">
+        {["Anna", "Ben", "Clara", "David", "Eva", "Felix"].map((n, i) => (
+          <div
+            key={i}
+            className="flex items-center justify-between rounded-md border bg-white px-1.5 py-1"
+            style={{ borderColor: `${BRAND_DARK}22` }}
+          >
+            <div className="flex items-center gap-1">
+              <div
+                className="h-3 w-3 rounded-full"
+                style={{ background: BRAND_MINT, border: `1px solid ${BRAND_DARK}55` }}
+              />
+              <span style={{ color: BRAND_DARK, fontWeight: 600 }}>{n}</span>
+            </div>
+            <span
+              className="rounded px-1 text-white"
+              style={{ background: i % 3 === 0 ? "#dc2626" : BRAND_DARK, fontSize: 6 }}
+            >
+              {i % 3 === 0 ? "fehlt" : "da"}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
