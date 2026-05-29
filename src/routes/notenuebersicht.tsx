@@ -1,16 +1,19 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
-import { ArrowLeft, IdCard, List, Award, Activity, ShieldCheck, Sparkles, User } from "lucide-react";
+import { useMemo, useRef, useState } from "react";
+import { ArrowLeft, IdCard, List, Award, Activity, ShieldCheck, Sparkles, Camera, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import {
   computeGrade,
   getDisciplineUnit,
   getEffectiveTotalLessons,
   scoreToPercent,
+  turnActions,
   useTurnState,
   type ClassData,
   type ClassId,
   type Student,
 } from "@/lib/turn-store";
+import { StudentAvatar, fileToResizedDataUrl } from "@/components/StudentAvatar";
 
 export const Route = createFileRoute("/notenuebersicht")({
   component: NotenUebersicht,
