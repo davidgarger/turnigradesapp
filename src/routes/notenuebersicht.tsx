@@ -223,7 +223,7 @@ function StudentCard({
           icon={<Award className="h-4 w-4" />}
           label="Leistung"
           value={`${Math.round(g.disciplineAverage)} %`}
-          hint={`${g.measuredCount}/${cls.disciplines.length} Disz.`}
+          hint={`${g.measuredCount}/${cls.disciplines.filter((d) => d.weight > 0).length} Disz.`}
           tone="from-indigo-500 to-violet-500"
         />
         <StatTile
