@@ -237,6 +237,15 @@ function ClassPage() {
             </button>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
+            <Link
+              to="/notenuebersicht"
+              search={{ class: cls.id }}
+              className="inline-flex items-center gap-2 rounded-md bg-gradient-to-r from-amber-500 to-rose-500 px-3 py-2 text-sm font-semibold text-white shadow-md shadow-rose-500/30 transition hover:opacity-95"
+              title="Notenübersicht dieser Klasse"
+            >
+              <BarChart3 className="h-4 w-4" />
+              <span className="hidden sm:inline">Notenübersicht</span>
+            </Link>
             <SchedulePanel cls={cls} effectiveLessons={effectiveLessons} />
             <UndoButton />
 
