@@ -329,7 +329,7 @@ function ClassPage() {
           <table className="w-full min-w-[900px] border-collapse text-sm">
             <thead className="bg-muted/60">
               <tr className="text-left">
-                <th className="sticky left-0 z-[1] bg-muted/60 px-3 py-3 font-semibold">
+                <th className="sticky left-0 z-[1] bg-muted/60 pl-3 pr-1 py-3 font-semibold">
                   <span className="inline-flex items-center gap-1">
                     <button
                       onClick={() => setExpandNames((v) => !v)}
@@ -493,7 +493,7 @@ function StudentRow({
 
   return (
     <tr className="border-t border-border hover:bg-muted/30">
-      <td className="sticky left-0 z-[1] bg-card px-2 py-2 font-medium text-foreground">
+      <td className="sticky left-0 z-[1] bg-card pl-2 pr-1 py-2 font-medium text-foreground">
         <div className="flex items-center gap-1 sm:gap-2">
           <label
             className="group relative inline-flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-full ring-1 ring-border hover:ring-ring"
