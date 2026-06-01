@@ -128,7 +128,7 @@ export default function TeamGenerator({ cls }: { cls: ClassData }) {
     setOpen(v);
     if (v) {
       setTeams(null);
-      setExcluded(new Set());
+      setExcluded(new Set(sessionInactive));
     }
   };
 
