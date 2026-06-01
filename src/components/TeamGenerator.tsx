@@ -234,7 +234,7 @@ export default function TeamGenerator({ cls }: { cls: ClassData }) {
                     Keine Schüler in dieser Klasse.
                   </div>
                 )}
-                {cls.students.map((s) => {
+                {orderedStudents.map((s) => {
                   const isOut = excluded.has(s.id);
                   return (
                     <div
