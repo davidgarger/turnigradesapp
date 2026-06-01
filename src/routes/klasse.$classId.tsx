@@ -522,13 +522,28 @@ function StudentRow({
               }}
             />
           </label>
-          <input
-            value={student.lastName}
-            onChange={(e) => turnActions.updateStudent(classId, student.id, { lastName: e.target.value })}
-            placeholder="Nachname"
-            className="h-9 w-24 rounded-md border border-transparent bg-transparent px-1 text-sm font-semibold hover:border-input focus:border-input focus:bg-background focus:outline-none focus:ring-2 focus:ring-ring sm:w-28 sm:px-2"
-            aria-label="Nachname"
-          />
+          {expandNames ? (
+            <input
+              value={student.lastName}
+              onChange={(e) => turnActions.updateStudent(classId, student.id, { lastName: e.target.value })}
+              placeholder="Nachname"
+              className="h-9 w-24 rounded-md border border-transparent bg-transparent px-1 text-sm font-semibold hover:border-input focus:border-input focus:bg-background focus:outline-none focus:ring-2 focus:ring-ring sm:w-28 sm:px-2"
+              aria-label="Nachname"
+            />
+          ) : (
+            <>
+              <span className="inline-flex h-9 w-10 items-center rounded-md border border-transparent bg-transparent px-1 text-sm font-semibold text-foreground sm:hidden">
+                {student.lastName.charAt(0)}.
+              </span>
+              <input
+                value={student.lastName}
+                onChange={(e) => turnActions.updateStudent(classId, student.id, { lastName: e.target.value })}
+                placeholder="Nachname"
+                className="hidden h-9 w-24 rounded-md border border-transparent bg-transparent px-1 text-sm font-semibold hover:border-input focus:border-input focus:bg-background focus:outline-none focus:ring-2 focus:ring-ring sm:inline-flex sm:w-28 sm:px-2"
+                aria-label="Nachname"
+              />
+            </>
+          )}
           <input
             value={student.firstName}
             onChange={(e) => turnActions.updateStudent(classId, student.id, { firstName: e.target.value })}
