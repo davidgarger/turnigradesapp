@@ -17,6 +17,10 @@ import { StudentAvatar, fileToResizedDataUrl } from "@/components/StudentAvatar"
 
 export const Route = createFileRoute("/notenuebersicht")({
   component: NotenUebersicht,
+  validateSearch: (search: Record<string, unknown>): { class?: ClassId } => {
+    const c = search.class;
+    return typeof c === "string" && c.length > 0 ? { class: c as ClassId } : {};
+  },
   head: () => ({
     meta: [
       { title: "Notenübersicht — Turni" },
