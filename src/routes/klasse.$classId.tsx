@@ -118,6 +118,7 @@ function ClassPage() {
   const [query, setQuery] = useState("");
   const [sortKey, setSortKey] = useState<SortKey>("name");
   const [sortAsc, setSortAsc] = useState(true);
+  const [expandNames, setExpandNames] = useState(false);
 
   const [newFirst, setNewFirst] = useState("");
   const [newLast, setNewLast] = useState("");
@@ -329,12 +330,21 @@ function ClassPage() {
             <thead className="bg-muted/60">
               <tr className="text-left">
                 <th className="sticky left-0 z-[1] bg-muted/60 px-3 py-3 font-semibold">
-                  <button
-                    onClick={() => handleSort("name")}
-                    className="inline-flex items-center gap-1 hover:text-primary"
-                  >
-                    Name <ArrowUpDown className="h-3 w-3" />
-                  </button>
+                  <span className="inline-flex items-center gap-1">
+                    <button
+                      onClick={() => setExpandNames((v) => !v)}
+                      className="hover:text-primary"
+                      title={expandNames ? "Namen kürzen" : "Namen ausklappen"}
+                    >
+                      Name
+                    </button>
+                    <button
+                      onClick={() => handleSort("name")}
+                      className="hover:text-primary"
+                    >
+                      <ArrowUpDown className="h-3 w-3" />
+                    </button>
+                  </span>
                 </th>
                 {cls.disciplines.map((d) => {
                   const isPoints = (d.scoreMode ?? "percent") === "points";
@@ -397,6 +407,7 @@ function ClassPage() {
                   classId={cls.id}
                   disciplines={cls.disciplines}
                   totalLessons={effectiveLessons}
+                  expandNames={expandNames}
                 />
               ))}
 
@@ -453,12 +464,14 @@ function StudentRow({
   classId,
   disciplines,
   totalLessons,
+  expandNames,
 }: {
   student: Student;
   grade: ReturnType<typeof computeGrade>;
   classId: ClassId;
   disciplines: { id: string; name: string; weight: number }[];
   totalLessons: number;
+  expandNames: boolean;
 }) {
   const [warningOpen, setWarningOpen] = useState(false);
 
@@ -509,13 +522,28 @@ function StudentRow({
               }}
             />
           </label>
-          <input
-            value={student.lastName}
-            onChange={(e) => turnActions.updateStudent(classId, student.id, { lastName: e.target.value })}
-            placeholder="Nachname"
-            className="h-9 w-24 rounded-md border border-transparent bg-transparent px-1 text-sm font-semibold hover:border-input focus:border-input focus:bg-background focus:outline-none focus:ring-2 focus:ring-ring sm:w-28 sm:px-2"
-            aria-label="Nachname"
-          />
+          {expandNames ? (
+            <input
+              value={student.lastName}
+              onChange={(e) => turnActions.updateStudent(classId, student.id, { lastName: e.target.value })}
+              placeholder="Nachname"
+              className="h-9 w-24 rounded-md border border-transparent bg-transparent px-1 text-sm font-semibold hover:border-input focus:border-input focus:bg-background focus:outline-none focus:ring-2 focus:ring-ring sm:w-28 sm:px-2"
+              aria-label="Nachname"
+            />
+          ) : (
+            <>
+              <span className="inline-flex h-9 w-10 items-center rounded-md border border-transparent bg-transparent px-1 text-sm font-semibold text-foreground sm:hidden">
+                {student.lastName.charAt(0)}.
+              </span>
+              <input
+                value={student.lastName}
+                onChange={(e) => turnActions.updateStudent(classId, student.id, { lastName: e.target.value })}
+                placeholder="Nachname"
+                className="hidden h-9 w-24 rounded-md border border-transparent bg-transparent px-1 text-sm font-semibold hover:border-input focus:border-input focus:bg-background focus:outline-none focus:ring-2 focus:ring-ring sm:inline-flex sm:w-28 sm:px-2"
+                aria-label="Nachname"
+              />
+            </>
+          )}
           <input
             value={student.firstName}
             onChange={(e) => turnActions.updateStudent(classId, student.id, { firstName: e.target.value })}
