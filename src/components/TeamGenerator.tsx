@@ -60,6 +60,33 @@ export default function TeamGenerator({ cls }: { cls: ClassData }) {
   const [excluded, setExcluded] = useState<Set<string>>(new Set());
   const [teams, setTeams] = useState<Student[][] | null>(null);
 
+  // Aus einer laufenden Stunde (heutige, zuletzt gestartete Lesson) die
+  // entschuldigten / nicht aktiven Schüler bestimmen.
+  const sessionInactive = useMemo(() => {
+    const today = new Date().toISOString().slice(0, 10);
+    const todays = (cls.lessons ?? []).filter((l) => l.date === today);
+    if (todays.length === 0) return new Set<string>();
+    const latest = todays.reduce((a, b) =>
+      a.createdAt > b.createdAt ? a : b,
+    );
+    const ids = new Set<string>();
+    for (const e of latest.entries) {
+      if (e.type === "excused" || e.type === "unexcused") ids.add(e.studentId);
+    }
+    return ids;
+  }, [cls.lessons]);
+
+  // Anzeige-Reihenfolge: aktive Schüler zuerst, inaktive ans Ende
+  const orderedStudents = useMemo(() => {
+    const list = cls.students.slice();
+    list.sort((a, b) => {
+      const ai = sessionInactive.has(a.id) ? 1 : 0;
+      const bi = sessionInactive.has(b.id) ? 1 : 0;
+      return ai - bi;
+    });
+    return list;
+  }, [cls.students, sessionInactive]);
+
   const active = useMemo(
     () => cls.students.filter((s) => !excluded.has(s.id)),
     [cls.students, excluded],
@@ -101,7 +128,7 @@ export default function TeamGenerator({ cls }: { cls: ClassData }) {
     setOpen(v);
     if (v) {
       setTeams(null);
-      setExcluded(new Set());
+      setExcluded(new Set(sessionInactive));
     }
   };
 
@@ -207,7 +234,7 @@ export default function TeamGenerator({ cls }: { cls: ClassData }) {
                     Keine Schüler in dieser Klasse.
                   </div>
                 )}
-                {cls.students.map((s) => {
+                {orderedStudents.map((s) => {
                   const isOut = excluded.has(s.id);
                   return (
                     <div
