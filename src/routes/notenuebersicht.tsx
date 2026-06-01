@@ -45,8 +45,9 @@ function gradeText(g: number): string {
 
 function NotenUebersicht() {
   const state = useTurnState();
+  const search = Route.useSearch();
   const [mode, setMode] = useState<Mode>("card");
-  const [selectedClass, setSelectedClass] = useState<ClassId | "">("");
+  const [selectedClass, setSelectedClass] = useState<ClassId | "">(search.class ?? "");
   const [selectedStudent, setSelectedStudent] = useState<string>("");
 
   const classList = useMemo(
