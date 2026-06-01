@@ -17,6 +17,10 @@ import { StudentAvatar, fileToResizedDataUrl } from "@/components/StudentAvatar"
 
 export const Route = createFileRoute("/notenuebersicht")({
   component: NotenUebersicht,
+  validateSearch: (search: Record<string, unknown>): { class?: ClassId } => {
+    const c = search.class;
+    return typeof c === "string" && c.length > 0 ? { class: c as ClassId } : {};
+  },
   head: () => ({
     meta: [
       { title: "Notenübersicht — Turni" },
@@ -41,8 +45,9 @@ function gradeText(g: number): string {
 
 function NotenUebersicht() {
   const state = useTurnState();
+  const search = Route.useSearch();
   const [mode, setMode] = useState<Mode>("card");
-  const [selectedClass, setSelectedClass] = useState<ClassId | "">("");
+  const [selectedClass, setSelectedClass] = useState<ClassId | "">(search.class ?? "");
   const [selectedStudent, setSelectedStudent] = useState<string>("");
 
   const classList = useMemo(
