@@ -833,31 +833,57 @@ function EndSchoolYearDialog({
           })}
         </div>
 
-        <div className="flex items-center justify-between gap-2 border-t border-border bg-muted/40 px-4 py-3">
-          <div className="text-xs text-muted-foreground">
-            {advanceCount} aufsteigen · {archiveCount} archivieren
+        {confirming ? (
+          <div className="border-t border-border bg-amber-50 px-4 py-3">
+            <p className="mb-2 text-sm font-medium text-amber-900">
+              Schuljahr wirklich beenden?
+            </p>
+            <p className="mb-3 text-xs text-amber-800">
+              • {advanceCount} Klasse(n) aufsteigen<br />
+              • {archiveCount} Klasse(n) ins Archiv<br />
+              Alle aktuellen Klassen werden vorher im Archiv gesichert.
+            </p>
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setConfirming(false)}
+                className="rounded-md border border-input bg-background px-3 py-2 text-sm font-medium hover:bg-accent"
+              >
+                Zurück
+              </button>
+              <button
+                type="button"
+                onClick={() => onConfirm(decisions)}
+                className="rounded-md bg-gradient-to-r from-emerald-500 to-teal-600 px-4 py-2 text-sm font-semibold text-white shadow hover:opacity-95"
+              >
+                Ja, beenden
+              </button>
+            </div>
           </div>
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="rounded-md border border-input bg-background px-3 py-2 text-sm font-medium hover:bg-accent"
-            >
-              Abbrechen
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                if (window.confirm(`Schuljahr wirklich beenden?\n\n• ${advanceCount} Klasse(n) aufsteigen\n• ${archiveCount} Klasse(n) ins Archiv\n\nAlle aktuellen Klassen werden vorher im Archiv gesichert.`)) {
-                  onConfirm(decisions);
-                }
-              }}
-              className="rounded-md bg-gradient-to-r from-emerald-500 to-teal-600 px-4 py-2 text-sm font-semibold text-white shadow hover:opacity-95"
-            >
-              Schuljahr beenden
-            </button>
+        ) : (
+          <div className="flex items-center justify-between gap-2 border-t border-border bg-muted/40 px-4 py-3">
+            <div className="text-xs text-muted-foreground">
+              {advanceCount} aufsteigen · {archiveCount} archivieren
+            </div>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={onClose}
+                className="rounded-md border border-input bg-background px-3 py-2 text-sm font-medium hover:bg-accent"
+              >
+                Abbrechen
+              </button>
+              <button
+                type="button"
+                onClick={() => setConfirming(true)}
+                className="rounded-md bg-gradient-to-r from-emerald-500 to-teal-600 px-4 py-2 text-sm font-semibold text-white shadow hover:opacity-95"
+              >
+                Schuljahr beenden
+              </button>
+            </div>
           </div>
-        </div>
+        )}
+
       </div>
     </div>
   );
