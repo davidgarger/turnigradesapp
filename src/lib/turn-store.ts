@@ -971,7 +971,7 @@ export const turnActions = {
           schoolYear: year,
           reason: dec.action === "advance" ? "advanced" : "removed",
           originalClassId: dec.classId,
-          data: JSON.parse(JSON.stringify(cls)) as ClassData,
+          data: (typeof structuredClone === "function" ? structuredClone(cls) : JSON.parse(JSON.stringify(cls))) as ClassData,
         });
 
         if (dec.action === "advance") {
