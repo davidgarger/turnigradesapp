@@ -764,10 +764,12 @@ function EndSchoolYearDialog({
     for (const id of visibleClasses) init[id] = "advance";
     return init;
   });
+  const [confirming, setConfirming] = useState(false);
 
   const decisions: Decision[] = visibleClasses.map((id) => ({ classId: id, action: choices[id] ?? "advance" }));
   const advanceCount = decisions.filter((d) => d.action === "advance").length;
   const archiveCount = decisions.filter((d) => d.action === "archive").length;
+
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm" onClick={onClose}>
