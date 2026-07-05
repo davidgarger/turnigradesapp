@@ -544,20 +544,30 @@ function Index() {
           visibleClasses={visible}
           onClose={() => setEndYearOpen(false)}
           onConfirm={(decisions) => {
-            turnActions.endSchoolYear(
-              decisions.map((d) => ({ classId: d.classId as (typeof CLASSES)[number], action: d.action })),
-            );
-            // Entfernte Klassen ausblenden
-            const removedIds = decisions.filter((d) => d.action === "archive").map((d) => d.classId);
-            if (removedIds.length) {
-              const next = visible.filter((c) => !removedIds.includes(c));
-              persistVisible(next.length ? next : ["1"]);
-            }
+            // Dialog sofort schließen, damit die UI reagieren kann
             setEndYearOpen(false);
-            toast.success("Schuljahr beendet");
+            const loadingId = toast.loading("Schuljahr wird beendet…");
+            // Schwere Arbeit deferrieren, damit der Frame gerendert wird
+            setTimeout(() => {
+              try {
+                turnActions.endSchoolYear(
+                  decisions.map((d) => ({ classId: d.classId as (typeof CLASSES)[number], action: d.action })),
+                );
+                const removedIds = decisions.filter((d) => d.action === "archive").map((d) => d.classId);
+                if (removedIds.length) {
+                  const next = visible.filter((c) => !removedIds.includes(c));
+                  persistVisible(next.length ? next : ["1"]);
+                }
+                toast.success("Schuljahr beendet", { id: loadingId });
+              } catch (err) {
+                console.error("endSchoolYear failed", err);
+                toast.error("Fehler beim Beenden des Schuljahres", { id: loadingId });
+              }
+            }, 30);
           }}
         />
       )}
+
     </div>
   );
 }
@@ -754,10 +764,12 @@ function EndSchoolYearDialog({
     for (const id of visibleClasses) init[id] = "advance";
     return init;
   });
+  const [confirming, setConfirming] = useState(false);
 
   const decisions: Decision[] = visibleClasses.map((id) => ({ classId: id, action: choices[id] ?? "advance" }));
   const advanceCount = decisions.filter((d) => d.action === "advance").length;
   const archiveCount = decisions.filter((d) => d.action === "archive").length;
+
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm" onClick={onClose}>
@@ -821,31 +833,57 @@ function EndSchoolYearDialog({
           })}
         </div>
 
-        <div className="flex items-center justify-between gap-2 border-t border-border bg-muted/40 px-4 py-3">
-          <div className="text-xs text-muted-foreground">
-            {advanceCount} aufsteigen · {archiveCount} archivieren
+        {confirming ? (
+          <div className="border-t border-border bg-amber-50 px-4 py-3">
+            <p className="mb-2 text-sm font-medium text-amber-900">
+              Schuljahr wirklich beenden?
+            </p>
+            <p className="mb-3 text-xs text-amber-800">
+              • {advanceCount} Klasse(n) aufsteigen<br />
+              • {archiveCount} Klasse(n) ins Archiv<br />
+              Alle aktuellen Klassen werden vorher im Archiv gesichert.
+            </p>
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setConfirming(false)}
+                className="rounded-md border border-input bg-background px-3 py-2 text-sm font-medium hover:bg-accent"
+              >
+                Zurück
+              </button>
+              <button
+                type="button"
+                onClick={() => onConfirm(decisions)}
+                className="rounded-md bg-gradient-to-r from-emerald-500 to-teal-600 px-4 py-2 text-sm font-semibold text-white shadow hover:opacity-95"
+              >
+                Ja, beenden
+              </button>
+            </div>
           </div>
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="rounded-md border border-input bg-background px-3 py-2 text-sm font-medium hover:bg-accent"
-            >
-              Abbrechen
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                if (window.confirm(`Schuljahr wirklich beenden?\n\n• ${advanceCount} Klasse(n) aufsteigen\n• ${archiveCount} Klasse(n) ins Archiv\n\nAlle aktuellen Klassen werden vorher im Archiv gesichert.`)) {
-                  onConfirm(decisions);
-                }
-              }}
-              className="rounded-md bg-gradient-to-r from-emerald-500 to-teal-600 px-4 py-2 text-sm font-semibold text-white shadow hover:opacity-95"
-            >
-              Schuljahr beenden
-            </button>
+        ) : (
+          <div className="flex items-center justify-between gap-2 border-t border-border bg-muted/40 px-4 py-3">
+            <div className="text-xs text-muted-foreground">
+              {advanceCount} aufsteigen · {archiveCount} archivieren
+            </div>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={onClose}
+                className="rounded-md border border-input bg-background px-3 py-2 text-sm font-medium hover:bg-accent"
+              >
+                Abbrechen
+              </button>
+              <button
+                type="button"
+                onClick={() => setConfirming(true)}
+                className="rounded-md bg-gradient-to-r from-emerald-500 to-teal-600 px-4 py-2 text-sm font-semibold text-white shadow hover:opacity-95"
+              >
+                Schuljahr beenden
+              </button>
+            </div>
           </div>
-        </div>
+        )}
+
       </div>
     </div>
   );
