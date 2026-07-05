@@ -544,20 +544,30 @@ function Index() {
           visibleClasses={visible}
           onClose={() => setEndYearOpen(false)}
           onConfirm={(decisions) => {
-            turnActions.endSchoolYear(
-              decisions.map((d) => ({ classId: d.classId as (typeof CLASSES)[number], action: d.action })),
-            );
-            // Entfernte Klassen ausblenden
-            const removedIds = decisions.filter((d) => d.action === "archive").map((d) => d.classId);
-            if (removedIds.length) {
-              const next = visible.filter((c) => !removedIds.includes(c));
-              persistVisible(next.length ? next : ["1"]);
-            }
+            // Dialog sofort schließen, damit die UI reagieren kann
             setEndYearOpen(false);
-            toast.success("Schuljahr beendet");
+            const loadingId = toast.loading("Schuljahr wird beendet…");
+            // Schwere Arbeit deferrieren, damit der Frame gerendert wird
+            setTimeout(() => {
+              try {
+                turnActions.endSchoolYear(
+                  decisions.map((d) => ({ classId: d.classId as (typeof CLASSES)[number], action: d.action })),
+                );
+                const removedIds = decisions.filter((d) => d.action === "archive").map((d) => d.classId);
+                if (removedIds.length) {
+                  const next = visible.filter((c) => !removedIds.includes(c));
+                  persistVisible(next.length ? next : ["1"]);
+                }
+                toast.success("Schuljahr beendet", { id: loadingId });
+              } catch (err) {
+                console.error("endSchoolYear failed", err);
+                toast.error("Fehler beim Beenden des Schuljahres", { id: loadingId });
+              }
+            }, 30);
           }}
         />
       )}
+
     </div>
   );
 }
