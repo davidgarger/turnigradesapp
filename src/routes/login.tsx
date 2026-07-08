@@ -13,6 +13,7 @@ import {
   Sparkles,
   ShieldCheck,
   Library,
+  ArrowDown,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { TurniLogo } from "@/components/TurniLogo";
@@ -235,19 +236,12 @@ function LoginPage() {
         </p>
 
 
-        {/* Hand-drawn arrow */}
-        <svg
-          viewBox="0 0 80 90"
-          className="mt-8 h-16 w-14"
-          fill="none"
-          stroke={BRAND_DARK}
-          strokeWidth="2.2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M40 5 C 18 25, 18 55, 38 78" />
-          <path d="M28 66 L 38 80 L 50 70" />
-        </svg>
+        {/* Real arrow */}
+        <ArrowDown
+          className="mt-8 h-10 w-10"
+          strokeWidth={2.5}
+          style={{ color: BRAND_DARK }}
+        />
 
         {/* CTA */}
         <a
