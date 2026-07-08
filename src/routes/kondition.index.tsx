@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, Clock, Users, Package, Search, Plus, Heart, Filter, X, Activity } from "lucide-react";
+import { ArrowLeft, Clock, Users, Package, Search, Plus, Heart, Filter, X, Activity, Image as ImageIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { SUBCATEGORIES, type Subcategory, konditionActions, useExercises, useFavorites } from "@/lib/kondition-store";
 
@@ -172,7 +172,7 @@ export default function KonditionOverview() {
                     className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm ring-1 ring-black/[0.02] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl"
                   >
                     {/* Farbiger Header-Streifen */}
-                    <div className={`relative h-24 bg-gradient-to-br ${gradient} p-4 text-white`}>
+                    <div className={`relative min-h-24 bg-gradient-to-br ${gradient} p-4 text-white`}>
                       <div className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full bg-white/20 blur-2xl" />
                       <div className="pointer-events-none absolute -bottom-8 -left-6 h-20 w-20 rounded-full bg-black/10 blur-2xl" />
                       <div className="relative flex items-start justify-between">
@@ -180,8 +180,22 @@ export default function KonditionOverview() {
                           {e.subcategory}
                         </span>
                       </div>
-                      <div className="relative mt-3 text-lg font-bold leading-tight drop-shadow-sm line-clamp-2">
-                        {e.title}
+                      <div className="relative mt-3 flex items-start gap-3">
+                        <div className="flex-1 text-lg font-bold leading-tight drop-shadow-sm line-clamp-2">
+                          {e.title}
+                        </div>
+                        {e.images[0] ? (
+                          <img
+                            src={e.images[0]}
+                            alt={e.title}
+                            loading="lazy"
+                            className="h-14 w-14 shrink-0 rounded-xl object-cover ring-2 ring-white/60 shadow-sm"
+                          />
+                        ) : (
+                          <div className="grid h-14 w-14 shrink-0 place-items-center rounded-xl bg-white/25 text-white ring-2 ring-white/40 shadow-sm">
+                            <ImageIcon className="h-6 w-6" />
+                          </div>
+                        )}
                       </div>
                     </div>
 
