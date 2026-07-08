@@ -75,15 +75,15 @@ const FEATURES: Array<{
     desc: "Alternative Aufgaben für nicht teilnehmende Schüler:innen.",
   },
   {
+    icon: Library,
+    title: "Übungsbibliothek",
+    desc: "Alle Übungen, Stationenkarten und Anleitungen an einem Ort.",
+    badge: "Neu",
+  },
+  {
     icon: Users,
     title: "Bis zu 10 Klassen",
     desc: "Alle deine Lerngruppen sauber getrennt an einem Ort.",
-  },
-  {
-    icon: LayoutGrid,
-    title: "Stationenkarten",
-    desc: "Druckfertige Karten für Zirkeltraining & Co.",
-    badge: "Coming soon",
   },
 ];
 
