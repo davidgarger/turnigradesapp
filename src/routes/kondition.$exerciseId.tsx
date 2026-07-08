@@ -1,8 +1,9 @@
+import { useState } from "react";
 import { createFileRoute, useParams, useNavigate } from "@tanstack/react-router";
-import { Heart, Trash2, Printer } from "lucide-react";
+import { Heart, Trash2, Download, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { konditionActions, useExercises, useFavorites } from "@/lib/kondition-store";
-import { printExercise } from "@/lib/print-exercise";
+import { downloadExercisePdf } from "@/lib/pdf-exercise";
 import { ExercisePosterModal } from "@/components/ExercisePosterModal";
 import KonditionOverview from "./kondition.index";
 
@@ -17,7 +18,23 @@ function ExerciseDetail() {
   const favs = useFavorites();
   const ex = exercises.find((e) => e.id === exerciseId);
 
+  const [pdfBusy, setPdfBusy] = useState(false);
+
   const close = () => navigate({ to: "/kondition" });
+
+  const handlePdf = async () => {
+    if (!ex || pdfBusy) return;
+    setPdfBusy(true);
+    try {
+      await downloadExercisePdf(ex);
+      toast.success("PDF heruntergeladen");
+    } catch (err) {
+      console.error(err);
+      toast.error("PDF konnte nicht erstellt werden");
+    } finally {
+      setPdfBusy(false);
+    }
+  };
 
   if (!ex) {
     return (
@@ -45,12 +62,13 @@ function ExerciseDetail() {
           <>
             <button
               type="button"
-              onClick={() => printExercise(ex)}
-              className="inline-flex h-9 items-center gap-1.5 rounded-full bg-white/95 px-3 text-sm font-medium text-slate-700 shadow hover:bg-white"
-              aria-label="Als PDF drucken"
-              title="Als PDF drucken"
+              onClick={handlePdf}
+              disabled={pdfBusy}
+              className="inline-flex h-9 items-center gap-1.5 rounded-full bg-white/95 px-3 text-sm font-medium text-slate-700 shadow hover:bg-white disabled:opacity-60"
+              aria-label="Als PDF herunterladen"
+              title="Als PDF herunterladen"
             >
-              <Printer className="h-4 w-4" />
+              {pdfBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
               PDF
             </button>
             <button
