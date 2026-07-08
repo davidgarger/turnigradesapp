@@ -38,13 +38,47 @@ const AGE_FILTERS = [
 ] as const;
 
 export default function KonditionOverview() {
-  const exercises = useExercises();
-  const favs = useFavorites();
+  const localExercises = useExercises();
+  const { list: communityAll } = useCommunityExercises();
+  const localFavs = useFavorites();
+  const { favs: cloudFavs, toggle: toggleCloudFav } = useCloudFavorites();
+  const isAdmin = useIsAdmin();
+  const uid = useCurrentUserId();
+
   const [q, setQ] = useState("");
   const [sub, setSub] = useState<Subcategory | "all">("all");
   const [duration, setDuration] = useState<(typeof DURATION_FILTERS)[number]["key"]>("all");
   const [age, setAge] = useState<(typeof AGE_FILTERS)[number]["key"]>("all");
   const [onlyFavs, setOnlyFavs] = useState(false);
+  const [source, setSource] = useState<"all" | "official" | "community">("all");
+
+  const pendingCount = useMemo(
+    () => communityAll.filter((e) => e.status === "pending").length,
+    [communityAll],
+  );
+
+  // Vereinigte Liste: lokale (offizielle) + freigegebene Community-Übungen
+  const exercises = useMemo(() => {
+    const approvedCommunity = communityAll.filter((e) => e.status === "approved");
+    const combined: (Exercise & { isCommunity?: boolean; authorName?: string | null })[] = [
+      ...localExercises,
+      ...approvedCommunity,
+    ];
+    return combined;
+  }, [localExercises, communityAll]);
+
+  // Favoriten aus beiden Quellen zusammenführen (Cloud, wenn eingeloggt; sonst nur lokal)
+  const favs = useMemo(() => {
+    const s = new Set<string>();
+    localFavs.forEach((f) => s.add(f));
+    cloudFavs.forEach((f) => s.add(f));
+    return s;
+  }, [localFavs, cloudFavs]);
+
+  const toggleFav = (id: string) => {
+    konditionActions.toggleFav(id);
+    if (uid) void toggleCloudFav(id);
+  };
 
   const filtered = useMemo(() => {
     const dur = DURATION_FILTERS.find((d) => d.key === duration)!;
@@ -52,14 +86,15 @@ export default function KonditionOverview() {
     const needle = q.trim().toLowerCase();
     return exercises.filter((e) => {
       if (sub !== "all" && e.subcategory !== sub) return false;
+      if (source === "official" && (e as { isCommunity?: boolean }).isCommunity) return false;
+      if (source === "community" && !(e as { isCommunity?: boolean }).isCommunity) return false;
       if (e.durationMinutes < dur.min || e.durationMinutes > dur.max) return false;
-      // Übung passt, wenn Altersbereich überlappt
       if (e.ageMax < ag.min || e.ageMin > ag.max) return false;
       if (onlyFavs && !favs.has(e.id)) return false;
       if (needle && !e.title.toLowerCase().includes(needle)) return false;
       return true;
     });
-  }, [exercises, sub, duration, age, q, onlyFavs, favs]);
+  }, [exercises, sub, duration, age, q, onlyFavs, favs, source]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50">
