@@ -254,18 +254,6 @@ function Section({ title, tone, children }: { title: string; tone: "amber" | "em
   );
 }
 
-function Row({ title, subtitle, desc, children }: { title: string; subtitle: string; desc: string; children: React.ReactNode }) {
-  return (
-    <div className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
-      <div className="min-w-0">
-        <div className="text-sm font-semibold text-slate-900">{title}</div>
-        <div className="text-[11px] uppercase tracking-wider text-slate-500">{subtitle}</div>
-        <p className="mt-1 line-clamp-2 text-xs text-slate-600">{desc}</p>
-      </div>
-      <div className="flex flex-wrap items-center gap-2">{children}</div>
-    </div>
-  );
-}
 
 function Empty({ children }: { children: React.ReactNode }) {
   return <div className="rounded-lg border border-dashed border-slate-200 bg-white p-4 text-center text-xs text-slate-500">{children}</div>;
