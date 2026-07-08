@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect } from "react";
-import { ArrowLeft, ShieldCheck, Check, X, Trash2, Loader2 } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { ArrowLeft, ShieldCheck, Check, X, Trash2, Loader2, Activity, LayoutGrid } from "lucide-react";
 import { toast } from "sonner";
 import {
   useCommunityExercises,
@@ -8,7 +8,11 @@ import {
   useCurrentUserId,
   setCommunityStatus,
   deleteCommunityExercise,
+  COMMUNITY_CATEGORIES,
+  type CommunityCategory,
+  type CommunityExercise,
 } from "@/lib/community-store";
+
 
 export const Route = createFileRoute("/admin/uebungen")({
   component: AdminExercises,
