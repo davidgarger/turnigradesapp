@@ -62,12 +62,13 @@ function ExerciseDetail() {
           <>
             <button
               type="button"
-              onClick={() => printExercise(ex)}
-              className="inline-flex h-9 items-center gap-1.5 rounded-full bg-white/95 px-3 text-sm font-medium text-slate-700 shadow hover:bg-white"
-              aria-label="Als PDF drucken"
-              title="Als PDF drucken"
+              onClick={handlePdf}
+              disabled={pdfBusy}
+              className="inline-flex h-9 items-center gap-1.5 rounded-full bg-white/95 px-3 text-sm font-medium text-slate-700 shadow hover:bg-white disabled:opacity-60"
+              aria-label="Als PDF herunterladen"
+              title="Als PDF herunterladen"
             >
-              <Printer className="h-4 w-4" />
+              {pdfBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
               PDF
             </button>
             <button
