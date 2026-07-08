@@ -245,6 +245,7 @@ export async function uploadExerciseImage(file: File): Promise<string> {
 }
 
 export type SubmitCommunityInput = {
+  category: CommunityCategory;
   title: string;
   subcategory: string;
   shortDescription: string;
@@ -272,6 +273,7 @@ export async function submitCommunityExercise(input: SubmitCommunityInput): Prom
     .insert({
       created_by: uid,
       status: "pending",
+      category: input.category,
       title: input.title,
       subcategory: input.subcategory,
       short_description: input.shortDescription,
@@ -291,6 +293,7 @@ export async function submitCommunityExercise(input: SubmitCommunityInput): Prom
     })
     .select("id")
     .single();
+
   if (error) throw error;
   return data.id;
 }
