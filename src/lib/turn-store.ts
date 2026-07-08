@@ -519,6 +519,11 @@ export const turnActions = {
       };
     });
   },
+  setClassOrder(order: ClassId[]) {
+    const valid = order.filter((id): id is ClassId => ALL_CLASS_IDS.includes(id as ClassId));
+    const missing = ALL_CLASS_IDS.filter((id) => !valid.includes(id));
+    setState((s) => ({ ...s, classOrder: [...valid, ...missing] }));
+  },
   setTotalLessons(classId: ClassId, totalLessons: number) {
     setState((s) => ({
       ...s,
