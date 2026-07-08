@@ -45,6 +45,16 @@ function ExerciseDetail() {
           <>
             <button
               type="button"
+              onClick={() => printExercise(ex)}
+              className="inline-flex h-9 items-center gap-1.5 rounded-full bg-white/95 px-3 text-sm font-medium text-slate-700 shadow hover:bg-white"
+              aria-label="Als PDF drucken"
+              title="Als PDF drucken"
+            >
+              <Printer className="h-4 w-4" />
+              PDF
+            </button>
+            <button
+              type="button"
               onClick={() => konditionActions.toggleFav(ex.id)}
               className={`inline-flex h-9 w-9 items-center justify-center rounded-full shadow ${
                 isFav ? "bg-rose-100 text-rose-600" : "bg-white/95 text-slate-700 hover:bg-white"
