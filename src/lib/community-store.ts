@@ -28,6 +28,8 @@ type Row = {
   id: string;
   created_by: string;
   status: CommunityStatus;
+  category: CommunityCategory | null;
+
   title: string;
   subcategory: string;
   short_description: string;
