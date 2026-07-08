@@ -80,7 +80,20 @@ export function ExercisePoster({ exercise }: { exercise: Exercise }) {
           {exercise.images.length > 0 ? (
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
               {exercise.images.map((src, i) => (
-                <img key={i} src={src} alt={`${exercise.title} – Bild ${i + 1}`} className="aspect-[4/3] w-full rounded-xl object-cover ring-1 ring-slate-200" />
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => setLightboxIndex(i)}
+                  className="group relative overflow-hidden rounded-xl ring-1 ring-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-400"
+                  aria-label={`Bild ${i + 1} vergrößern`}
+                >
+                  <img
+                    src={src}
+                    alt={`${exercise.title} – Bild ${i + 1}`}
+                    loading="lazy"
+                    className="aspect-[4/3] w-full object-cover transition group-hover:scale-[1.02]"
+                  />
+                </button>
               ))}
             </div>
           ) : (
