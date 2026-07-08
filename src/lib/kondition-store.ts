@@ -53,7 +53,21 @@ function readAll(): Exercise[] {
     const raw = localStorage.getItem(STORE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) return parsed;
+      if (Array.isArray(parsed)) {
+        // Migration: Vorschaubild für Gedächtnislauf ergänzen, falls noch leer
+        let changed = false;
+        const migrated = parsed.map((e: Exercise) => {
+          if (e.id === "demo_gedaechtnislauf" && (!e.images || e.images.length === 0)) {
+            changed = true;
+            return { ...e, images: [gedaechtnislaufVorschau] };
+          }
+          return e;
+        });
+        if (changed) {
+          try { localStorage.setItem(STORE_KEY, JSON.stringify(migrated)); } catch { /* ignore */ }
+        }
+        return migrated;
+      }
     }
   } catch { /* ignore */ }
   try { localStorage.setItem(STORE_KEY, JSON.stringify(DEMO_EXERCISES)); } catch { /* ignore */ }
