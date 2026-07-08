@@ -12,7 +12,7 @@ import {
   FileText,
   Sparkles,
   ShieldCheck,
-  LayoutGrid,
+  Library,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { TurniLogo } from "@/components/TurniLogo";
@@ -74,15 +74,15 @@ const FEATURES: Array<{
     desc: "Alternative Aufgaben für nicht teilnehmende Schüler:innen.",
   },
   {
+    icon: Library,
+    title: "Übungsbibliothek",
+    desc: "Alle Übungen, Stationenkarten und Anleitungen an einem Ort.",
+    badge: "Neu",
+  },
+  {
     icon: Users,
     title: "Bis zu 10 Klassen",
     desc: "Alle deine Lerngruppen sauber getrennt an einem Ort.",
-  },
-  {
-    icon: LayoutGrid,
-    title: "Stationenkarten",
-    desc: "Druckfertige Karten für Zirkeltraining & Co.",
-    badge: "Coming soon",
   },
 ];
 
@@ -302,30 +302,7 @@ function LoginPage() {
             Die App für moderne PE-Lehrkräfte
           </div>
 
-          {/* Big logo lockup */}
-          <div className="mb-6 flex items-center gap-4">
-            <div className="relative">
-              <div
-                className="absolute -inset-2 rounded-3xl blur-xl"
-                style={{ background: `linear-gradient(135deg, ${BRAND_MINT}66, ${BRAND_DARK}22)` }}
-              />
-              <div
-                className="relative flex h-20 w-20 items-center justify-center rounded-3xl bg-white ring-1"
-                style={{ boxShadow: `0 20px 40px -20px ${BRAND_DARK}55`, borderColor: `${BRAND_DARK}22` }}
-              >
-                <TurniLogo className="h-14 w-14" />
-              </div>
-            </div>
-            <div>
-              <div className="text-3xl font-black tracking-tight" style={{ color: BRAND_DARK }}>
-                turni<span>.live</span>
-              </div>
-              <div className="text-sm" style={{ color: BRAND_DARK, opacity: 0.7 }}>
-                Sportunterricht. Strukturiert.
-              </div>
-            </div>
-          </div>
-
+          {/* Heading without big logo */}
           <h1 className="leading-[0.95]" style={{ color: BRAND_DARK }}>
             <span className="block text-3xl font-bold sm:text-4xl">
               Sportunterricht
@@ -405,16 +382,7 @@ function LoginPage() {
               className="relative rounded-3xl border bg-white/95 p-6 backdrop-blur sm:p-8"
               style={{ borderColor: `${BRAND_DARK}22`, boxShadow: `0 30px 60px -30px ${BRAND_DARK}55` }}
             >
-              <div className="mb-5 flex items-center gap-3 lg:hidden">
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white shadow ring-1" style={{ borderColor: `${BRAND_DARK}22` }}>
-                  <TurniLogo className="h-7 w-7" />
-                </div>
-                <div className="font-bold tracking-tight" style={{ color: BRAND_DARK }}>
-                  turni<span>.live</span>
-                </div>
-              </div>
-
-              <div className="mb-5">
+              <div className="mb-5 lg:hidden">
                 <div
                   className="text-lg font-semibold leading-none"
                   style={{ color: BRAND_DARK, opacity: 0.85 }}
