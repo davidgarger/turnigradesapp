@@ -1,7 +1,8 @@
 import { createFileRoute, useParams, useNavigate } from "@tanstack/react-router";
-import { Heart, Trash2 } from "lucide-react";
+import { Heart, Trash2, Printer } from "lucide-react";
 import { toast } from "sonner";
 import { konditionActions, useExercises, useFavorites } from "@/lib/kondition-store";
+import { printExercise } from "@/lib/print-exercise";
 import { ExercisePosterModal } from "@/components/ExercisePosterModal";
 import KonditionOverview from "./kondition.index";
 
