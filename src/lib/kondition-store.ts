@@ -6,6 +6,7 @@ import gedaechtnislaufVorschau from "@/assets/exercises/gedaechtnislauf-vorschau
 import gedaechtnislaufLeer from "@/assets/exercises/gedaechtnislauf-leer.jpg";
 import gedaechtnislaufVorschau25 from "@/assets/exercises/gedaechtnislauf-vorschau-25.jpg";
 import gedaechtnislaufLeer25 from "@/assets/exercises/gedaechtnislauf-leer-25.jpg";
+import wuerfelrallyeSkizze from "@/assets/exercises/wuerfelrallye-skizze.jpg";
 
 // Vorschaubilder für Demo-Übungen werden immer aus dem Build geladen
 // (Vite-URLs enthalten einen Hash, der beim nächsten Build wechselt – daher
@@ -17,6 +18,7 @@ const DEMO_IMAGES: Record<string, string[]> = {
     gedaechtnislaufVorschau25,
     gedaechtnislaufLeer25,
   ],
+  demo_wuerfelrallye: [wuerfelrallyeSkizze],
 };
 
 
