@@ -115,13 +115,27 @@ export default function KonditionOverview() {
               <p className="hidden text-xs text-muted-foreground sm:block">Übungsbibliothek – Testversion</p>
             </div>
           </div>
-          <Link
-            to="/kondition/neu"
-            className="inline-flex items-center gap-2 rounded-md bg-gradient-to-r from-emerald-500 to-teal-600 px-3 py-2 text-sm font-semibold text-white shadow-md shadow-teal-500/30 transition hover:opacity-95"
-          >
-            <Plus className="h-4 w-4" />
-            <span className="hidden sm:inline">Neue Übung</span>
-          </Link>
+          <div className="flex items-center gap-2">
+            {isAdmin && (
+              <Link
+                to="/admin/uebungen"
+                className="relative inline-flex items-center gap-1.5 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground hover:bg-accent"
+              >
+                <ShieldCheck className="h-4 w-4" />
+                <span className="hidden sm:inline">Admin</span>
+                {pendingCount > 0 && (
+                  <span className="ml-1 grid h-5 min-w-5 place-items-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white">{pendingCount}</span>
+                )}
+              </Link>
+            )}
+            <Link
+              to="/kondition/neu"
+              className="inline-flex items-center gap-2 rounded-md bg-gradient-to-r from-emerald-500 to-teal-600 px-3 py-2 text-sm font-semibold text-white shadow-md shadow-teal-500/30 transition hover:opacity-95"
+            >
+              <Plus className="h-4 w-4" />
+              <span className="hidden sm:inline">Neue Übung</span>
+            </Link>
+          </div>
         </div>
       </header>
 
