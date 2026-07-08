@@ -4,12 +4,19 @@
 import { useEffect, useState } from "react";
 import gedaechtnislaufVorschau from "@/assets/exercises/gedaechtnislauf-vorschau.jpg";
 import gedaechtnislaufLeer from "@/assets/exercises/gedaechtnislauf-leer.jpg";
+import gedaechtnislaufVorschau25 from "@/assets/exercises/gedaechtnislauf-vorschau-25.jpg";
+import gedaechtnislaufLeer25 from "@/assets/exercises/gedaechtnislauf-leer-25.jpg";
 
 // Vorschaubilder für Demo-Übungen werden immer aus dem Build geladen
 // (Vite-URLs enthalten einen Hash, der beim nächsten Build wechselt – daher
 // niemals in localStorage speichern, sondern beim Lesen frisch überlagern).
 const DEMO_IMAGES: Record<string, string[]> = {
-  demo_gedaechtnislauf: [gedaechtnislaufVorschau, gedaechtnislaufLeer],
+  demo_gedaechtnislauf: [
+    gedaechtnislaufVorschau,
+    gedaechtnislaufLeer,
+    gedaechtnislaufVorschau25,
+    gedaechtnislaufLeer25,
+  ],
 };
 
 
