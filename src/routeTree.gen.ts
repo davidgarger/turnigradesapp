@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as StationenkartenRouteImport } from './routes/stationenkarten'
 import { Route as NotenuebersichtRouteImport } from './routes/notenuebersicht'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as KonditionRouteImport } from './routes/kondition'
 import { Route as ImpressumRouteImport } from './routes/impressum'
 import { Route as EinstellungenRouteImport } from './routes/einstellungen'
 import { Route as DatenschutzRouteImport } from './routes/datenschutz'
@@ -35,6 +36,11 @@ const NotenuebersichtRoute = NotenuebersichtRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KonditionRoute = KonditionRouteImport.update({
+  id: '/kondition',
+  path: '/kondition',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ImpressumRoute = ImpressumRouteImport.update({
@@ -91,6 +97,7 @@ export interface FileRoutesByFullPath {
   '/datenschutz': typeof DatenschutzRoute
   '/einstellungen': typeof EinstellungenRoute
   '/impressum': typeof ImpressumRoute
+  '/kondition': typeof KonditionRoute
   '/login': typeof LoginRoute
   '/notenuebersicht': typeof NotenuebersichtRoute
   '/stationenkarten': typeof StationenkartenRoute
@@ -105,6 +112,7 @@ export interface FileRoutesByTo {
   '/datenschutz': typeof DatenschutzRoute
   '/einstellungen': typeof EinstellungenRoute
   '/impressum': typeof ImpressumRoute
+  '/kondition': typeof KonditionRoute
   '/login': typeof LoginRoute
   '/notenuebersicht': typeof NotenuebersichtRoute
   '/stationenkarten': typeof StationenkartenRoute
@@ -120,6 +128,7 @@ export interface FileRoutesById {
   '/datenschutz': typeof DatenschutzRoute
   '/einstellungen': typeof EinstellungenRoute
   '/impressum': typeof ImpressumRoute
+  '/kondition': typeof KonditionRoute
   '/login': typeof LoginRoute
   '/notenuebersicht': typeof NotenuebersichtRoute
   '/stationenkarten': typeof StationenkartenRoute
@@ -136,6 +145,7 @@ export interface FileRouteTypes {
     | '/datenschutz'
     | '/einstellungen'
     | '/impressum'
+    | '/kondition'
     | '/login'
     | '/notenuebersicht'
     | '/stationenkarten'
@@ -150,6 +160,7 @@ export interface FileRouteTypes {
     | '/datenschutz'
     | '/einstellungen'
     | '/impressum'
+    | '/kondition'
     | '/login'
     | '/notenuebersicht'
     | '/stationenkarten'
@@ -164,6 +175,7 @@ export interface FileRouteTypes {
     | '/datenschutz'
     | '/einstellungen'
     | '/impressum'
+    | '/kondition'
     | '/login'
     | '/notenuebersicht'
     | '/stationenkarten'
@@ -179,6 +191,7 @@ export interface RootRouteChildren {
   DatenschutzRoute: typeof DatenschutzRoute
   EinstellungenRoute: typeof EinstellungenRoute
   ImpressumRoute: typeof ImpressumRoute
+  KonditionRoute: typeof KonditionRoute
   LoginRoute: typeof LoginRoute
   NotenuebersichtRoute: typeof NotenuebersichtRoute
   StationenkartenRoute: typeof StationenkartenRoute
@@ -206,6 +219,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kondition': {
+      id: '/kondition'
+      path: '/kondition'
+      fullPath: '/kondition'
+      preLoaderRoute: typeof KonditionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/impressum': {
@@ -295,6 +315,7 @@ const rootRouteChildren: RootRouteChildren = {
   DatenschutzRoute: DatenschutzRoute,
   EinstellungenRoute: EinstellungenRoute,
   ImpressumRoute: ImpressumRoute,
+  KonditionRoute: KonditionRoute,
   LoginRoute: LoginRoute,
   NotenuebersichtRoute: NotenuebersichtRoute,
   StationenkartenRoute: StationenkartenRoute,
