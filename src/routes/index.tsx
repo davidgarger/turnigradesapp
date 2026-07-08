@@ -197,6 +197,35 @@ function Index() {
   const [endYearOpen, setEndYearOpen] = useState(false);
   useScrollLock(!!openPicker || endYearOpen);
 
+  function moveClass(id: ClassId, direction: -1 | 1) {
+    const order = [...(state.classOrder ?? CLASSES)];
+    const idx = order.indexOf(id);
+    if (idx < 0) return;
+    let swapIdx = -1;
+    if (direction === -1) {
+      for (let i = idx - 1; i >= 0; i--) {
+        if (visible.includes(order[i])) { swapIdx = i; break; }
+      }
+    } else {
+      for (let i = idx + 1; i < order.length; i++) {
+        if (visible.includes(order[i])) { swapIdx = i; break; }
+      }
+    }
+    if (swapIdx < 0) return;
+    [order[idx], order[swapIdx]] = [order[swapIdx], order[idx]];
+    turnActions.setClassOrder(order);
+  }
+
+  function moveClassToFirst(id: ClassId) {
+    const order = [...(state.classOrder ?? CLASSES)];
+    const idx = order.indexOf(id);
+    if (idx < 0) return;
+    order.splice(idx, 1);
+    const firstVisibleIdx = order.findIndex((c) => visible.includes(c));
+    order.splice(firstVisibleIdx >= 0 ? firstVisibleIdx : 0, 0, id);
+    turnActions.setClassOrder(order);
+  }
+
   useEffect(() => {
     // Sofort lokalen Cache anzeigen, dann Cloud-Werte nachladen
     setThemes(loadThemes());
