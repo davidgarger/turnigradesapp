@@ -20,6 +20,11 @@ export const Route = createFileRoute("/")({
 
 const CLASSES = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"] as const;
 
+function classDisplayNumber(name: string, fallback: string): string {
+  const match = name.trim().match(/^(\d+)/);
+  return match ? match[1] : fallback;
+}
+
 type ThemeKey =
   | "violet"
   | "pink"
@@ -365,7 +370,7 @@ function Index() {
 
                   <div className="relative flex items-center justify-between">
                     <span className="text-6xl font-black leading-none tracking-tight drop-shadow-sm">
-                      {id}
+                      {classDisplayNumber(cls.name, id)}
                     </span>
                     <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/20 backdrop-blur-sm">
                       <Users className="h-5 w-5" />
