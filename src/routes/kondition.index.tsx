@@ -36,7 +36,7 @@ const AGE_FILTERS = [
   { key: "teens", label: "14–18 Jahre", min: 14, max: 18 },
 ] as const;
 
-function KonditionOverview() {
+export default function KonditionOverview() {
   const exercises = useExercises();
   const favs = useFavorites();
   const [q, setQ] = useState("");

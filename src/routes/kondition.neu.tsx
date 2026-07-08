@@ -1,12 +1,13 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { ArrowLeft, Plus, X, Upload, Save } from "lucide-react";
-import { useState, useRef } from "react";
+import { ArrowLeft, Plus, X, Upload, Save, Eye } from "lucide-react";
+import { useMemo, useState, useRef } from "react";
 import { toast } from "sonner";
 import {
   SUBCATEGORIES, DIFFICULTIES,
-  type Subcategory, type Difficulty,
+  type Subcategory, type Difficulty, type Exercise,
   konditionActions,
 } from "@/lib/kondition-store";
+import { ExercisePosterModal } from "@/components/ExercisePosterModal";
 
 export const Route = createFileRoute("/kondition/neu")({
   component: NewExercise,
@@ -30,6 +31,7 @@ function NewExercise() {
   const [difficulty, setDifficulty] = useState<Difficulty>("Mittel");
   const [images, setImages] = useState<string[]>([]);
   const [videoUrl, setVideoUrl] = useState("");
+  const [showPreview, setShowPreview] = useState(false);
   const imgRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLInputElement>(null);
 
@@ -62,6 +64,25 @@ function NewExercise() {
     r.readAsDataURL(f);
   };
 
+  const previewExercise: Exercise = useMemo(() => ({
+    id: "preview",
+    title: title.trim() || "Titel der Übung",
+    subcategory,
+    shortDescription: shortDescription.trim() || "Kurze Beschreibung der Übung erscheint hier.",
+    goal: goal.trim(),
+    steps: steps.map((s) => s.trim()).filter(Boolean),
+    duration: duration.trim() || `${durationMinutes} Min`,
+    durationMinutes,
+    groupSize: groupSize.trim() || "ganze Klasse",
+    material: material.trim(),
+    ageGroup: ageGroup.trim() || `${ageMin}–${ageMax} Jahre`,
+    ageMin, ageMax,
+    difficulty,
+    images,
+    videoUrl: videoUrl || undefined,
+    createdAt: Date.now(),
+  }), [title, subcategory, shortDescription, goal, steps, duration, durationMinutes, groupSize, material, ageGroup, ageMin, ageMax, difficulty, images, videoUrl]);
+
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     const cleanSteps = steps.map((s) => s.trim()).filter(Boolean);
@@ -90,136 +111,143 @@ function NewExercise() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50">
-      <header className="border-b border-border bg-background/80 backdrop-blur">
+    <div className="min-h-screen bg-slate-50">
+      <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-4">
-          <Link to="/kondition" className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent">
+          <Link to="/kondition" className="inline-flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-100">
             <ArrowLeft className="h-4 w-4" /> Zurück
           </Link>
-          <h1 className="truncate text-lg font-semibold tracking-tight text-foreground">Neue Übung</h1>
-          <div className="w-[76px]" />
+          <h1 className="truncate text-sm font-medium uppercase tracking-[0.14em] text-slate-500">Bearbeiten</h1>
+          <button
+            type="button"
+            onClick={() => setShowPreview(true)}
+            className="inline-flex items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-100"
+          >
+            <Eye className="h-4 w-4" /> Vorschau
+          </button>
         </div>
       </header>
 
       <main className="mx-auto max-w-3xl px-4 py-6">
-        <form onSubmit={submit} className="space-y-5">
-          {/* Titel */}
-          <Field label="Titel" required>
-            <input required value={title} onChange={(e) => setTitle(e.target.value)} className={inputCls} placeholder="z.B. Kettenfangen" />
-          </Field>
+        <form onSubmit={submit} className="space-y-6">
+          {/* Titel — großer, schlichter Header-Input */}
+          <div>
+            <input
+              required
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="w-full border-0 bg-transparent px-0 text-2xl font-bold tracking-tight text-slate-900 outline-none placeholder:text-slate-300"
+              placeholder="Titel der Übung"
+            />
+            <div className="mt-1 h-px w-full bg-slate-200" />
+          </div>
 
           {/* Unterkategorie */}
-          <Field label="Unterkategorie" required>
+          <Row label="Unterkategorie">
             <div className="flex flex-wrap gap-1.5">
               {SUBCATEGORIES.map((s) => (
                 <button
                   key={s}
                   type="button"
                   onClick={() => setSubcategory(s)}
-                  className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
+                  className={`rounded-full px-3 py-1 text-xs font-medium transition ${
                     subcategory === s
-                      ? "border-teal-500 bg-gradient-to-r from-emerald-500 to-teal-600 text-white shadow-sm shadow-teal-500/30"
-                      : "border-input bg-background text-foreground hover:bg-accent"
+                      ? "bg-slate-900 text-white"
+                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                   }`}
                 >
                   {s}
                 </button>
               ))}
             </div>
-          </Field>
+          </Row>
 
-          {/* Kurzbeschreibung */}
-          <Field label="Kurzbeschreibung" required hint="1–2 Sätze für die Kartenansicht">
-            <textarea required value={shortDescription} onChange={(e) => setShortDescription(e.target.value)} rows={2} className={inputCls} />
-          </Field>
+          <Row label="Kurzbeschreibung">
+            <textarea required value={shortDescription} onChange={(e) => setShortDescription(e.target.value)} rows={2} className={plainInput} placeholder="1–2 Sätze" />
+          </Row>
 
-          {/* Ziel */}
-          <Field label="Ziel der Übung" required>
-            <textarea required value={goal} onChange={(e) => setGoal(e.target.value)} rows={2} className={inputCls} />
-          </Field>
+          <Row label="Ziel der Übung">
+            <textarea required value={goal} onChange={(e) => setGoal(e.target.value)} rows={2} className={plainInput} />
+          </Row>
 
-          {/* Ablauf */}
-          <Field label="Ablauf" required hint="3 bis 5 Schritte">
+          <Row label="Ablauf" hint="3–5 Schritte">
             <div className="space-y-2">
               {steps.map((s, i) => (
                 <div key={i} className="flex items-start gap-2">
-                  <span className="mt-2 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 text-xs font-bold text-white">
+                  <span className="mt-2 grid h-6 w-6 shrink-0 place-items-center rounded-full bg-slate-100 text-xs font-semibold text-slate-600">
                     {i + 1}
                   </span>
                   <textarea
                     value={s}
                     onChange={(e) => setStep(i, e.target.value)}
                     rows={2}
-                    className={inputCls}
+                    className={plainInput}
                     placeholder={`Schritt ${i + 1}`}
                   />
                   {canRemoveStep && (
-                    <button type="button" onClick={() => removeStep(i)} className="mt-2 grid h-8 w-8 shrink-0 place-items-center rounded-md border border-input text-muted-foreground hover:bg-destructive/10 hover:text-destructive" aria-label="Schritt entfernen">
+                    <button type="button" onClick={() => removeStep(i)} className="mt-2 grid h-8 w-8 shrink-0 place-items-center rounded-md text-slate-400 hover:bg-rose-50 hover:text-rose-600" aria-label="Schritt entfernen">
                       <X className="h-4 w-4" />
                     </button>
                   )}
                 </div>
               ))}
               {canAddStep && (
-                <button type="button" onClick={addStep} className="inline-flex items-center gap-1.5 rounded-md border border-dashed border-border px-3 py-1.5 text-xs font-medium text-muted-foreground hover:border-teal-400 hover:text-teal-600">
+                <button type="button" onClick={addStep} className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium text-slate-500 hover:text-slate-900">
                   <Plus className="h-3.5 w-3.5" /> Schritt hinzufügen
                 </button>
               )}
             </div>
-          </Field>
+          </Row>
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <Field label="Dauer" required hint={'z.B. „10 Min"'}>
-              <input required value={duration} onChange={(e) => setDuration(e.target.value)} placeholder="10 Min" className={inputCls} />
-            </Field>
-            <Field label="Ungefähre Minuten" hint="Für Dauer-Filter">
-              <input type="number" min={1} max={120} value={durationMinutes} onChange={(e) => setDurationMinutes(Number(e.target.value) || 10)} className={inputCls} />
-            </Field>
-            <Field label="Gruppengröße" required>
-              <input required value={groupSize} onChange={(e) => setGroupSize(e.target.value)} placeholder="ganze Klasse / 4er-Teams" className={inputCls} />
-            </Field>
-            <Field label="Material">
-              <input value={material} onChange={(e) => setMaterial(e.target.value)} placeholder="Hütchen, Stoppuhr…" className={inputCls} />
-            </Field>
-            <Field label="Altersgruppe" required>
-              <input required value={ageGroup} onChange={(e) => setAgeGroup(e.target.value)} placeholder="10–14 Jahre" className={inputCls} />
-            </Field>
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+            <Row label="Dauer">
+              <input required value={duration} onChange={(e) => setDuration(e.target.value)} placeholder="10 Min" className={plainInput} />
+            </Row>
+            <Row label="Ungefähre Minuten" hint="für Filter">
+              <input type="number" min={1} max={120} value={durationMinutes} onChange={(e) => setDurationMinutes(Number(e.target.value) || 10)} className={plainInput} />
+            </Row>
+            <Row label="Gruppengröße">
+              <input required value={groupSize} onChange={(e) => setGroupSize(e.target.value)} placeholder="ganze Klasse / 4er-Teams" className={plainInput} />
+            </Row>
+            <Row label="Material">
+              <input value={material} onChange={(e) => setMaterial(e.target.value)} placeholder="Hütchen, Würfel…" className={plainInput} />
+            </Row>
+            <Row label="Altersgruppe">
+              <input required value={ageGroup} onChange={(e) => setAgeGroup(e.target.value)} placeholder="10–14 Jahre" className={plainInput} />
+            </Row>
             <div className="grid grid-cols-2 gap-2">
-              <Field label="Alter von">
-                <input type="number" min={4} max={20} value={ageMin} onChange={(e) => setAgeMin(Number(e.target.value) || 8)} className={inputCls} />
-              </Field>
-              <Field label="Alter bis">
-                <input type="number" min={4} max={20} value={ageMax} onChange={(e) => setAgeMax(Number(e.target.value) || 14)} className={inputCls} />
-              </Field>
+              <Row label="Alter von">
+                <input type="number" min={4} max={20} value={ageMin} onChange={(e) => setAgeMin(Number(e.target.value) || 8)} className={plainInput} />
+              </Row>
+              <Row label="Alter bis">
+                <input type="number" min={4} max={20} value={ageMax} onChange={(e) => setAgeMax(Number(e.target.value) || 14)} className={plainInput} />
+              </Row>
             </div>
-            <Field label="Schwierigkeit" required>
+            <Row label="Schwierigkeit">
               <div className="flex gap-1.5">
                 {DIFFICULTIES.map((d) => (
                   <button
                     key={d}
                     type="button"
                     onClick={() => setDifficulty(d)}
-                    className={`flex-1 rounded-md border px-3 py-2 text-xs font-semibold transition ${
-                      difficulty === d
-                        ? "border-teal-500 bg-teal-50 text-teal-700"
-                        : "border-input bg-background text-foreground hover:bg-accent"
+                    className={`flex-1 rounded-md px-3 py-1.5 text-xs font-medium transition ${
+                      difficulty === d ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                     }`}
                   >
                     {d}
                   </button>
                 ))}
               </div>
-            </Field>
+            </Row>
           </div>
 
-          {/* Bilder */}
-          <Field label="Bilder" hint="Optional – bis zu 6 Bilder">
+          <Row label="Bilder" hint="optional">
             <div className="space-y-2">
               {images.length > 0 && (
                 <div className="grid grid-cols-3 gap-2">
                   {images.map((src, i) => (
                     <div key={i} className="relative">
-                      <img src={src} alt="" className="aspect-video w-full rounded-md border border-border object-cover" />
+                      <img src={src} alt="" className="aspect-video w-full rounded-md object-cover ring-1 ring-slate-200" />
                       <button type="button" onClick={() => setImages((p) => p.filter((_, idx) => idx !== i))} className="absolute right-1 top-1 grid h-6 w-6 place-items-center rounded-full bg-black/60 text-white hover:bg-black/80" aria-label="Bild entfernen">
                         <X className="h-3 w-3" />
                       </button>
@@ -228,55 +256,63 @@ function NewExercise() {
                 </div>
               )}
               <input ref={imgRef} type="file" accept="image/*" multiple hidden onChange={(e) => onPickImages(e.target.files)} />
-              <button type="button" onClick={() => imgRef.current?.click()} className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium hover:bg-accent">
+              <button type="button" onClick={() => imgRef.current?.click()} className="inline-flex items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50">
                 <Upload className="h-4 w-4" /> Bilder auswählen
               </button>
             </div>
-          </Field>
+          </Row>
 
-          {/* Video */}
-          <Field label="Video" hint="Link (YouTube, Vimeo…) oder Upload">
+          <Row label="Video" hint="Link oder Upload">
             <div className="space-y-2">
-              <input value={videoUrl.startsWith("data:") ? "" : videoUrl} onChange={(e) => setVideoUrl(e.target.value)} placeholder="https://…" className={inputCls} />
+              <input value={videoUrl.startsWith("data:") ? "" : videoUrl} onChange={(e) => setVideoUrl(e.target.value)} placeholder="https://…" className={plainInput} />
               <input ref={videoRef} type="file" accept="video/*" hidden onChange={(e) => onPickVideo(e.target.files?.[0] ?? null)} />
               <div className="flex items-center gap-2">
-                <button type="button" onClick={() => videoRef.current?.click()} className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-xs font-medium hover:bg-accent">
+                <button type="button" onClick={() => videoRef.current?.click()} className="inline-flex items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50">
                   <Upload className="h-3.5 w-3.5" /> Video hochladen
                 </button>
                 {videoUrl.startsWith("data:") && (
-                  <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+                  <span className="inline-flex items-center gap-1 text-xs text-slate-500">
                     Video hochgeladen
-                    <button type="button" onClick={() => setVideoUrl("")} className="text-destructive hover:underline">entfernen</button>
+                    <button type="button" onClick={() => setVideoUrl("")} className="text-rose-600 hover:underline">entfernen</button>
                   </span>
                 )}
               </div>
             </div>
-          </Field>
+          </Row>
 
-          <div className="sticky bottom-0 -mx-4 flex items-center justify-end gap-2 border-t border-border bg-background/95 px-4 py-3 backdrop-blur">
-            <Link to="/kondition" className="rounded-md border border-input bg-background px-4 py-2 text-sm font-medium hover:bg-accent">
+          <div className="sticky bottom-0 -mx-4 flex items-center justify-end gap-2 border-t border-slate-200 bg-white/95 px-4 py-3 backdrop-blur">
+            <button
+              type="button"
+              onClick={() => setShowPreview(true)}
+              className="inline-flex items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+            >
+              <Eye className="h-4 w-4" /> Vorschau
+            </button>
+            <Link to="/kondition" className="rounded-md px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100">
               Abbrechen
             </Link>
-            <button type="submit" className="inline-flex items-center gap-2 rounded-md bg-gradient-to-r from-emerald-500 to-teal-600 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-teal-500/30 transition hover:opacity-95">
-              <Save className="h-4 w-4" /> Übung speichern
+            <button type="submit" className="inline-flex items-center gap-2 rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800">
+              <Save className="h-4 w-4" /> Speichern
             </button>
           </div>
         </form>
       </main>
+
+      {showPreview && (
+        <ExercisePosterModal exercise={previewExercise} onClose={() => setShowPreview(false)} />
+      )}
     </div>
   );
 }
 
-const inputCls = "w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none transition focus:border-teal-400 focus:ring-2 focus:ring-teal-100";
+const plainInput = "w-full border-0 border-b border-slate-200 bg-transparent px-0 py-1.5 text-[15px] text-slate-900 outline-none transition placeholder:text-slate-300 focus:border-slate-400";
 
-function Field({ label, required, hint, children }: { label: string; required?: boolean; hint?: string; children: React.ReactNode }) {
+function Row({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
   return (
     <label className="block">
       <div className="mb-1.5 flex items-baseline justify-between gap-2">
-        <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          {label} {required && <span className="text-rose-500">*</span>}
-        </span>
-        {hint && <span className="text-[10px] text-muted-foreground">{hint}</span>}
+        <span className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">{label}</span>
+        {hint && <span className="text-[10px] text-slate-400">{hint}</span>}
       </div>
       {children}
     </label>
