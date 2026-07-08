@@ -383,16 +383,7 @@ function LoginPage() {
               className="relative rounded-3xl border bg-white/95 p-6 backdrop-blur sm:p-8"
               style={{ borderColor: `${BRAND_DARK}22`, boxShadow: `0 30px 60px -30px ${BRAND_DARK}55` }}
             >
-              <div className="mb-5 flex items-center gap-3 lg:hidden">
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white shadow ring-1" style={{ borderColor: `${BRAND_DARK}22` }}>
-                  <TurniLogo className="h-7 w-7" />
-                </div>
-                <div className="font-bold tracking-tight" style={{ color: BRAND_DARK }}>
-                  turni<span>.live</span>
-                </div>
-              </div>
-
-              <div className="mb-5">
+              <div className="mb-5 lg:hidden">
                 <div
                   className="text-lg font-semibold leading-none"
                   style={{ color: BRAND_DARK, opacity: 0.85 }}
