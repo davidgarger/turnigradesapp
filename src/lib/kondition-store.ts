@@ -56,6 +56,18 @@ function notify() {
   listeners.forEach((l) => l());
 }
 
+function withDemoImages(list: Exercise[]): Exercise[] {
+  return list.map((e) =>
+    DEMO_IMAGES[e.id] ? { ...e, images: DEMO_IMAGES[e.id] } : e,
+  );
+}
+
+function stripDemoImages(list: Exercise[]): Exercise[] {
+  return list.map((e) =>
+    DEMO_IMAGES[e.id] ? { ...e, images: [] } : e,
+  );
+}
+
 function readAll(): Exercise[] {
   if (typeof window === "undefined") return [];
   try {
@@ -63,40 +75,39 @@ function readAll(): Exercise[] {
     if (raw) {
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed)) {
-        // Migration: Gedächtnislauf auf neue Version (Bild + korrekter Ablauf) bringen
+        // Migration: Text-Inhalte des Gedächtnislaufs auf aktuelle Version bringen
         let changed = false;
         const demo = DEMO_EXERCISES.find((d) => d.id === "demo_gedaechtnislauf");
         const migrated = parsed.map((e: Exercise) => {
           if (e.id === "demo_gedaechtnislauf" && demo) {
-            const needsImage = !e.images || e.images.length === 0;
             const needsSteps = !e.steps?.[0]?.startsWith("Klasse in Gruppen einteilen");
-            if (needsImage || needsSteps) {
+            if (needsSteps) {
               changed = true;
               return {
                 ...e,
-                images: needsImage ? [gedaechtnislaufVorschau] : e.images,
-                steps: needsSteps ? demo.steps : e.steps,
-                shortDescription: needsSteps ? demo.shortDescription : e.shortDescription,
-                goal: needsSteps ? demo.goal : e.goal,
-                material: needsSteps ? demo.material : e.material,
+                steps: demo.steps,
+                shortDescription: demo.shortDescription,
+                goal: demo.goal,
+                material: demo.material,
               };
             }
           }
           return e;
         });
         if (changed) {
-          try { localStorage.setItem(STORE_KEY, JSON.stringify(migrated)); } catch { /* ignore */ }
+          try { localStorage.setItem(STORE_KEY, JSON.stringify(stripDemoImages(migrated))); } catch { /* ignore */ }
         }
-        return migrated;
+        return withDemoImages(migrated);
       }
     }
   } catch { /* ignore */ }
-  try { localStorage.setItem(STORE_KEY, JSON.stringify(DEMO_EXERCISES)); } catch { /* ignore */ }
-  return DEMO_EXERCISES;
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(stripDemoImages(DEMO_EXERCISES))); } catch { /* ignore */ }
+  return withDemoImages(DEMO_EXERCISES);
 }
 
 function writeAll(list: Exercise[]) {
-  try { localStorage.setItem(STORE_KEY, JSON.stringify(list)); } catch { /* ignore */ }
+  // Demo-Bilder nicht persistieren (Build-Hash-URLs) – beim Lesen wieder überlagern.
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(stripDemoImages(list))); } catch { /* ignore */ }
   notify();
 }
 
