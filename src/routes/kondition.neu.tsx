@@ -169,7 +169,7 @@ function NewExercise() {
           </Field>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <Field label="Dauer" required hint="z.B. „10 Min"">
+            <Field label="Dauer" required hint={'z.B. „10 Min"'}>
               <input required value={duration} onChange={(e) => setDuration(e.target.value)} placeholder="10 Min" className={inputCls} />
             </Field>
             <Field label="Ungefähre Minuten" hint="Für Dauer-Filter">
