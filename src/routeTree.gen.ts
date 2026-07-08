@@ -20,6 +20,7 @@ import { Route as ArchivRouteImport } from './routes/archiv'
 import { Route as ArbeitsauftragRouteImport } from './routes/arbeitsauftrag'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as KonditionIndexRouteImport } from './routes/kondition.index'
+import { Route as KonditionExerciseIdRouteImport } from './routes/kondition.$exerciseId'
 import { Route as KlasseClassIdRouteImport } from './routes/klasse.$classId'
 import { Route as KlasseClassIdQuickRouteImport } from './routes/klasse.$classId.quick'
 import { Route as KlasseClassIdDisziplinenRouteImport } from './routes/klasse.$classId.disziplinen'
@@ -79,6 +80,11 @@ const KonditionIndexRoute = KonditionIndexRouteImport.update({
   path: '/',
   getParentRoute: () => KonditionRoute,
 } as any)
+const KonditionExerciseIdRoute = KonditionExerciseIdRouteImport.update({
+  id: '/$exerciseId',
+  path: '/$exerciseId',
+  getParentRoute: () => KonditionRoute,
+} as any)
 const KlasseClassIdRoute = KlasseClassIdRouteImport.update({
   id: '/klasse/$classId',
   path: '/klasse/$classId',
@@ -108,6 +114,7 @@ export interface FileRoutesByFullPath {
   '/notenuebersicht': typeof NotenuebersichtRoute
   '/stationenkarten': typeof StationenkartenRoute
   '/klasse/$classId': typeof KlasseClassIdRouteWithChildren
+  '/kondition/$exerciseId': typeof KonditionExerciseIdRoute
   '/kondition/': typeof KonditionIndexRoute
   '/klasse/$classId/disziplinen': typeof KlasseClassIdDisziplinenRoute
   '/klasse/$classId/quick': typeof KlasseClassIdQuickRoute
@@ -123,6 +130,7 @@ export interface FileRoutesByTo {
   '/notenuebersicht': typeof NotenuebersichtRoute
   '/stationenkarten': typeof StationenkartenRoute
   '/klasse/$classId': typeof KlasseClassIdRouteWithChildren
+  '/kondition/$exerciseId': typeof KonditionExerciseIdRoute
   '/kondition': typeof KonditionIndexRoute
   '/klasse/$classId/disziplinen': typeof KlasseClassIdDisziplinenRoute
   '/klasse/$classId/quick': typeof KlasseClassIdQuickRoute
@@ -140,6 +148,7 @@ export interface FileRoutesById {
   '/notenuebersicht': typeof NotenuebersichtRoute
   '/stationenkarten': typeof StationenkartenRoute
   '/klasse/$classId': typeof KlasseClassIdRouteWithChildren
+  '/kondition/$exerciseId': typeof KonditionExerciseIdRoute
   '/kondition/': typeof KonditionIndexRoute
   '/klasse/$classId/disziplinen': typeof KlasseClassIdDisziplinenRoute
   '/klasse/$classId/quick': typeof KlasseClassIdQuickRoute
@@ -158,6 +167,7 @@ export interface FileRouteTypes {
     | '/notenuebersicht'
     | '/stationenkarten'
     | '/klasse/$classId'
+    | '/kondition/$exerciseId'
     | '/kondition/'
     | '/klasse/$classId/disziplinen'
     | '/klasse/$classId/quick'
@@ -173,6 +183,7 @@ export interface FileRouteTypes {
     | '/notenuebersicht'
     | '/stationenkarten'
     | '/klasse/$classId'
+    | '/kondition/$exerciseId'
     | '/kondition'
     | '/klasse/$classId/disziplinen'
     | '/klasse/$classId/quick'
@@ -189,6 +200,7 @@ export interface FileRouteTypes {
     | '/notenuebersicht'
     | '/stationenkarten'
     | '/klasse/$classId'
+    | '/kondition/$exerciseId'
     | '/kondition/'
     | '/klasse/$classId/disziplinen'
     | '/klasse/$classId/quick'
@@ -287,6 +299,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof KonditionIndexRouteImport
       parentRoute: typeof KonditionRoute
     }
+    '/kondition/$exerciseId': {
+      id: '/kondition/$exerciseId'
+      path: '/$exerciseId'
+      fullPath: '/kondition/$exerciseId'
+      preLoaderRoute: typeof KonditionExerciseIdRouteImport
+      parentRoute: typeof KonditionRoute
+    }
     '/klasse/$classId': {
       id: '/klasse/$classId'
       path: '/klasse/$classId'
@@ -312,10 +331,12 @@ declare module '@tanstack/react-router' {
 }
 
 interface KonditionRouteChildren {
+  KonditionExerciseIdRoute: typeof KonditionExerciseIdRoute
   KonditionIndexRoute: typeof KonditionIndexRoute
 }
 
 const KonditionRouteChildren: KonditionRouteChildren = {
+  KonditionExerciseIdRoute: KonditionExerciseIdRoute,
   KonditionIndexRoute: KonditionIndexRoute,
 }
 
