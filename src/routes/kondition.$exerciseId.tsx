@@ -18,7 +18,23 @@ function ExerciseDetail() {
   const favs = useFavorites();
   const ex = exercises.find((e) => e.id === exerciseId);
 
+  const [pdfBusy, setPdfBusy] = useState(false);
+
   const close = () => navigate({ to: "/kondition" });
+
+  const handlePdf = async () => {
+    if (!ex || pdfBusy) return;
+    setPdfBusy(true);
+    try {
+      await downloadExercisePdf(ex);
+      toast.success("PDF heruntergeladen");
+    } catch (err) {
+      console.error(err);
+      toast.error("PDF konnte nicht erstellt werden");
+    } finally {
+      setPdfBusy(false);
+    }
+  };
 
   if (!ex) {
     return (
