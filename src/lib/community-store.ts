@@ -8,18 +8,28 @@ import type {
 } from "@/lib/kondition-store";
 
 export type CommunityStatus = "pending" | "approved" | "rejected";
+export type CommunityCategory = "kondition" | "stationenkarten";
+
+export const COMMUNITY_CATEGORIES: { value: CommunityCategory; label: string }[] = [
+  { value: "kondition", label: "Kondition" },
+  { value: "stationenkarten", label: "Stationenkarten" },
+];
 
 export type CommunityExercise = Exercise & {
   status: CommunityStatus;
+  category: CommunityCategory;
   createdBy: string;
   authorName?: string | null;
   isCommunity: true;
 };
 
+
 type Row = {
   id: string;
   created_by: string;
   status: CommunityStatus;
+  category: CommunityCategory | null;
+
   title: string;
   subcategory: string;
   short_description: string;
@@ -61,9 +71,11 @@ function rowToExercise(r: Row): CommunityExercise {
     videoUrl: r.video_url ?? undefined,
     createdAt: new Date(r.created_at).getTime(),
     status: r.status,
+    category: (r.category as CommunityCategory | null) ?? "kondition",
     createdBy: r.created_by,
     authorName: r.author_name,
     isCommunity: true,
+
   };
 }
 
@@ -233,6 +245,7 @@ export async function uploadExerciseImage(file: File): Promise<string> {
 }
 
 export type SubmitCommunityInput = {
+  category: CommunityCategory;
   title: string;
   subcategory: string;
   shortDescription: string;
@@ -260,6 +273,7 @@ export async function submitCommunityExercise(input: SubmitCommunityInput): Prom
     .insert({
       created_by: uid,
       status: "pending",
+      category: input.category,
       title: input.title,
       subcategory: input.subcategory,
       short_description: input.shortDescription,
@@ -279,6 +293,7 @@ export async function submitCommunityExercise(input: SubmitCommunityInput): Prom
     })
     .select("id")
     .single();
+
   if (error) throw error;
   return data.id;
 }

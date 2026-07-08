@@ -38,6 +38,7 @@ export type Database = {
           age_max: number
           age_min: number
           author_name: string | null
+          category: string
           created_at: string
           created_by: string
           difficulty: string
@@ -61,6 +62,7 @@ export type Database = {
           age_max?: number
           age_min?: number
           author_name?: string | null
+          category?: string
           created_at?: string
           created_by: string
           difficulty: string
@@ -84,6 +86,7 @@ export type Database = {
           age_max?: number
           age_min?: number
           author_name?: string | null
+          category?: string
           created_at?: string
           created_by?: string
           difficulty?: string
