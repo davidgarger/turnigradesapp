@@ -13,6 +13,7 @@ import {
   Sparkles,
   ShieldCheck,
   LayoutGrid,
+  Library,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { TurniLogo } from "@/components/TurniLogo";
