@@ -19,11 +19,15 @@ export function printExercise(ex: Exercise): void {
   if (!w) return;
 
   const steps = ex.steps.map((s) => `<li>${escapeHtml(s)}</li>`).join("");
+  const toAbs = (src: string) => {
+    if (/^(https?:|data:|blob:)/i.test(src)) return src;
+    try { return new URL(src, window.location.href).href; } catch { return src; }
+  };
   const images = ex.images
     .filter((src) => !src.startsWith("data:video"))
     .map(
       (src) =>
-        `<img src="${src}" alt="" style="width:100%;max-width:640px;border-radius:12px;border:1px solid #e2e8f0;display:block;margin:12px auto;page-break-inside:avoid;" />`,
+        `<img src="${toAbs(src)}" alt="" style="width:100%;max-width:640px;border-radius:12px;border:1px solid #e2e8f0;display:block;margin:12px auto;page-break-inside:avoid;" />`,
     )
     .join("");
 
