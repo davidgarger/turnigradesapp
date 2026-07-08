@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, Clock, Users, Package, Search, Plus, Heart, Filter, X, Activity } from "lucide-react";
+import { ArrowLeft, Clock, Users, Package, Search, Plus, Heart, Filter, X, Activity, ShieldCheck, Sparkles, Clock3 } from "lucide-react";
 import { useMemo, useState } from "react";
-import { SUBCATEGORIES, type Subcategory, konditionActions, useExercises, useFavorites } from "@/lib/kondition-store";
+import { SUBCATEGORIES, type Subcategory, konditionActions, useExercises, useFavorites, type Exercise } from "@/lib/kondition-store";
+import { useCommunityExercises, useIsAdmin, useCloudFavorites, useCurrentUserId } from "@/lib/community-store";
 
 export const Route = createFileRoute("/kondition/")({
   component: KonditionOverview,
