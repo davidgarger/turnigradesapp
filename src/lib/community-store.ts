@@ -105,14 +105,16 @@ export function useCommunityExercises(): {
 
   useEffect(() => {
     refresh();
+    const chName = `community_exercises_changes_${Math.random().toString(36).slice(2, 10)}`;
     const ch = supabase
-      .channel("community_exercises_changes")
+      .channel(chName)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "community_exercises" },
         () => refresh(),
       )
       .subscribe();
+
     return () => {
       supabase.removeChannel(ch);
     };
