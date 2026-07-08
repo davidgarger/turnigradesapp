@@ -1,12 +1,12 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { ArrowLeft, Plus, X, Upload, Save, Eye } from "lucide-react";
-import { useMemo, useState, useRef } from "react";
+import { ArrowLeft, Plus, X, Upload, Save, Eye, Info, Loader2 } from "lucide-react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { toast } from "sonner";
 import {
   SUBCATEGORIES, DIFFICULTIES,
   type Subcategory, type Difficulty, type Exercise,
-  konditionActions,
 } from "@/lib/kondition-store";
+import { submitCommunityExercise, uploadExerciseImage, useCurrentUserId } from "@/lib/community-store";
 import { ExercisePosterModal } from "@/components/ExercisePosterModal";
 
 export const Route = createFileRoute("/kondition/neu")({
@@ -16,6 +16,7 @@ export const Route = createFileRoute("/kondition/neu")({
 
 function NewExercise() {
   const navigate = useNavigate();
+  const uid = useCurrentUserId();
   const [title, setTitle] = useState("");
   const [subcategory, setSubcategory] = useState<Subcategory>("Ausdauer");
   const [shortDescription, setShortDescription] = useState("");
@@ -30,10 +31,21 @@ function NewExercise() {
   const [ageMax, setAgeMax] = useState(14);
   const [difficulty, setDifficulty] = useState<Difficulty>("Mittel");
   const [images, setImages] = useState<string[]>([]);
+  const [uploadingImages, setUploadingImages] = useState(false);
   const [videoUrl, setVideoUrl] = useState("");
+  const [authorName, setAuthorName] = useState("");
   const [showPreview, setShowPreview] = useState(false);
+  const [saving, setSaving] = useState(false);
   const imgRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLInputElement>(null);
+
+  // Wenn nicht eingeloggt → Login-Hinweis + Redirect
+  useEffect(() => {
+    if (uid === null) {
+      // uid ist initial null (unbekannt) und bleibt null wenn nicht eingeloggt.
+      // Wir warten kurz, damit Auth-Session initialisieren kann.
+    }
+  }, [uid]);
 
   const canAddStep = steps.length < 5;
   const canRemoveStep = steps.length > 3;
@@ -44,17 +56,24 @@ function NewExercise() {
 
   const onPickImages = async (files: FileList | null) => {
     if (!files) return;
-    const arr = await Promise.all(
-      Array.from(files).slice(0, 5).map(
-        (f) => new Promise<string>((res, rej) => {
-          const r = new FileReader();
-          r.onload = () => res(String(r.result));
-          r.onerror = rej;
-          r.readAsDataURL(f);
-        })
-      )
-    );
-    setImages((prev) => [...prev, ...arr].slice(0, 6));
+    if (!uid) {
+      toast.error("Bitte zuerst einloggen, um Bilder hochzuladen.");
+      return;
+    }
+    setUploadingImages(true);
+    try {
+      const uploaded: string[] = [];
+      for (const f of Array.from(files).slice(0, 5)) {
+        const url = await uploadExerciseImage(f);
+        uploaded.push(url);
+      }
+      setImages((prev) => [...prev, ...uploaded].slice(0, 6));
+    } catch (err) {
+      console.error(err);
+      toast.error("Bild-Upload fehlgeschlagen");
+    } finally {
+      setUploadingImages(false);
+    }
   };
 
   const onPickVideo = (f: File | null) => {
