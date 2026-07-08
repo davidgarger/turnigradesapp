@@ -171,7 +171,7 @@ export const DEMO_EXERCISES: Exercise[] = [
     ageMin: 8,
     ageMax: 14,
     difficulty: "Leicht",
-    images: [],
+    images: [gedaechtnislaufVorschau],
     createdAt: Date.now() - 2_000,
   },
   {
