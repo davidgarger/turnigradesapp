@@ -255,18 +255,20 @@ export default function KonditionOverview() {
                       <div className="mt-auto flex flex-wrap gap-2 text-[11px] font-medium text-foreground/80">
                         <Chip icon={<Clock className="h-3 w-3" />}>{e.duration}</Chip>
                         <Chip icon={<Users className="h-3 w-3" />}>{e.groupSize}</Chip>
-                        <Chip icon={<Package className="h-3 w-3" />}>{truncate(e.material, 22)}</Chip>
+                        {e.material && <Chip icon={<Package className="h-3 w-3" />}>{truncate(e.material, 22)}</Chip>}
                       </div>
+                      {isCom && author && (
+                        <div className="text-[11px] text-muted-foreground">von {author}</div>
+                      )}
                     </div>
                   </Link>
 
-                  {/* Favoriten-Button */}
                   <button
                     type="button"
                     onClick={(ev) => {
                       ev.preventDefault();
                       ev.stopPropagation();
-                      konditionActions.toggleFav(e.id);
+                      toggleFav(e.id);
                     }}
                     aria-label={isFav ? "Favorit entfernen" : "Als Favorit speichern"}
                     className="absolute right-3 top-3 z-10 inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/25 text-white backdrop-blur-sm transition hover:bg-white/40"
