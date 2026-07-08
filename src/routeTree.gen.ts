@@ -19,6 +19,7 @@ import { Route as DatenschutzRouteImport } from './routes/datenschutz'
 import { Route as ArchivRouteImport } from './routes/archiv'
 import { Route as ArbeitsauftragRouteImport } from './routes/arbeitsauftrag'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as KonditionIndexRouteImport } from './routes/kondition.index'
 import { Route as KlasseClassIdRouteImport } from './routes/klasse.$classId'
 import { Route as KlasseClassIdQuickRouteImport } from './routes/klasse.$classId.quick'
 import { Route as KlasseClassIdDisziplinenRouteImport } from './routes/klasse.$classId.disziplinen'
@@ -73,6 +74,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const KonditionIndexRoute = KonditionIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => KonditionRoute,
+} as any)
 const KlasseClassIdRoute = KlasseClassIdRouteImport.update({
   id: '/klasse/$classId',
   path: '/klasse/$classId',
@@ -97,11 +103,12 @@ export interface FileRoutesByFullPath {
   '/datenschutz': typeof DatenschutzRoute
   '/einstellungen': typeof EinstellungenRoute
   '/impressum': typeof ImpressumRoute
-  '/kondition': typeof KonditionRoute
+  '/kondition': typeof KonditionRouteWithChildren
   '/login': typeof LoginRoute
   '/notenuebersicht': typeof NotenuebersichtRoute
   '/stationenkarten': typeof StationenkartenRoute
   '/klasse/$classId': typeof KlasseClassIdRouteWithChildren
+  '/kondition/': typeof KonditionIndexRoute
   '/klasse/$classId/disziplinen': typeof KlasseClassIdDisziplinenRoute
   '/klasse/$classId/quick': typeof KlasseClassIdQuickRoute
 }
@@ -112,11 +119,11 @@ export interface FileRoutesByTo {
   '/datenschutz': typeof DatenschutzRoute
   '/einstellungen': typeof EinstellungenRoute
   '/impressum': typeof ImpressumRoute
-  '/kondition': typeof KonditionRoute
   '/login': typeof LoginRoute
   '/notenuebersicht': typeof NotenuebersichtRoute
   '/stationenkarten': typeof StationenkartenRoute
   '/klasse/$classId': typeof KlasseClassIdRouteWithChildren
+  '/kondition': typeof KonditionIndexRoute
   '/klasse/$classId/disziplinen': typeof KlasseClassIdDisziplinenRoute
   '/klasse/$classId/quick': typeof KlasseClassIdQuickRoute
 }
@@ -128,11 +135,12 @@ export interface FileRoutesById {
   '/datenschutz': typeof DatenschutzRoute
   '/einstellungen': typeof EinstellungenRoute
   '/impressum': typeof ImpressumRoute
-  '/kondition': typeof KonditionRoute
+  '/kondition': typeof KonditionRouteWithChildren
   '/login': typeof LoginRoute
   '/notenuebersicht': typeof NotenuebersichtRoute
   '/stationenkarten': typeof StationenkartenRoute
   '/klasse/$classId': typeof KlasseClassIdRouteWithChildren
+  '/kondition/': typeof KonditionIndexRoute
   '/klasse/$classId/disziplinen': typeof KlasseClassIdDisziplinenRoute
   '/klasse/$classId/quick': typeof KlasseClassIdQuickRoute
 }
@@ -150,6 +158,7 @@ export interface FileRouteTypes {
     | '/notenuebersicht'
     | '/stationenkarten'
     | '/klasse/$classId'
+    | '/kondition/'
     | '/klasse/$classId/disziplinen'
     | '/klasse/$classId/quick'
   fileRoutesByTo: FileRoutesByTo
@@ -160,11 +169,11 @@ export interface FileRouteTypes {
     | '/datenschutz'
     | '/einstellungen'
     | '/impressum'
-    | '/kondition'
     | '/login'
     | '/notenuebersicht'
     | '/stationenkarten'
     | '/klasse/$classId'
+    | '/kondition'
     | '/klasse/$classId/disziplinen'
     | '/klasse/$classId/quick'
   id:
@@ -180,6 +189,7 @@ export interface FileRouteTypes {
     | '/notenuebersicht'
     | '/stationenkarten'
     | '/klasse/$classId'
+    | '/kondition/'
     | '/klasse/$classId/disziplinen'
     | '/klasse/$classId/quick'
   fileRoutesById: FileRoutesById
@@ -191,7 +201,7 @@ export interface RootRouteChildren {
   DatenschutzRoute: typeof DatenschutzRoute
   EinstellungenRoute: typeof EinstellungenRoute
   ImpressumRoute: typeof ImpressumRoute
-  KonditionRoute: typeof KonditionRoute
+  KonditionRoute: typeof KonditionRouteWithChildren
   LoginRoute: typeof LoginRoute
   NotenuebersichtRoute: typeof NotenuebersichtRoute
   StationenkartenRoute: typeof StationenkartenRoute
@@ -270,6 +280,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/kondition/': {
+      id: '/kondition/'
+      path: '/'
+      fullPath: '/kondition/'
+      preLoaderRoute: typeof KonditionIndexRouteImport
+      parentRoute: typeof KonditionRoute
+    }
     '/klasse/$classId': {
       id: '/klasse/$classId'
       path: '/klasse/$classId'
@@ -294,6 +311,18 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface KonditionRouteChildren {
+  KonditionIndexRoute: typeof KonditionIndexRoute
+}
+
+const KonditionRouteChildren: KonditionRouteChildren = {
+  KonditionIndexRoute: KonditionIndexRoute,
+}
+
+const KonditionRouteWithChildren = KonditionRoute._addFileChildren(
+  KonditionRouteChildren,
+)
+
 interface KlasseClassIdRouteChildren {
   KlasseClassIdDisziplinenRoute: typeof KlasseClassIdDisziplinenRoute
   KlasseClassIdQuickRoute: typeof KlasseClassIdQuickRoute
@@ -315,7 +344,7 @@ const rootRouteChildren: RootRouteChildren = {
   DatenschutzRoute: DatenschutzRoute,
   EinstellungenRoute: EinstellungenRoute,
   ImpressumRoute: ImpressumRoute,
-  KonditionRoute: KonditionRoute,
+  KonditionRoute: KonditionRouteWithChildren,
   LoginRoute: LoginRoute,
   NotenuebersichtRoute: NotenuebersichtRoute,
   StationenkartenRoute: StationenkartenRoute,
