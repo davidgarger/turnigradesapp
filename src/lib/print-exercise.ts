@@ -19,11 +19,15 @@ export function printExercise(ex: Exercise): void {
   if (!w) return;
 
   const steps = ex.steps.map((s) => `<li>${escapeHtml(s)}</li>`).join("");
+  const toAbs = (src: string) => {
+    if (/^(https?:|data:|blob:)/i.test(src)) return src;
+    try { return new URL(src, window.location.href).href; } catch { return src; }
+  };
   const images = ex.images
     .filter((src) => !src.startsWith("data:video"))
     .map(
       (src) =>
-        `<img src="${src}" alt="" style="width:100%;max-width:640px;border-radius:12px;border:1px solid #e2e8f0;display:block;margin:12px auto;page-break-inside:avoid;" />`,
+        `<img src="${toAbs(src)}" alt="" style="width:100%;max-width:640px;border-radius:12px;border:1px solid #e2e8f0;display:block;margin:12px auto;page-break-inside:avoid;" />`,
     )
     .join("");
 
@@ -129,12 +133,22 @@ export function printExercise(ex: Exercise): void {
   </div>
 
   <script>
-    window.addEventListener("load", function () {
-      setTimeout(function () {
-        window.focus();
-        window.print();
-      }, 400);
-    });
+    (function () {
+      function doPrint() {
+        try { window.focus(); } catch (e) {}
+        try { window.print(); } catch (e) {}
+      }
+      window.addEventListener("load", function () {
+        var imgs = Array.prototype.slice.call(document.images || []);
+        if (imgs.length === 0) { setTimeout(doPrint, 200); return; }
+        var pending = imgs.length;
+        var done = function () { if (--pending <= 0) setTimeout(doPrint, 150); };
+        imgs.forEach(function (img) {
+          if (img.complete) { done(); }
+          else { img.addEventListener("load", done); img.addEventListener("error", done); }
+        });
+      });
+    })();
   </script>
 </body>
 </html>`;
