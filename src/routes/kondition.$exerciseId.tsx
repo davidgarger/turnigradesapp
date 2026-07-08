@@ -57,6 +57,30 @@ function ExerciseDetail() {
 
   const isFav = favs.has(ex.id);
 
+  const favs = new Set<string>([...localFavs, ...cloudFavs]);
+  const isFav = favs.has(ex.id);
+
+  const handleFav = () => {
+    konditionActions.toggleFav(ex.id);
+    if (uid) void toggleCloudFav(ex.id);
+  };
+
+  const handleDelete = async () => {
+    if (!confirm(`„${ex.title}" wirklich löschen?`)) return;
+    try {
+      if (isCommunity) {
+        await deleteCommunityExercise(ex.id);
+      } else {
+        konditionActions.remove(ex.id);
+      }
+      toast.success("Übung gelöscht");
+      navigate({ to: "/kondition" });
+    } catch (err) {
+      console.error(err);
+      toast.error("Löschen fehlgeschlagen");
+    }
+  };
+
   return (
     <>
       <KonditionOverview />
@@ -78,7 +102,7 @@ function ExerciseDetail() {
             </button>
             <button
               type="button"
-              onClick={() => konditionActions.toggleFav(ex.id)}
+              onClick={handleFav}
               className={`inline-flex h-9 w-9 items-center justify-center rounded-full shadow ${
                 isFav ? "bg-rose-100 text-rose-600" : "bg-white/95 text-slate-700 hover:bg-white"
               }`}
@@ -88,13 +112,7 @@ function ExerciseDetail() {
             </button>
             <button
               type="button"
-              onClick={() => {
-                if (confirm(`„${ex.title}" wirklich löschen?`)) {
-                  konditionActions.remove(ex.id);
-                  toast.success("Übung gelöscht");
-                  navigate({ to: "/kondition" });
-                }
-              }}
+              onClick={handleDelete}
               className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/95 text-rose-600 shadow hover:bg-white"
               aria-label="Löschen"
             >
