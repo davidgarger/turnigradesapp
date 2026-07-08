@@ -13,11 +13,6 @@ import {
   Sparkles,
   ShieldCheck,
   LayoutGrid,
-  Check,
-  Backpack,
-  Slash,
-  FileCheck,
-  FileX,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { TurniLogo } from "@/components/TurniLogo";
@@ -590,182 +585,130 @@ function LoginPage() {
 }
 
 /* ---------- Mini Turni Mockups for the hero ---------- */
+/* Diese Mockups spiegeln die echte App-Oberfläche wider —
+   gleiche Farbthemen, gleiche Kartenstruktur wie unter „/". */
+
+const CLASS_TILES: Array<{ id: string; name: string; sus: number; disc: number; grad: string }> = [
+  { id: "1", name: "1a", sus: 22, disc: 4, grad: "from-indigo-500 via-violet-500 to-fuchsia-500" },
+  { id: "2", name: "2b", sus: 24, disc: 5, grad: "from-orange-400 via-pink-500 to-rose-500" },
+  { id: "3", name: "3a", sus: 21, disc: 4, grad: "from-emerald-400 via-teal-500 to-cyan-500" },
+  { id: "4", name: "4c", sus: 26, disc: 6, grad: "from-amber-400 via-orange-500 to-red-500" },
+  { id: "5", name: "5a", sus: 23, disc: 5, grad: "from-sky-500 via-blue-600 to-indigo-700" },
+  { id: "6", name: "6b", sus: 25, disc: 4, grad: "from-lime-400 via-green-500 to-emerald-600" },
+  { id: "7", name: "7c", sus: 20, disc: 5, grad: "from-rose-400 via-rose-500 to-red-600" },
+  { id: "8", name: "8a", sus: 22, disc: 6, grad: "from-cyan-400 via-sky-500 to-blue-600" },
+];
 
 function MiniTurniDashboard() {
   return (
-    <div className="aspect-[16/10] w-full bg-[#f6faf7] p-3 text-[8px] leading-tight">
-      {/* topbar */}
-      <div className="flex items-center justify-between">
+    <div className="aspect-[16/10] w-full bg-gradient-to-b from-slate-50 via-white to-slate-50 text-[8px] leading-tight">
+      {/* Header — genau wie in der echten App */}
+      <div className="flex items-center justify-between border-b border-slate-200/70 bg-white/80 px-2.5 py-2 backdrop-blur">
         <div className="flex items-center gap-1.5">
-          <div
-            className="flex h-4 w-4 items-center justify-center rounded-md"
-            style={{ background: BRAND_DARK, color: BRAND_MINT, fontWeight: 800, fontSize: 6 }}
-          >
-            T
+          <TurniLogo className="h-4 w-4 rounded-[3px] shadow-sm" />
+          <div className="leading-none">
+            <div className="text-[8px] font-semibold tracking-tight text-slate-900">Turni</div>
+            <div className="text-[6px] text-slate-500">Sportunterricht</div>
           </div>
-          <span style={{ color: BRAND_DARK, fontWeight: 700 }}>turni.live</span>
         </div>
-        <div className="flex gap-1">
-          <span className="rounded-sm px-1 py-[1px] text-white" style={{ background: BRAND_DARK, fontSize: 6 }}>
-            Klassen
-          </span>
-          <span className="rounded-sm bg-white px-1 py-[1px]" style={{ color: BRAND_DARK, fontSize: 6, border: `1px solid ${BRAND_DARK}33` }}>
-            Notenübersicht
-          </span>
+        <div className="flex items-center gap-1">
+          <span className="rounded-[3px] bg-gradient-to-r from-amber-500 to-rose-500 px-1 py-[2px] text-[6px] font-semibold text-white shadow-sm">Noten</span>
+          <span className="rounded-[3px] bg-gradient-to-r from-indigo-500 to-fuchsia-500 px-1 py-[2px] text-[6px] font-semibold text-white shadow-sm">Aufträge</span>
+          <span className="rounded-[3px] bg-gradient-to-r from-emerald-500 to-teal-500 px-1 py-[2px] text-[6px] font-semibold text-white shadow-sm">Übungen</span>
+          <span className="rounded-[3px] border border-slate-200 bg-white px-1 py-[2px] text-[6px] font-medium text-slate-600">Archiv</span>
+          <span className="grid h-3 w-3 place-items-center rounded-[3px] border border-slate-200 bg-white text-slate-500" style={{ fontSize: 5 }}>⚙</span>
         </div>
       </div>
 
-      {/* class cards grid */}
-      <div className="mt-2 grid grid-cols-4 gap-1.5">
-        {[
-          { c: "5a", k: 24 },
-          { c: "6b", k: 22 },
-          { c: "7c", k: 26 },
-          { c: "8a", k: 19 },
-          { c: "9b", k: 23 },
-          { c: "10", k: 21 },
-          { c: "5c", k: 25 },
-          { c: "6a", k: 20 },
-        ].map((it, i) => (
-          <div
-            key={i}
-            className="rounded-md p-1.5 text-white shadow-sm"
-            style={{
-              background: i % 2 === 0
-                ? `linear-gradient(135deg, ${BRAND_DARK}, #0a6e52)`
-                : `linear-gradient(135deg, #0a6e52, ${BRAND_DARK})`,
-            }}
-          >
-            <div className="font-black" style={{ fontSize: 10 }}>
-              {it.c}
-            </div>
-            <div className="opacity-80" style={{ fontSize: 6 }}>
-              {it.k} SuS
-            </div>
-          </div>
-        ))}
+      {/* Titel */}
+      <div className="px-3 pt-2 text-center">
+        <div className="text-[10px] font-bold tracking-tight text-slate-900">Klasse auswählen</div>
+        <div className="text-[6px] text-slate-500">Wähle eine Klasse zur Verwaltung.</div>
       </div>
 
-      {/* table preview */}
-      <div className="mt-2 rounded-md border bg-white p-1.5" style={{ borderColor: `${BRAND_DARK}22` }}>
-        <div className="flex items-center justify-between" style={{ color: BRAND_DARK }}>
-          <span style={{ fontWeight: 700, fontSize: 7 }}>Klasse 8a</span>
-          <span style={{ fontSize: 6, opacity: 0.6 }}>Anwesenheit · Noten</span>
-        </div>
-        <div className="mt-1 space-y-[3px]">
-          {["Anna M.", "Ben K.", "Clara R.", "David S."].map((n, i) => (
-            <div key={i} className="flex items-center gap-1.5">
-              <div
-                className="h-2.5 w-2.5 rounded-full"
-                style={{ background: BRAND_MINT, border: `1px solid ${BRAND_DARK}55` }}
-              />
-              <span style={{ color: BRAND_DARK, fontSize: 7 }}>{n}</span>
-              <div className="ml-auto flex gap-[2px]">
-                {[1, 2, 3, 4, 5].map((x) => (
-                  <div
-                    key={x}
-                    className="h-1.5 w-3 rounded-sm"
-                    style={{
-                      background: x <= 3 + (i % 2) ? BRAND_DARK : `${BRAND_DARK}22`,
-                    }}
-                  />
-                ))}
-                <span
-                  className="ml-1 rounded px-1 text-white"
-                  style={{ background: BRAND_DARK, fontSize: 6 }}
-                >
-                  {[1.7, 2.3, 1.3, 2.0][i]}
+      {/* Klassen-Kacheln — echte Gradient-Optik */}
+      <div className="mt-1.5 grid grid-cols-4 gap-1.5 px-2.5 pb-2.5">
+        {CLASS_TILES.map((c) => (
+          <div
+            key={c.id}
+            className={`relative overflow-hidden rounded-md bg-gradient-to-br ${c.grad} p-1.5 text-white shadow-md ring-1 ring-white/20`}
+          >
+            <div className="pointer-events-none absolute -right-2 -top-2 h-6 w-6 rounded-full bg-white/25 blur-md" />
+            <div className="pointer-events-none absolute -bottom-2 -left-2 h-5 w-5 rounded-full bg-black/10 blur-md" />
+            <div className="relative flex items-start justify-between">
+              <span className="text-[14px] font-black leading-none tracking-tight drop-shadow-sm">{c.id}</span>
+              <span className="grid h-3 w-3 place-items-center rounded-[3px] bg-white/25 text-[6px] backdrop-blur-sm">◧</span>
+            </div>
+            <div className="relative mt-1">
+              <div className="text-[7px] font-bold leading-none">{c.name}</div>
+              <div className="mt-0.5 flex gap-0.5">
+                <span className="rounded-full bg-white/25 px-1 py-[1px] text-[5px] font-semibold">
+                  {c.sus} SuS
+                </span>
+                <span className="rounded-full bg-white/25 px-1 py-[1px] text-[5px] font-semibold">
+                  {c.disc} Disz.
                 </span>
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
     </div>
   );
 }
 
 function MiniTurniPhone() {
+  const mobileTiles = CLASS_TILES.slice(0, 4);
   return (
-    <div className="aspect-[9/19] w-full bg-[#f6faf7] p-2 text-[7px] leading-tight">
-      <div className="mt-3 flex items-center gap-1">
-        <div
-          className="flex h-3.5 w-3.5 items-center justify-center rounded-md"
-          style={{ background: BRAND_DARK, color: BRAND_MINT, fontWeight: 800, fontSize: 5 }}
-        >
-          T
-        </div>
-        <span style={{ color: BRAND_DARK, fontWeight: 700, fontSize: 7 }}>Klasse 8a</span>
-      </div>
-
-      <div
-        className="mt-2 rounded-md p-1.5 text-white"
-        style={{ background: `linear-gradient(135deg, ${BRAND_DARK}, #0a6e52)` }}
-      >
-        <div style={{ fontSize: 6, opacity: 0.8 }}>Heute</div>
-        <div style={{ fontSize: 9, fontWeight: 800 }}>Anwesenheit</div>
-        <div className="mt-1 flex gap-[2px]">
-          {Array.from({ length: 12 }).map((_, i) => (
-            <div
-              key={i}
-              className="h-2 flex-1 rounded-sm"
-              style={{ background: i < 10 ? BRAND_MINT : "#ffffff33" }}
-            />
-          ))}
-        </div>
-        <div className="mt-1 flex justify-between" style={{ fontSize: 6 }}>
-          <span>10 / 12 da</span>
-          <span>schnelle Stunde</span>
+    <div className="aspect-[9/19] w-full bg-gradient-to-b from-slate-50 via-white to-slate-50 p-1.5 text-[6px] leading-tight">
+      {/* Header */}
+      <div className="mt-2 flex items-center justify-between rounded-md border border-slate-200 bg-white/80 px-1.5 py-1 backdrop-blur">
+        <TurniLogo className="h-3 w-3" />
+        <div className="flex gap-0.5">
+          <span className="h-2.5 w-2.5 rounded-[2px] bg-gradient-to-br from-amber-500 to-rose-500" />
+          <span className="h-2.5 w-2.5 rounded-[2px] bg-gradient-to-br from-indigo-500 to-fuchsia-500" />
+          <span className="h-2.5 w-2.5 rounded-[2px] bg-gradient-to-br from-emerald-500 to-teal-500" />
         </div>
       </div>
 
-      <div className="mt-2 space-y-1">
-        {([
-          { n: "Anna", s: "present" },
-          { n: "Ben", s: "forgotten" },
-          { n: "Clara", s: "present" },
-          { n: "David", s: "excused" },
-          { n: "Eva", s: "present" },
-          { n: "Felix", s: "unexcused" },
-        ] as const).map(({ n, s }) => {
-          const cfg = {
-            present: { bg: "#16a34a", icon: <Check className="h-2.5 w-2.5" strokeWidth={3.5} /> },
-            forgotten: {
-              bg: "#ea580c",
-              icon: (
-                <span className="relative inline-flex h-2.5 w-2.5 items-center justify-center">
-                  <Backpack className="h-2.5 w-2.5" strokeWidth={2.75} />
-                  <Slash className="absolute inset-0 h-2.5 w-2.5" strokeWidth={3} />
-                </span>
-              ),
-            },
-            excused: { bg: "#d97706", icon: <FileCheck className="h-2.5 w-2.5" strokeWidth={2.75} /> },
-            unexcused: { bg: "#dc2626", icon: <FileX className="h-2.5 w-2.5" strokeWidth={2.75} /> },
-          }[s];
-          return (
-            <div
-              key={n}
-              className="flex items-center justify-between rounded-md border bg-white px-1.5 py-1"
-              style={{ borderColor: `${BRAND_DARK}22` }}
-            >
-              <div className="flex items-center gap-1">
-                <div
-                  className="h-3 w-3 rounded-full"
-                  style={{ background: BRAND_MINT, border: `1px solid ${BRAND_DARK}55` }}
-                />
-                <span style={{ color: BRAND_DARK, fontWeight: 600 }}>{n}</span>
-              </div>
-              <span
-                className="flex h-4 w-4 items-center justify-center rounded-full text-white shadow-sm"
-                style={{ background: cfg.bg }}
-              >
-                {cfg.icon}
-              </span>
+      {/* Titel */}
+      <div className="mt-2 px-1 text-center">
+        <div className="text-[8px] font-bold tracking-tight text-slate-900">Klasse auswählen</div>
+      </div>
+
+      {/* Klassenkacheln — 2 Spalten wie am Handy */}
+      <div className="mt-1.5 grid grid-cols-2 gap-1.5 px-1">
+        {mobileTiles.map((c) => (
+          <div
+            key={c.id}
+            className={`relative overflow-hidden rounded-md bg-gradient-to-br ${c.grad} p-1.5 text-white shadow-md ring-1 ring-white/20`}
+          >
+            <div className="pointer-events-none absolute -right-2 -top-2 h-6 w-6 rounded-full bg-white/25 blur-md" />
+            <div className="relative flex items-start justify-between">
+              <span className="text-[16px] font-black leading-none tracking-tight drop-shadow-sm">{c.id}</span>
+              <span className="grid h-3 w-3 place-items-center rounded-[3px] bg-white/25 text-[6px] backdrop-blur-sm">◧</span>
             </div>
-          );
-        })}
+            <div className="relative mt-1.5">
+              <div className="text-[7px] font-bold leading-none">{c.name}</div>
+              <div className="mt-0.5 flex flex-wrap gap-0.5">
+                <span className="rounded-full bg-white/25 px-1 py-[1px] text-[5px] font-semibold">
+                  {c.sus} SuS
+                </span>
+                <span className="rounded-full bg-white/25 px-1 py-[1px] text-[5px] font-semibold">
+                  {c.disc} Disz.
+                </span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Kleiner Hinweis unten */}
+      <div className="mt-2 rounded-md border border-slate-200 bg-white/80 px-1.5 py-1 text-center text-[6px] font-medium text-slate-500">
+        Notenübersicht · Aufträge · Übungen
       </div>
     </div>
   );
 }
+
 
