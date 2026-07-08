@@ -370,7 +370,7 @@ function Index() {
 
                   <div className="relative flex items-center justify-between">
                     <span className="text-6xl font-black leading-none tracking-tight drop-shadow-sm">
-                      {id}
+                      {classDisplayNumber(cls.name, id)}
                     </span>
                     <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/20 backdrop-blur-sm">
                       <Users className="h-5 w-5" />
