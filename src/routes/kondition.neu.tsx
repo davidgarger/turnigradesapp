@@ -162,6 +162,20 @@ function NewExercise() {
       </header>
 
       <main className="mx-auto max-w-3xl px-4 py-6">
+        {!uid && (
+          <div className="mb-4 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+            <Info className="mt-0.5 h-4 w-4 shrink-0" />
+            <span>
+              Du bist nicht eingeloggt. <Link to="/login" className="font-semibold underline">Jetzt einloggen</Link>, um eine Übung einzureichen.
+            </span>
+          </div>
+        )}
+        <div className="mb-4 flex items-start gap-2 rounded-lg border border-teal-200 bg-teal-50 px-3 py-2 text-sm text-teal-900">
+          <Info className="mt-0.5 h-4 w-4 shrink-0" />
+          <span>
+            Deine Übung wird nach kurzer Freigabe durch einen Admin für alle Nutzer sichtbar.
+          </span>
+        </div>
         <form onSubmit={submit} className="space-y-6">
           {/* Titel — großer, schlichter Header-Input */}
           <div>
