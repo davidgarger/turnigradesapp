@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Settings, Users, ClipboardList, ImagePlus, Trash2, Palette, Check, LogOut, MoreVertical, Pencil, ArrowLeftRight, RotateCcw, Plus, EyeOff, LayoutGrid, BarChart3, GraduationCap, Archive } from "lucide-react";
+import { Settings, Users, ClipboardList, ImagePlus, Trash2, Palette, Check, LogOut, MoreVertical, Pencil, ArrowLeftRight, ArrowLeft, ArrowRight, RotateCcw, Plus, EyeOff, LayoutGrid, BarChart3, GraduationCap, Archive } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { turnActions, useTurnState } from "@/lib/turn-store";
+import { turnActions, useTurnState, type ClassId } from "@/lib/turn-store";
 import { schoolYearLabel } from "@/routes/klasse.$classId";
 import { TurniLogo } from "@/components/TurniLogo";
 import { supabase } from "@/integrations/supabase/client";
@@ -197,6 +197,35 @@ function Index() {
   const [endYearOpen, setEndYearOpen] = useState(false);
   useScrollLock(!!openPicker || endYearOpen);
 
+  function moveClass(id: ClassId, direction: -1 | 1) {
+    const order = [...(state.classOrder ?? CLASSES)];
+    const idx = order.indexOf(id);
+    if (idx < 0) return;
+    let swapIdx = -1;
+    if (direction === -1) {
+      for (let i = idx - 1; i >= 0; i--) {
+        if (visible.includes(order[i])) { swapIdx = i; break; }
+      }
+    } else {
+      for (let i = idx + 1; i < order.length; i++) {
+        if (visible.includes(order[i])) { swapIdx = i; break; }
+      }
+    }
+    if (swapIdx < 0) return;
+    [order[idx], order[swapIdx]] = [order[swapIdx], order[idx]];
+    turnActions.setClassOrder(order);
+  }
+
+  function moveClassToFirst(id: ClassId) {
+    const order = [...(state.classOrder ?? CLASSES)];
+    const idx = order.indexOf(id);
+    if (idx < 0) return;
+    order.splice(idx, 1);
+    const firstVisibleIdx = order.findIndex((c) => visible.includes(c));
+    order.splice(firstVisibleIdx >= 0 ? firstVisibleIdx : 0, 0, id);
+    turnActions.setClassOrder(order);
+  }
+
   useEffect(() => {
     // Sofort lokalen Cache anzeigen, dann Cloud-Werte nachladen
     setThemes(loadThemes());
@@ -352,7 +381,9 @@ function Index() {
         </div>
 
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {CLASSES.filter((id) => visible.includes(id)).map((id) => {
+          {(state.classOrder ?? CLASSES)
+            .filter((id) => visible.includes(id))
+            .map((id) => {
             const cls = state.classes[id];
             const themeKey = themes[id] ?? DEFAULT_THEME[id];
             const theme = THEMES[themeKey];
@@ -456,8 +487,46 @@ function Index() {
                       <div className="my-1 border-t border-border" />
 
                       <div className="px-3 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                        <span className="inline-flex items-center gap-1.5"><Palette className="h-3 w-3" /> Farbe</span>
+                        <span className="inline-flex items-center gap-1.5"><ArrowLeftRight className="h-3 w-3" /> Reihenfolge ändern</span>
                       </div>
+                      <div className="flex gap-1.5 px-2 pb-2">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            moveClass(id, -1);
+                            setOpenPicker(null);
+                          }}
+                          className="flex-1 rounded-md border border-input bg-background px-2 py-1.5 text-xs font-semibold hover:bg-accent"
+                          title="Nach vorne"
+                        >
+                          <ArrowLeft className="mx-auto h-3.5 w-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            moveClass(id, 1);
+                            setOpenPicker(null);
+                          }}
+                          className="flex-1 rounded-md border border-input bg-background px-2 py-1.5 text-xs font-semibold hover:bg-accent"
+                          title="Nach hinten"
+                        >
+                          <ArrowRight className="mx-auto h-3.5 w-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            moveClassToFirst(id);
+                            toast.success("Klasse an erste Stelle verschoben");
+                            setOpenPicker(null);
+                          }}
+                          className="flex-1 rounded-md border border-input bg-background px-2 py-1.5 text-xs font-semibold hover:bg-accent"
+                          title="An erste Stelle"
+                        >
+                          1.
+                        </button>
+                      </div>
+
+                      <div className="my-1 border-t border-border" />
                       <div className="grid grid-cols-5 gap-2 px-2 pb-2">
                         {(Object.keys(THEMES) as ThemeKey[]).map((k) => {
                           const active = themeKey === k;

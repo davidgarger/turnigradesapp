@@ -152,6 +152,7 @@ export interface ArchivedClass {
 export interface TurnState {
   classes: Record<ClassId, ClassData>;
   settings: GradingSettings;
+  classOrder?: ClassId[];
   archive?: ArchivedClass[];
 }
 
@@ -272,6 +273,7 @@ function defaultState(): TurnState {
   return {
     classes,
     settings: defaultSettings,
+    classOrder: [...ALL_CLASS_IDS],
   };
 }
 
@@ -285,6 +287,9 @@ function load(): TurnState {
     if (!raw) return defaultState();
     const parsed = JSON.parse(raw) as TurnState;
     if (!parsed.classes || !parsed.settings) return defaultState();
+    if (!parsed.classOrder || parsed.classOrder.length !== ALL_CLASS_IDS.length) {
+      parsed.classOrder = [...ALL_CLASS_IDS];
+    }
     return parsed;
   } catch {
     return defaultState();
@@ -513,6 +518,11 @@ export const turnActions = {
         classes: { ...s.classes, [a]: swappedA, [b]: swappedB },
       };
     });
+  },
+  setClassOrder(order: ClassId[]) {
+    const valid = order.filter((id): id is ClassId => ALL_CLASS_IDS.includes(id as ClassId));
+    const missing = ALL_CLASS_IDS.filter((id) => !valid.includes(id));
+    setState((s) => ({ ...s, classOrder: [...valid, ...missing] }));
   },
   setTotalLessons(classId: ClassId, totalLessons: number) {
     setState((s) => ({
