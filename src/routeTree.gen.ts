@@ -20,6 +20,7 @@ import { Route as ArchivRouteImport } from './routes/archiv'
 import { Route as ArbeitsauftragRouteImport } from './routes/arbeitsauftrag'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as KonditionIndexRouteImport } from './routes/kondition.index'
+import { Route as KonditionNeuRouteImport } from './routes/kondition.neu'
 import { Route as KonditionExerciseIdRouteImport } from './routes/kondition.$exerciseId'
 import { Route as KlasseClassIdRouteImport } from './routes/klasse.$classId'
 import { Route as KlasseClassIdQuickRouteImport } from './routes/klasse.$classId.quick'
@@ -80,6 +81,11 @@ const KonditionIndexRoute = KonditionIndexRouteImport.update({
   path: '/',
   getParentRoute: () => KonditionRoute,
 } as any)
+const KonditionNeuRoute = KonditionNeuRouteImport.update({
+  id: '/neu',
+  path: '/neu',
+  getParentRoute: () => KonditionRoute,
+} as any)
 const KonditionExerciseIdRoute = KonditionExerciseIdRouteImport.update({
   id: '/$exerciseId',
   path: '/$exerciseId',
@@ -115,6 +121,7 @@ export interface FileRoutesByFullPath {
   '/stationenkarten': typeof StationenkartenRoute
   '/klasse/$classId': typeof KlasseClassIdRouteWithChildren
   '/kondition/$exerciseId': typeof KonditionExerciseIdRoute
+  '/kondition/neu': typeof KonditionNeuRoute
   '/kondition/': typeof KonditionIndexRoute
   '/klasse/$classId/disziplinen': typeof KlasseClassIdDisziplinenRoute
   '/klasse/$classId/quick': typeof KlasseClassIdQuickRoute
@@ -131,6 +138,7 @@ export interface FileRoutesByTo {
   '/stationenkarten': typeof StationenkartenRoute
   '/klasse/$classId': typeof KlasseClassIdRouteWithChildren
   '/kondition/$exerciseId': typeof KonditionExerciseIdRoute
+  '/kondition/neu': typeof KonditionNeuRoute
   '/kondition': typeof KonditionIndexRoute
   '/klasse/$classId/disziplinen': typeof KlasseClassIdDisziplinenRoute
   '/klasse/$classId/quick': typeof KlasseClassIdQuickRoute
@@ -149,6 +157,7 @@ export interface FileRoutesById {
   '/stationenkarten': typeof StationenkartenRoute
   '/klasse/$classId': typeof KlasseClassIdRouteWithChildren
   '/kondition/$exerciseId': typeof KonditionExerciseIdRoute
+  '/kondition/neu': typeof KonditionNeuRoute
   '/kondition/': typeof KonditionIndexRoute
   '/klasse/$classId/disziplinen': typeof KlasseClassIdDisziplinenRoute
   '/klasse/$classId/quick': typeof KlasseClassIdQuickRoute
@@ -168,6 +177,7 @@ export interface FileRouteTypes {
     | '/stationenkarten'
     | '/klasse/$classId'
     | '/kondition/$exerciseId'
+    | '/kondition/neu'
     | '/kondition/'
     | '/klasse/$classId/disziplinen'
     | '/klasse/$classId/quick'
@@ -184,6 +194,7 @@ export interface FileRouteTypes {
     | '/stationenkarten'
     | '/klasse/$classId'
     | '/kondition/$exerciseId'
+    | '/kondition/neu'
     | '/kondition'
     | '/klasse/$classId/disziplinen'
     | '/klasse/$classId/quick'
@@ -201,6 +212,7 @@ export interface FileRouteTypes {
     | '/stationenkarten'
     | '/klasse/$classId'
     | '/kondition/$exerciseId'
+    | '/kondition/neu'
     | '/kondition/'
     | '/klasse/$classId/disziplinen'
     | '/klasse/$classId/quick'
@@ -299,6 +311,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof KonditionIndexRouteImport
       parentRoute: typeof KonditionRoute
     }
+    '/kondition/neu': {
+      id: '/kondition/neu'
+      path: '/neu'
+      fullPath: '/kondition/neu'
+      preLoaderRoute: typeof KonditionNeuRouteImport
+      parentRoute: typeof KonditionRoute
+    }
     '/kondition/$exerciseId': {
       id: '/kondition/$exerciseId'
       path: '/$exerciseId'
@@ -332,11 +351,13 @@ declare module '@tanstack/react-router' {
 
 interface KonditionRouteChildren {
   KonditionExerciseIdRoute: typeof KonditionExerciseIdRoute
+  KonditionNeuRoute: typeof KonditionNeuRoute
   KonditionIndexRoute: typeof KonditionIndexRoute
 }
 
 const KonditionRouteChildren: KonditionRouteChildren = {
   KonditionExerciseIdRoute: KonditionExerciseIdRoute,
+  KonditionNeuRoute: KonditionNeuRoute,
   KonditionIndexRoute: KonditionIndexRoute,
 }
 
