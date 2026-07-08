@@ -188,6 +188,15 @@ export default function KonditionOverview() {
                 <option key={a.key} value={a.key}>{a.label}</option>
               ))}
             </select>
+            <select
+              value={source}
+              onChange={(e) => setSource(e.target.value as typeof source)}
+              className="h-8 rounded-md border border-input bg-background px-2 text-xs font-medium"
+            >
+              <option value="all">Alle Quellen</option>
+              <option value="official">Nur offiziell</option>
+              <option value="community">Nur Community</option>
+            </select>
             <button
               type="button"
               onClick={() => setOnlyFavs((v) => !v)}
@@ -214,6 +223,8 @@ export default function KonditionOverview() {
             {filtered.map((e) => {
               const isFav = favs.has(e.id);
               const gradient = SUB_COLORS[e.subcategory];
+              const isCom = !!(e as { isCommunity?: boolean }).isCommunity;
+              const author = (e as { authorName?: string | null }).authorName;
               return (
                 <div key={e.id} className="relative">
                   <Link
@@ -221,14 +232,18 @@ export default function KonditionOverview() {
                     params={{ exerciseId: e.id }}
                     className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm ring-1 ring-black/[0.02] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl"
                   >
-                    {/* Farbiger Header-Streifen */}
                     <div className={`relative h-24 bg-gradient-to-br ${gradient} p-4 text-white`}>
                       <div className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full bg-white/20 blur-2xl" />
                       <div className="pointer-events-none absolute -bottom-8 -left-6 h-20 w-20 rounded-full bg-black/10 blur-2xl" />
-                      <div className="relative flex items-start justify-between">
+                      <div className="relative flex items-start justify-between gap-2">
                         <span className="rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider backdrop-blur-sm">
                           {e.subcategory}
                         </span>
+                        {isCom && (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-white/25 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider backdrop-blur-sm">
+                            <Sparkles className="h-3 w-3" /> Community
+                          </span>
+                        )}
                       </div>
                       <div className="relative mt-3 text-lg font-bold leading-tight drop-shadow-sm line-clamp-2">
                         {e.title}
