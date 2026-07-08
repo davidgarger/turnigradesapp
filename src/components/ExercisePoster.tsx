@@ -1,4 +1,5 @@
-import { Clock, Users, Package, Baby, Gauge, Target, ListChecks, Image as ImageIcon, Video } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Clock, Users, Package, Baby, Gauge, Target, ListChecks, Image as ImageIcon, Video, X, ChevronLeft, ChevronRight } from "lucide-react";
 import type { Exercise, Subcategory } from "@/lib/kondition-store";
 
 // Sanfte Pastellfarben pro Unterkategorie – wirkt wie ein Merkblatt.
