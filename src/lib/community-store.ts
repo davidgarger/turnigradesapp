@@ -71,9 +71,11 @@ function rowToExercise(r: Row): CommunityExercise {
     videoUrl: r.video_url ?? undefined,
     createdAt: new Date(r.created_at).getTime(),
     status: r.status,
+    category: (r.category as CommunityCategory | null) ?? "kondition",
     createdBy: r.created_by,
     authorName: r.author_name,
     isCommunity: true,
+
   };
 }
 
