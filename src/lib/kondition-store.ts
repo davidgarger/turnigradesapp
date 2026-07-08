@@ -2,6 +2,7 @@
 // Erste modulare Version, später erweiterbar für weitere Hauptkategorien.
 
 import { useEffect, useState } from "react";
+import gedaechtnislaufVorschau from "@/assets/exercises/gedaechtnislauf-vorschau.jpg";
 
 export const SUBCATEGORIES = [
   "Ausdauer",
