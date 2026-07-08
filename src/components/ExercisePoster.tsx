@@ -14,8 +14,10 @@ const PASTELS: Record<Subcategory, { bg: string; accent: string; chip: string; r
 
 export function ExercisePoster({ exercise }: { exercise: Exercise }) {
   const p = PASTELS[exercise.subcategory];
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   return (
+    <>
     <article className={`relative overflow-hidden rounded-3xl bg-white shadow-xl ring-1 ${p.ring}`}>
       {/* Sanfter Farbrand oben – Merkblatt-Optik */}
       <div className={`${p.bg} px-8 pb-10 pt-8 sm:px-12`}>
