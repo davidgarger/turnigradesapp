@@ -303,10 +303,15 @@ function NewExercise() {
                 </div>
               )}
               <input ref={imgRef} type="file" accept="image/*" multiple hidden onChange={(e) => onPickImages(e.target.files)} />
-              <button type="button" onClick={() => imgRef.current?.click()} className="inline-flex items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50">
-                <Upload className="h-4 w-4" /> Bilder auswählen
+              <button type="button" disabled={uploadingImages || !uid} onClick={() => imgRef.current?.click()} className="inline-flex items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-60">
+                {uploadingImages ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                {uploadingImages ? "Lädt hoch…" : "Bilder auswählen"}
               </button>
             </div>
+          </Row>
+
+          <Row label="Autor:in" hint="wird bei der Übung angezeigt (optional)">
+            <input value={authorName} onChange={(e) => setAuthorName(e.target.value)} placeholder="Dein Name / Kürzel" className={plainInput} />
           </Row>
 
           <Row label="Video" hint="Link oder Upload">
@@ -338,8 +343,9 @@ function NewExercise() {
             <Link to="/kondition" className="rounded-md px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100">
               Abbrechen
             </Link>
-            <button type="submit" className="inline-flex items-center gap-2 rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800">
-              <Save className="h-4 w-4" /> Speichern
+            <button type="submit" disabled={saving || !uid} className="inline-flex items-center gap-2 rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-60">
+              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+              {saving ? "Speichert…" : "Einreichen"}
             </button>
           </div>
         </form>
