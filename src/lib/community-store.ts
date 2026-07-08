@@ -8,13 +8,21 @@ import type {
 } from "@/lib/kondition-store";
 
 export type CommunityStatus = "pending" | "approved" | "rejected";
+export type CommunityCategory = "kondition" | "stationenkarten";
+
+export const COMMUNITY_CATEGORIES: { value: CommunityCategory; label: string }[] = [
+  { value: "kondition", label: "Kondition" },
+  { value: "stationenkarten", label: "Stationenkarten" },
+];
 
 export type CommunityExercise = Exercise & {
   status: CommunityStatus;
+  category: CommunityCategory;
   createdBy: string;
   authorName?: string | null;
   isCommunity: true;
 };
+
 
 type Row = {
   id: string;
