@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as UebungssammlungenRouteImport } from './routes/uebungssammlungen'
 import { Route as StationenkartenRouteImport } from './routes/stationenkarten'
 import { Route as NotenuebersichtRouteImport } from './routes/notenuebersicht'
 import { Route as LoginRouteImport } from './routes/login'
@@ -26,6 +27,11 @@ import { Route as KlasseClassIdRouteImport } from './routes/klasse.$classId'
 import { Route as KlasseClassIdQuickRouteImport } from './routes/klasse.$classId.quick'
 import { Route as KlasseClassIdDisziplinenRouteImport } from './routes/klasse.$classId.disziplinen'
 
+const UebungssammlungenRoute = UebungssammlungenRouteImport.update({
+  id: '/uebungssammlungen',
+  path: '/uebungssammlungen',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StationenkartenRoute = StationenkartenRouteImport.update({
   id: '/stationenkarten',
   path: '/stationenkarten',
@@ -119,6 +125,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/notenuebersicht': typeof NotenuebersichtRoute
   '/stationenkarten': typeof StationenkartenRoute
+  '/uebungssammlungen': typeof UebungssammlungenRoute
   '/klasse/$classId': typeof KlasseClassIdRouteWithChildren
   '/kondition/$exerciseId': typeof KonditionExerciseIdRoute
   '/kondition/neu': typeof KonditionNeuRoute
@@ -136,6 +143,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/notenuebersicht': typeof NotenuebersichtRoute
   '/stationenkarten': typeof StationenkartenRoute
+  '/uebungssammlungen': typeof UebungssammlungenRoute
   '/klasse/$classId': typeof KlasseClassIdRouteWithChildren
   '/kondition/$exerciseId': typeof KonditionExerciseIdRoute
   '/kondition/neu': typeof KonditionNeuRoute
@@ -155,6 +163,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/notenuebersicht': typeof NotenuebersichtRoute
   '/stationenkarten': typeof StationenkartenRoute
+  '/uebungssammlungen': typeof UebungssammlungenRoute
   '/klasse/$classId': typeof KlasseClassIdRouteWithChildren
   '/kondition/$exerciseId': typeof KonditionExerciseIdRoute
   '/kondition/neu': typeof KonditionNeuRoute
@@ -175,6 +184,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/notenuebersicht'
     | '/stationenkarten'
+    | '/uebungssammlungen'
     | '/klasse/$classId'
     | '/kondition/$exerciseId'
     | '/kondition/neu'
@@ -192,6 +202,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/notenuebersicht'
     | '/stationenkarten'
+    | '/uebungssammlungen'
     | '/klasse/$classId'
     | '/kondition/$exerciseId'
     | '/kondition/neu'
@@ -210,6 +221,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/notenuebersicht'
     | '/stationenkarten'
+    | '/uebungssammlungen'
     | '/klasse/$classId'
     | '/kondition/$exerciseId'
     | '/kondition/neu'
@@ -229,11 +241,19 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   NotenuebersichtRoute: typeof NotenuebersichtRoute
   StationenkartenRoute: typeof StationenkartenRoute
+  UebungssammlungenRoute: typeof UebungssammlungenRoute
   KlasseClassIdRoute: typeof KlasseClassIdRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/uebungssammlungen': {
+      id: '/uebungssammlungen'
+      path: '/uebungssammlungen'
+      fullPath: '/uebungssammlungen'
+      preLoaderRoute: typeof UebungssammlungenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/stationenkarten': {
       id: '/stationenkarten'
       path: '/stationenkarten'
@@ -390,6 +410,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   NotenuebersichtRoute: NotenuebersichtRoute,
   StationenkartenRoute: StationenkartenRoute,
+  UebungssammlungenRoute: UebungssammlungenRoute,
   KlasseClassIdRoute: KlasseClassIdRouteWithChildren,
 }
 export const routeTree = rootRouteImport
