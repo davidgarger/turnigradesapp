@@ -24,20 +24,20 @@ export type Exercise = {
   shortDescription: string;
   goal: string;
   steps: string[];
-  duration: string;         // z.B. "10–15 Min"
-  durationMinutes: number;  // grobe Minutenzahl für Filter
-  groupSize: string;        // z.B. "ganze Klasse", "4er-Teams"
-  material: string;         // z.B. "Hütchen, Stoppuhr"
-  ageGroup: string;         // z.B. "10–14 Jahre"
+  duration: string;
+  durationMinutes: number;
+  groupSize: string;
+  material: string;
+  ageGroup: string;
   ageMin: number;
   ageMax: number;
   difficulty: Difficulty;
-  images: string[];         // data URLs oder https
-  videoUrl?: string;        // externer Link ODER data URL
+  images: string[];
+  videoUrl?: string;
   createdAt: number;
 };
 
-const STORE_KEY = "turni-kondition-exercises-v1";
+const STORE_KEY = "turni-kondition-exercises-v2";
 const FAV_KEY = "turni-kondition-favs-v1";
 
 const listeners = new Set<() => void>();
@@ -55,7 +55,6 @@ function readAll(): Exercise[] {
       if (Array.isArray(parsed)) return parsed;
     }
   } catch { /* ignore */ }
-  // Erstlauf: Demo-Daten schreiben
   try { localStorage.setItem(STORE_KEY, JSON.stringify(DEMO_EXERCISES)); } catch { /* ignore */ }
   return DEMO_EXERCISES;
 }
@@ -135,134 +134,54 @@ export function useFavorites(): Set<string> {
 
 export const DEMO_EXERCISES: Exercise[] = [
   {
-    id: "demo_dauerlauf",
-    title: "Ruhiger Dauerlauf",
-    subcategory: "Ausdauer",
-    shortDescription: "Gleichmäßiger Lauf im Wohlfühltempo zur Grundlagenausdauer.",
-    goal: "Grundlagenausdauer verbessern und Sprechtempo halten können.",
+    id: "demo_gedaechtnislauf",
+    title: "Gedächtnislauf",
+    subcategory: "Aufwärm-Laufspiele",
+    shortDescription:
+      "Kinder laufen zu einem Merkbereich, prägen sich Symbole oder Karten ein und ordnen sie im Team richtig zu.",
+    goal:
+      "Kondition, Konzentration und Zusammenarbeit verbinden – laufen, merken, richtig zuordnen.",
     steps: [
-      "Kurzes Warm-up: 2 Minuten lockeres Einlaufen.",
-      "12 Minuten gleichmäßig in Zweiergruppen laufen (Sprechtempo).",
-      "Nach 6 Minuten Richtung wechseln.",
-      "Ausklang: 2 Minuten gehen und leichtes Dehnen.",
+      "Merkbereich auf der einen Hallenseite aufbauen: dort liegen frei wählbare Symbole, Bilder oder Karten (Platzhalter – später beliebig austauschbar).",
+      "Auf der anderen Seite arbeiten die Gruppen an einer Ablagefläche, wo die Informationen richtig zugeordnet werden.",
+      "Immer ein Kind pro Gruppe läuft los, merkt sich ein Element und läuft zurück.",
+      "In der Gruppe wird das Element benannt, zugeordnet oder passend abgelegt.",
+      "Danach startet das nächste Kind – bis alle Elemente korrekt zugeordnet sind.",
     ],
     duration: "15 Min",
     durationMinutes: 15,
-    groupSize: "ganze Klasse",
-    material: "Stoppuhr, evtl. Hütchen als Wendepunkte",
-    ageGroup: "10–15 Jahre",
-    ageMin: 10, ageMax: 15,
-    difficulty: "Leicht",
-    images: [],
-    createdAt: Date.now() - 6_000,
-  },
-  {
-    id: "demo_sprint30",
-    title: "30-Meter-Sprints",
-    subcategory: "Sprint",
-    shortDescription: "Kurze Antritte aus dem Hochstart für Schnelligkeit.",
-    goal: "Antrittsschnelligkeit und Reaktionsvermögen schulen.",
-    steps: [
-      "Zwei Linien im Abstand von 30 m markieren.",
-      "In Dreier-Gruppen aus Hochstart starten.",
-      "5 Sprints mit je 60 Sekunden Pause dazwischen.",
-      "Kurz auslaufen und locker ausschütteln.",
-    ],
-    duration: "15 Min",
-    durationMinutes: 15,
-    groupSize: "3er-Gruppen",
-    material: "2 Hütchen pro Bahn, Stoppuhr",
-    ageGroup: "10–16 Jahre",
-    ageMin: 10, ageMax: 16,
-    difficulty: "Mittel",
-    images: [],
-    createdAt: Date.now() - 5_000,
-  },
-  {
-    id: "demo_intervall",
-    title: "Tabata-Laufintervalle",
-    subcategory: "Intervall",
-    shortDescription: "Acht Runden 20 s Sprint, 10 s Pause – kurz und intensiv.",
-    goal: "Anaerobe Kapazität und Willenskraft trainieren.",
-    steps: [
-      "Warm-up: 3 Minuten lockeres Laufen und Skippings.",
-      "8 × 20 Sekunden Sprint mit 10 Sekunden Gehpause.",
-      "Zwischen den Runden Puls kurz überprüfen.",
-      "Cool-down: 3 Minuten ausgehen.",
-    ],
-    duration: "10 Min",
-    durationMinutes: 10,
-    groupSize: "ganze Klasse",
-    material: "Stoppuhr, Bodenmarkierungen",
-    ageGroup: "12–16 Jahre",
-    ageMin: 12, ageMax: 16,
-    difficulty: "Schwer",
-    images: [],
-    createdAt: Date.now() - 4_000,
-  },
-  {
-    id: "demo_pendelstaffel",
-    title: "Pendelstaffel",
-    subcategory: "Staffel",
-    shortDescription: "Klassiker: Teams laufen abwechselnd zum Wendepunkt und zurück.",
-    goal: "Teamgeist, Wechseltechnik und Sprintausdauer.",
-    steps: [
-      "Klasse in gleich große Teams (4–6 Kinder) teilen.",
-      "Startlinie und Wendehütchen 15 m entfernt aufstellen.",
-      "Erste:r läuft zum Hütchen, umrundet es und übergibt per Handklatsch.",
-      "Sieger-Team ist zuerst zurück und sitzt auf der Bank.",
-    ],
-    duration: "10 Min",
-    durationMinutes: 10,
-    groupSize: "4er-/6er-Teams",
-    material: "Hütchen als Wendepunkte",
+    groupSize: "3er-/4er-Teams",
+    material: "Merkkarten oder Symbole (frei wählbar), Ablagefläche pro Gruppe",
     ageGroup: "8–14 Jahre",
-    ageMin: 8, ageMax: 14,
+    ageMin: 8,
+    ageMax: 14,
     difficulty: "Leicht",
-    images: [],
-    createdAt: Date.now() - 3_000,
-  },
-  {
-    id: "demo_parcours",
-    title: "Hindernis-Laufparcours",
-    subcategory: "Laufparcours",
-    shortDescription: "Slalom, Sprung und Krabbeltunnel als Rundkurs.",
-    goal: "Koordination, Wendigkeit und Ausdauer kombinieren.",
-    steps: [
-      "Parcours aufbauen: Hütchen-Slalom, Reifen zum Springen, Bank zum Balancieren, Matte zum Rollen.",
-      "Kinder starten im 15-Sekunden-Abstand.",
-      "3 Runden im eigenen Tempo laufen.",
-      "Gemeinsam abbauen und kurze Feedbackrunde.",
-    ],
-    duration: "20 Min",
-    durationMinutes: 20,
-    groupSize: "ganze Klasse",
-    material: "Hütchen, Reifen, Bank, Matte",
-    ageGroup: "8–13 Jahre",
-    ageMin: 8, ageMax: 13,
-    difficulty: "Mittel",
     images: [],
     createdAt: Date.now() - 2_000,
   },
   {
-    id: "demo_fangspiel",
-    title: "Kettenfangen",
-    subcategory: "Aufwärm-Laufspiele",
-    shortDescription: "Spielerisches Aufwärmen – wer gefangen wird, hängt sich an.",
-    goal: "Puls hochbringen, Übersicht und Zusammenspiel fördern.",
+    id: "demo_wuerfelrallye",
+    title: "Würfelrallye",
+    subcategory: "Ausdauer",
+    shortDescription:
+      "Vier Gruppen sammeln gemeinsam Runden – jedes Kind würfelt und läuft die gewürfelte Anzahl. Ziel: 50 Runden pro Gruppe.",
+    goal:
+      "Ausdauer spielerisch trainieren und als Team gemeinsam ein Rundenziel erreichen.",
     steps: [
-      "Spielfeld auf halber Hallengröße abgrenzen.",
-      "Eine Person startet als Fänger.",
-      "Wer gefangen wird, reicht die Hand – die Kette wächst.",
-      "Ab 4 Personen darf die Kette sich teilen.",
+      "Klasse in 4 Gruppen einteilen. Jede Gruppe erhält 1 Würfel und einen festen Startpunkt.",
+      "Ein Kind pro Gruppe würfelt und läuft genau die gewürfelte Anzahl an Runden.",
+      "Danach ist das nächste Kind der Gruppe an der Reihe – würfeln, laufen, weitergeben.",
+      "Alle gelaufenen Runden der Gruppe werden fortlaufend zusammengezählt.",
+      "Ziel: Die Gruppe erreicht insgesamt 50 Runden.",
     ],
-    duration: "8 Min",
-    durationMinutes: 8,
-    groupSize: "ganze Klasse",
-    material: "Feldmarkierungen (Hütchen)",
+    duration: "20 Min",
+    durationMinutes: 20,
+    groupSize: "4 Gruppen",
+    material: "4 Würfel, Rundenstrecke, Zettel/Tafel zum Mitzählen",
     ageGroup: "8–14 Jahre",
-    ageMin: 8, ageMax: 14,
-    difficulty: "Leicht",
+    ageMin: 8,
+    ageMax: 14,
+    difficulty: "Mittel",
     images: [],
     createdAt: Date.now() - 1_000,
   },
