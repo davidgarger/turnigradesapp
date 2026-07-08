@@ -20,6 +20,11 @@ export const Route = createFileRoute("/")({
 
 const CLASSES = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"] as const;
 
+function classDisplayNumber(name: string, fallback: string): string {
+  const match = name.trim().match(/^(\d+)/);
+  return match ? match[1] : fallback;
+}
+
 type ThemeKey =
   | "violet"
   | "pink"
