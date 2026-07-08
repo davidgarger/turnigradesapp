@@ -127,8 +127,86 @@ export function ExercisePoster({ exercise }: { exercise: Exercise }) {
         </div>
       </div>
     </article>
+    {lightboxIndex !== null && exercise.images[lightboxIndex] && (
+      <Lightbox
+        images={exercise.images}
+        index={lightboxIndex}
+        title={exercise.title}
+        onClose={() => setLightboxIndex(null)}
+        onIndex={setLightboxIndex}
+      />
+    )}
+    </>
   );
 }
+
+function Lightbox({
+  images, index, title, onClose, onIndex,
+}: {
+  images: string[];
+  index: number;
+  title: string;
+  onClose: () => void;
+  onIndex: (i: number) => void;
+}) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowLeft") onIndex((index - 1 + images.length) % images.length);
+      if (e.key === "ArrowRight") onIndex((index + 1) % images.length);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [index, images.length, onClose, onIndex]);
+
+  return (
+    <div
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-950/90 p-4"
+      onClick={onClose}
+    >
+      <button
+        type="button"
+        onClick={(e) => { e.stopPropagation(); onClose(); }}
+        className="absolute right-4 top-4 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/95 text-slate-800 shadow hover:bg-white"
+        aria-label="Schließen"
+      >
+        <X className="h-5 w-5" />
+      </button>
+      {images.length > 1 && (
+        <>
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); onIndex((index - 1 + images.length) % images.length); }}
+            className="absolute left-4 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-slate-800 shadow hover:bg-white"
+            aria-label="Vorheriges Bild"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); onIndex((index + 1) % images.length); }}
+            className="absolute right-4 top-1/2 inline-flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/95 text-slate-800 shadow hover:bg-white"
+            aria-label="Nächstes Bild"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
+        </>
+      )}
+      <img
+        src={images[index]}
+        alt={`${title} – Bild ${index + 1}`}
+        className="max-h-full max-w-full rounded-xl object-contain shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      />
+      {images.length > 1 && (
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-white/90 px-3 py-1 text-xs font-medium text-slate-700 shadow">
+          {index + 1} / {images.length}
+        </div>
+      )}
+    </div>
+  );
+}
+
 
 function MetaTile({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
