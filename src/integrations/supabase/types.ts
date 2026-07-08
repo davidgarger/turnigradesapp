@@ -32,6 +32,96 @@ export type Database = {
         }
         Relationships: []
       }
+      community_exercises: {
+        Row: {
+          age_group: string
+          age_max: number
+          age_min: number
+          author_name: string | null
+          created_at: string
+          created_by: string
+          difficulty: string
+          duration: string
+          duration_minutes: number
+          goal: string
+          group_size: string
+          id: string
+          images: Json
+          material: string | null
+          short_description: string
+          status: string
+          steps: Json
+          subcategory: string
+          title: string
+          updated_at: string
+          video_url: string | null
+        }
+        Insert: {
+          age_group: string
+          age_max?: number
+          age_min?: number
+          author_name?: string | null
+          created_at?: string
+          created_by: string
+          difficulty: string
+          duration: string
+          duration_minutes?: number
+          goal: string
+          group_size: string
+          id?: string
+          images?: Json
+          material?: string | null
+          short_description: string
+          status?: string
+          steps?: Json
+          subcategory: string
+          title: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Update: {
+          age_group?: string
+          age_max?: number
+          age_min?: number
+          author_name?: string | null
+          created_at?: string
+          created_by?: string
+          difficulty?: string
+          duration?: string
+          duration_minutes?: number
+          goal?: string
+          group_size?: string
+          id?: string
+          images?: Json
+          material?: string | null
+          short_description?: string
+          status?: string
+          steps?: Json
+          subcategory?: string
+          title?: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Relationships: []
+      }
+      exercise_favorites: {
+        Row: {
+          created_at: string
+          exercise_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          exercise_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          exercise_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       feedback: {
         Row: {
           contact_email: string | null
@@ -89,15 +179,42 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -224,6 +341,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const
