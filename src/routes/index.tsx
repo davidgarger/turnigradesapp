@@ -306,18 +306,11 @@ function Index() {
               <span className="hidden sm:inline">Arbeitsauftrag</span>
             </Link>
             <Link
-              to="/stationenkarten"
+              to="/uebungssammlungen"
               className="inline-flex items-center gap-2 rounded-md bg-gradient-to-r from-emerald-500 to-teal-500 px-3 py-2 text-sm font-semibold text-white shadow-md shadow-teal-500/30 transition hover:opacity-95"
             >
               <LayoutGrid className="h-4 w-4" />
-              <span className="hidden sm:inline">Stationenkarten</span>
-            </Link>
-            <Link
-              to="/kondition"
-              className="inline-flex items-center gap-2 rounded-md bg-gradient-to-r from-lime-500 to-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow-md shadow-emerald-500/30 transition hover:opacity-95"
-            >
-              <Activity className="h-4 w-4" />
-              <span className="hidden sm:inline">Kondition</span>
+              <span className="hidden sm:inline">Übungssammlungen</span>
             </Link>
 
             <Link
