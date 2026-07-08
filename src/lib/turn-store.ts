@@ -287,6 +287,9 @@ function load(): TurnState {
     if (!raw) return defaultState();
     const parsed = JSON.parse(raw) as TurnState;
     if (!parsed.classes || !parsed.settings) return defaultState();
+    if (!parsed.classOrder || parsed.classOrder.length !== ALL_CLASS_IDS.length) {
+      parsed.classOrder = [...ALL_CLASS_IDS];
+    }
     return parsed;
   } catch {
     return defaultState();
