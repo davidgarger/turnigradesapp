@@ -175,27 +175,10 @@ function LoginPage() {
           }}
         />
 
-        <div className="mb-6 flex items-center gap-2.5">
-          <div
-            className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white shadow-md ring-1"
-            style={{ borderColor: `${BRAND_DARK}22`, boxShadow: `0 8px 24px -12px ${BRAND_DARK}55` }}
-          >
-            <TurniLogo className="h-7 w-7" />
-          </div>
-          <div className="text-left leading-tight">
-            <div className="text-base font-bold tracking-tight" style={{ color: BRAND_DARK }}>
-              turni.live
-            </div>
-            <div className="text-[10px] font-semibold uppercase tracking-[0.18em]" style={{ color: BRAND_DARK, opacity: 0.6 }}>
-              Sportunterricht
-            </div>
-          </div>
-        </div>
-
         <h1 className="leading-[0.95]" style={{ color: BRAND_DARK }}>
           <span
             className="block text-4xl sm:text-5xl md:text-6xl"
-            style={{ fontFamily: '"Dancing Script", cursive', fontWeight: 700 }}
+            style={{ fontFamily: '"Archivo Black", system-ui, sans-serif', letterSpacing: "-0.02em" }}
           >
             Moderner
           </span>
@@ -207,25 +190,11 @@ function LoginPage() {
           </span>
           <span
             className="mt-3 block text-2xl sm:text-3xl md:text-4xl"
-            style={{ fontFamily: '"Dancing Script", cursive', fontWeight: 600, opacity: 0.9 }}
+            style={{ fontFamily: '"Archivo Black", system-ui, sans-serif', letterSpacing: "-0.02em", opacity: 0.9 }}
           >
-            auf einen Blick
+            AUF EINEN BLICK
           </span>
         </h1>
-
-        {/* Domain pill */}
-        <a
-          href="https://turni.live"
-          className="mt-6 inline-flex items-center gap-2 rounded-full border bg-white/80 px-5 py-2.5 text-sm font-medium shadow-sm backdrop-blur transition hover:bg-white sm:text-base"
-          style={{ borderColor: `${BRAND_DARK}55`, color: BRAND_DARK }}
-        >
-          <span className="opacity-60">www.</span>
-          <span className="font-semibold">turni.live</span>
-          <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="11" cy="11" r="7" />
-            <path d="m20 20-3.5-3.5" />
-          </svg>
-        </a>
 
         {/* Laptop + Phone mockup */}
         <div className="relative mt-10 w-full max-w-lg">
