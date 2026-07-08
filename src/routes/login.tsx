@@ -12,7 +12,6 @@ import {
   FileText,
   Sparkles,
   ShieldCheck,
-  LayoutGrid,
   Library,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
