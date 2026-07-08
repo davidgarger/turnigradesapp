@@ -12,12 +12,16 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as StationenkartenRouteImport } from './routes/stationenkarten'
 import { Route as NotenuebersichtRouteImport } from './routes/notenuebersicht'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as KonditionRouteImport } from './routes/kondition'
 import { Route as ImpressumRouteImport } from './routes/impressum'
 import { Route as EinstellungenRouteImport } from './routes/einstellungen'
 import { Route as DatenschutzRouteImport } from './routes/datenschutz'
 import { Route as ArchivRouteImport } from './routes/archiv'
 import { Route as ArbeitsauftragRouteImport } from './routes/arbeitsauftrag'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as KonditionIndexRouteImport } from './routes/kondition.index'
+import { Route as KonditionNeuRouteImport } from './routes/kondition.neu'
+import { Route as KonditionExerciseIdRouteImport } from './routes/kondition.$exerciseId'
 import { Route as KlasseClassIdRouteImport } from './routes/klasse.$classId'
 import { Route as KlasseClassIdQuickRouteImport } from './routes/klasse.$classId.quick'
 import { Route as KlasseClassIdDisziplinenRouteImport } from './routes/klasse.$classId.disziplinen'
@@ -35,6 +39,11 @@ const NotenuebersichtRoute = NotenuebersichtRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KonditionRoute = KonditionRouteImport.update({
+  id: '/kondition',
+  path: '/kondition',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ImpressumRoute = ImpressumRouteImport.update({
@@ -67,6 +76,21 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const KonditionIndexRoute = KonditionIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => KonditionRoute,
+} as any)
+const KonditionNeuRoute = KonditionNeuRouteImport.update({
+  id: '/neu',
+  path: '/neu',
+  getParentRoute: () => KonditionRoute,
+} as any)
+const KonditionExerciseIdRoute = KonditionExerciseIdRouteImport.update({
+  id: '/$exerciseId',
+  path: '/$exerciseId',
+  getParentRoute: () => KonditionRoute,
+} as any)
 const KlasseClassIdRoute = KlasseClassIdRouteImport.update({
   id: '/klasse/$classId',
   path: '/klasse/$classId',
@@ -91,10 +115,14 @@ export interface FileRoutesByFullPath {
   '/datenschutz': typeof DatenschutzRoute
   '/einstellungen': typeof EinstellungenRoute
   '/impressum': typeof ImpressumRoute
+  '/kondition': typeof KonditionRouteWithChildren
   '/login': typeof LoginRoute
   '/notenuebersicht': typeof NotenuebersichtRoute
   '/stationenkarten': typeof StationenkartenRoute
   '/klasse/$classId': typeof KlasseClassIdRouteWithChildren
+  '/kondition/$exerciseId': typeof KonditionExerciseIdRoute
+  '/kondition/neu': typeof KonditionNeuRoute
+  '/kondition/': typeof KonditionIndexRoute
   '/klasse/$classId/disziplinen': typeof KlasseClassIdDisziplinenRoute
   '/klasse/$classId/quick': typeof KlasseClassIdQuickRoute
 }
@@ -109,6 +137,9 @@ export interface FileRoutesByTo {
   '/notenuebersicht': typeof NotenuebersichtRoute
   '/stationenkarten': typeof StationenkartenRoute
   '/klasse/$classId': typeof KlasseClassIdRouteWithChildren
+  '/kondition/$exerciseId': typeof KonditionExerciseIdRoute
+  '/kondition/neu': typeof KonditionNeuRoute
+  '/kondition': typeof KonditionIndexRoute
   '/klasse/$classId/disziplinen': typeof KlasseClassIdDisziplinenRoute
   '/klasse/$classId/quick': typeof KlasseClassIdQuickRoute
 }
@@ -120,10 +151,14 @@ export interface FileRoutesById {
   '/datenschutz': typeof DatenschutzRoute
   '/einstellungen': typeof EinstellungenRoute
   '/impressum': typeof ImpressumRoute
+  '/kondition': typeof KonditionRouteWithChildren
   '/login': typeof LoginRoute
   '/notenuebersicht': typeof NotenuebersichtRoute
   '/stationenkarten': typeof StationenkartenRoute
   '/klasse/$classId': typeof KlasseClassIdRouteWithChildren
+  '/kondition/$exerciseId': typeof KonditionExerciseIdRoute
+  '/kondition/neu': typeof KonditionNeuRoute
+  '/kondition/': typeof KonditionIndexRoute
   '/klasse/$classId/disziplinen': typeof KlasseClassIdDisziplinenRoute
   '/klasse/$classId/quick': typeof KlasseClassIdQuickRoute
 }
@@ -136,10 +171,14 @@ export interface FileRouteTypes {
     | '/datenschutz'
     | '/einstellungen'
     | '/impressum'
+    | '/kondition'
     | '/login'
     | '/notenuebersicht'
     | '/stationenkarten'
     | '/klasse/$classId'
+    | '/kondition/$exerciseId'
+    | '/kondition/neu'
+    | '/kondition/'
     | '/klasse/$classId/disziplinen'
     | '/klasse/$classId/quick'
   fileRoutesByTo: FileRoutesByTo
@@ -154,6 +193,9 @@ export interface FileRouteTypes {
     | '/notenuebersicht'
     | '/stationenkarten'
     | '/klasse/$classId'
+    | '/kondition/$exerciseId'
+    | '/kondition/neu'
+    | '/kondition'
     | '/klasse/$classId/disziplinen'
     | '/klasse/$classId/quick'
   id:
@@ -164,10 +206,14 @@ export interface FileRouteTypes {
     | '/datenschutz'
     | '/einstellungen'
     | '/impressum'
+    | '/kondition'
     | '/login'
     | '/notenuebersicht'
     | '/stationenkarten'
     | '/klasse/$classId'
+    | '/kondition/$exerciseId'
+    | '/kondition/neu'
+    | '/kondition/'
     | '/klasse/$classId/disziplinen'
     | '/klasse/$classId/quick'
   fileRoutesById: FileRoutesById
@@ -179,6 +225,7 @@ export interface RootRouteChildren {
   DatenschutzRoute: typeof DatenschutzRoute
   EinstellungenRoute: typeof EinstellungenRoute
   ImpressumRoute: typeof ImpressumRoute
+  KonditionRoute: typeof KonditionRouteWithChildren
   LoginRoute: typeof LoginRoute
   NotenuebersichtRoute: typeof NotenuebersichtRoute
   StationenkartenRoute: typeof StationenkartenRoute
@@ -206,6 +253,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kondition': {
+      id: '/kondition'
+      path: '/kondition'
+      fullPath: '/kondition'
+      preLoaderRoute: typeof KonditionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/impressum': {
@@ -250,6 +304,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/kondition/': {
+      id: '/kondition/'
+      path: '/'
+      fullPath: '/kondition/'
+      preLoaderRoute: typeof KonditionIndexRouteImport
+      parentRoute: typeof KonditionRoute
+    }
+    '/kondition/neu': {
+      id: '/kondition/neu'
+      path: '/neu'
+      fullPath: '/kondition/neu'
+      preLoaderRoute: typeof KonditionNeuRouteImport
+      parentRoute: typeof KonditionRoute
+    }
+    '/kondition/$exerciseId': {
+      id: '/kondition/$exerciseId'
+      path: '/$exerciseId'
+      fullPath: '/kondition/$exerciseId'
+      preLoaderRoute: typeof KonditionExerciseIdRouteImport
+      parentRoute: typeof KonditionRoute
+    }
     '/klasse/$classId': {
       id: '/klasse/$classId'
       path: '/klasse/$classId'
@@ -274,6 +349,22 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface KonditionRouteChildren {
+  KonditionExerciseIdRoute: typeof KonditionExerciseIdRoute
+  KonditionNeuRoute: typeof KonditionNeuRoute
+  KonditionIndexRoute: typeof KonditionIndexRoute
+}
+
+const KonditionRouteChildren: KonditionRouteChildren = {
+  KonditionExerciseIdRoute: KonditionExerciseIdRoute,
+  KonditionNeuRoute: KonditionNeuRoute,
+  KonditionIndexRoute: KonditionIndexRoute,
+}
+
+const KonditionRouteWithChildren = KonditionRoute._addFileChildren(
+  KonditionRouteChildren,
+)
+
 interface KlasseClassIdRouteChildren {
   KlasseClassIdDisziplinenRoute: typeof KlasseClassIdDisziplinenRoute
   KlasseClassIdQuickRoute: typeof KlasseClassIdQuickRoute
@@ -295,6 +386,7 @@ const rootRouteChildren: RootRouteChildren = {
   DatenschutzRoute: DatenschutzRoute,
   EinstellungenRoute: EinstellungenRoute,
   ImpressumRoute: ImpressumRoute,
+  KonditionRoute: KonditionRouteWithChildren,
   LoginRoute: LoginRoute,
   NotenuebersichtRoute: NotenuebersichtRoute,
   StationenkartenRoute: StationenkartenRoute,

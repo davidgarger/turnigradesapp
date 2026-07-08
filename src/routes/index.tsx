@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Settings, Users, ClipboardList, ImagePlus, Trash2, Palette, Check, LogOut, MoreVertical, Pencil, ArrowLeftRight, RotateCcw, Plus, EyeOff, LayoutGrid, BarChart3, GraduationCap, Archive } from "lucide-react";
+import { Settings, Users, ClipboardList, ImagePlus, Trash2, Palette, Check, LogOut, MoreVertical, Pencil, ArrowLeftRight, RotateCcw, Plus, EyeOff, LayoutGrid, BarChart3, GraduationCap, Archive, Activity } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { turnActions, useTurnState } from "@/lib/turn-store";
 import { schoolYearLabel } from "@/routes/klasse.$classId";
@@ -312,6 +312,14 @@ function Index() {
               <LayoutGrid className="h-4 w-4" />
               <span className="hidden sm:inline">Stationenkarten</span>
             </Link>
+            <Link
+              to="/kondition"
+              className="inline-flex items-center gap-2 rounded-md bg-gradient-to-r from-lime-500 to-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow-md shadow-emerald-500/30 transition hover:opacity-95"
+            >
+              <Activity className="h-4 w-4" />
+              <span className="hidden sm:inline">Kondition</span>
+            </Link>
+
             <Link
               to="/archiv"
               className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
