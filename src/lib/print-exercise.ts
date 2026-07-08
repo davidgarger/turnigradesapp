@@ -133,12 +133,22 @@ export function printExercise(ex: Exercise): void {
   </div>
 
   <script>
-    window.addEventListener("load", function () {
-      setTimeout(function () {
-        window.focus();
-        window.print();
-      }, 400);
-    });
+    (function () {
+      function doPrint() {
+        try { window.focus(); } catch (e) {}
+        try { window.print(); } catch (e) {}
+      }
+      window.addEventListener("load", function () {
+        var imgs = Array.prototype.slice.call(document.images || []);
+        if (imgs.length === 0) { setTimeout(doPrint, 200); return; }
+        var pending = imgs.length;
+        var done = function () { if (--pending <= 0) setTimeout(doPrint, 150); };
+        imgs.forEach(function (img) {
+          if (img.complete) { done(); }
+          else { img.addEventListener("load", done); img.addEventListener("error", done); }
+        });
+      });
+    })();
   </script>
 </body>
 </html>`;
