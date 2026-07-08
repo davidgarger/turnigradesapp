@@ -152,6 +152,7 @@ export interface ArchivedClass {
 export interface TurnState {
   classes: Record<ClassId, ClassData>;
   settings: GradingSettings;
+  classOrder?: ClassId[];
   archive?: ArchivedClass[];
 }
 
