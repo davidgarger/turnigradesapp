@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, LayoutGrid, Activity } from "lucide-react";
+import { ArrowLeft, LayoutGrid, Activity, ShieldCheck } from "lucide-react";
 import { TurniLogo } from "@/components/TurniLogo";
+import { useCommunityExercises, useIsAdmin } from "@/lib/community-store";
 
 export const Route = createFileRoute("/uebungssammlungen")({
   component: UebungssammlungenIndex,
@@ -41,6 +42,10 @@ const CARDS: Card[] = [
 ];
 
 function UebungssammlungenIndex() {
+  const isAdmin = useIsAdmin();
+  const { list } = useCommunityExercises();
+  const pendingCount = list.filter((e) => e.status === "pending").length;
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50">
       <header className="border-b border-border bg-background/80 backdrop-blur">
@@ -52,13 +57,30 @@ function UebungssammlungenIndex() {
               <p className="hidden text-xs text-muted-foreground lg:block">Wähle eine Unterkategorie</p>
             </div>
           </div>
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            <span className="hidden sm:inline">Zurück</span>
-          </Link>
+          <div className="flex items-center gap-2">
+            {isAdmin && (
+              <Link
+                to="/admin/uebungen"
+                className="relative inline-flex items-center gap-2 rounded-md bg-gradient-to-r from-emerald-600 to-teal-600 px-3 py-2 text-sm font-semibold text-white shadow-md shadow-emerald-500/30 transition hover:opacity-95"
+              >
+                <ShieldCheck className="h-4 w-4" />
+                <span className="hidden sm:inline">Übungssammlungen freigeben</span>
+                <span className="sm:hidden">Freigeben</span>
+                {pendingCount > 0 && (
+                  <span className="ml-1 inline-flex min-w-[1.25rem] items-center justify-center rounded-full bg-amber-400 px-1.5 text-[10px] font-bold text-amber-950">
+                    {pendingCount}
+                  </span>
+                )}
+              </Link>
+            )}
+            <Link
+              to="/"
+              className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              <span className="hidden sm:inline">Zurück</span>
+            </Link>
+          </div>
         </div>
       </header>
 
