@@ -3,6 +3,7 @@ import { createFileRoute, useParams, useNavigate } from "@tanstack/react-router"
 import { Heart, Trash2, Download, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { konditionActions, useExercises, useFavorites } from "@/lib/kondition-store";
+import { useCommunityExercises, useCloudFavorites, useCurrentUserId, deleteCommunityExercise } from "@/lib/community-store";
 import { downloadExercisePdf } from "@/lib/pdf-exercise";
 import { ExercisePosterModal } from "@/components/ExercisePosterModal";
 import KonditionOverview from "./kondition.index";
@@ -14,9 +15,13 @@ export const Route = createFileRoute("/kondition/$exerciseId")({
 function ExerciseDetail() {
   const { exerciseId } = useParams({ from: "/kondition/$exerciseId" });
   const navigate = useNavigate();
-  const exercises = useExercises();
-  const favs = useFavorites();
-  const ex = exercises.find((e) => e.id === exerciseId);
+  const localExercises = useExercises();
+  const { list: community } = useCommunityExercises();
+  const localFavs = useFavorites();
+  const { favs: cloudFavs, toggle: toggleCloudFav } = useCloudFavorites();
+  const uid = useCurrentUserId();
+  const ex = localExercises.find((e) => e.id === exerciseId) ?? community.find((e) => e.id === exerciseId);
+  const isCommunity = !!community.find((e) => e.id === exerciseId);
 
   const [pdfBusy, setPdfBusy] = useState(false);
 
