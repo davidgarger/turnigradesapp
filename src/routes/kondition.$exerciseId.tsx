@@ -55,10 +55,9 @@ function ExerciseDetail() {
     );
   }
 
-  const isFav = favs.has(ex.id);
-
   const favs = new Set<string>([...localFavs, ...cloudFavs]);
   const isFav = favs.has(ex.id);
+
 
   const handleFav = () => {
     konditionActions.toggleFav(ex.id);
