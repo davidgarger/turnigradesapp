@@ -117,6 +117,7 @@ function NewExercise() {
     setSaving(true);
     try {
       await submitCommunityExercise({
+        category: "kondition",
         title: title.trim(),
         subcategory,
         shortDescription: shortDescription.trim(),
