@@ -102,31 +102,45 @@ function NewExercise() {
     createdAt: Date.now(),
   }), [title, subcategory, shortDescription, goal, steps, duration, durationMinutes, groupSize, material, ageGroup, ageMin, ageMax, difficulty, images, videoUrl]);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!uid) {
+      toast.error("Bitte zuerst einloggen.");
+      navigate({ to: "/login" });
+      return;
+    }
     const cleanSteps = steps.map((s) => s.trim()).filter(Boolean);
     if (!title.trim() || !shortDescription.trim() || !goal.trim() || cleanSteps.length < 3) {
       toast.error("Bitte alle Pflichtfelder ausfüllen (mind. 3 Schritte).");
       return;
     }
-    const ex = konditionActions.add({
-      title: title.trim(),
-      subcategory,
-      shortDescription: shortDescription.trim(),
-      goal: goal.trim(),
-      steps: cleanSteps,
-      duration: duration.trim() || `${durationMinutes} Min`,
-      durationMinutes,
-      groupSize: groupSize.trim() || "ganze Klasse",
-      material: material.trim(),
-      ageGroup: ageGroup.trim() || `${ageMin}–${ageMax} Jahre`,
-      ageMin, ageMax,
-      difficulty,
-      images,
-      videoUrl: videoUrl || undefined,
-    });
-    toast.success("Übung gespeichert");
-    navigate({ to: "/kondition/$exerciseId", params: { exerciseId: ex.id } });
+    setSaving(true);
+    try {
+      await submitCommunityExercise({
+        title: title.trim(),
+        subcategory,
+        shortDescription: shortDescription.trim(),
+        goal: goal.trim(),
+        steps: cleanSteps,
+        duration: duration.trim() || `${durationMinutes} Min`,
+        durationMinutes,
+        groupSize: groupSize.trim() || "ganze Klasse",
+        material: material.trim(),
+        ageGroup: ageGroup.trim() || `${ageMin}–${ageMax} Jahre`,
+        ageMin, ageMax,
+        difficulty,
+        images,
+        videoUrl: videoUrl || undefined,
+        authorName: authorName.trim() || undefined,
+      });
+      toast.success("Übung eingereicht — wird nach Freigabe für alle sichtbar.");
+      navigate({ to: "/kondition" });
+    } catch (err) {
+      console.error(err);
+      toast.error("Speichern fehlgeschlagen");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
