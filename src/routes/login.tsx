@@ -303,30 +303,7 @@ function LoginPage() {
             Die App für moderne PE-Lehrkräfte
           </div>
 
-          {/* Big logo lockup */}
-          <div className="mb-6 flex items-center gap-4">
-            <div className="relative">
-              <div
-                className="absolute -inset-2 rounded-3xl blur-xl"
-                style={{ background: `linear-gradient(135deg, ${BRAND_MINT}66, ${BRAND_DARK}22)` }}
-              />
-              <div
-                className="relative flex h-20 w-20 items-center justify-center rounded-3xl bg-white ring-1"
-                style={{ boxShadow: `0 20px 40px -20px ${BRAND_DARK}55`, borderColor: `${BRAND_DARK}22` }}
-              >
-                <TurniLogo className="h-14 w-14" />
-              </div>
-            </div>
-            <div>
-              <div className="text-3xl font-black tracking-tight" style={{ color: BRAND_DARK }}>
-                turni<span>.live</span>
-              </div>
-              <div className="text-sm" style={{ color: BRAND_DARK, opacity: 0.7 }}>
-                Sportunterricht. Strukturiert.
-              </div>
-            </div>
-          </div>
-
+          {/* Heading without big logo */}
           <h1 className="leading-[0.95]" style={{ color: BRAND_DARK }}>
             <span className="block text-3xl font-bold sm:text-4xl">
               Sportunterricht
