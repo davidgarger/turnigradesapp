@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Settings, Users, ClipboardList, ImagePlus, Trash2, Palette, Check, LogOut, MoreVertical, Pencil, ArrowLeftRight, ArrowLeft, ArrowRight, RotateCcw, Plus, EyeOff, LayoutGrid, BarChart3, GraduationCap, Archive } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { turnActions, useTurnState } from "@/lib/turn-store";
+import { turnActions, useTurnState, type ClassId } from "@/lib/turn-store";
 import { schoolYearLabel } from "@/routes/klasse.$classId";
 import { TurniLogo } from "@/components/TurniLogo";
 import { supabase } from "@/integrations/supabase/client";
