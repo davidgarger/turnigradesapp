@@ -487,8 +487,46 @@ function Index() {
                       <div className="my-1 border-t border-border" />
 
                       <div className="px-3 pt-2 pb-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                        <span className="inline-flex items-center gap-1.5"><Palette className="h-3 w-3" /> Farbe</span>
+                        <span className="inline-flex items-center gap-1.5"><ArrowLeftRight className="h-3 w-3" /> Reihenfolge ändern</span>
                       </div>
+                      <div className="flex gap-1.5 px-2 pb-2">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            moveClass(id, -1);
+                            setOpenPicker(null);
+                          }}
+                          className="flex-1 rounded-md border border-input bg-background px-2 py-1.5 text-xs font-semibold hover:bg-accent"
+                          title="Nach vorne"
+                        >
+                          <ArrowLeft className="mx-auto h-3.5 w-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            moveClass(id, 1);
+                            setOpenPicker(null);
+                          }}
+                          className="flex-1 rounded-md border border-input bg-background px-2 py-1.5 text-xs font-semibold hover:bg-accent"
+                          title="Nach hinten"
+                        >
+                          <ArrowRight className="mx-auto h-3.5 w-3.5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            moveClassToFirst(id);
+                            toast.success("Klasse an erste Stelle verschoben");
+                            setOpenPicker(null);
+                          }}
+                          className="flex-1 rounded-md border border-input bg-background px-2 py-1.5 text-xs font-semibold hover:bg-accent"
+                          title="An erste Stelle"
+                        >
+                          1.
+                        </button>
+                      </div>
+
+                      <div className="my-1 border-t border-border" />
                       <div className="grid grid-cols-5 gap-2 px-2 pb-2">
                         {(Object.keys(THEMES) as ThemeKey[]).map((k) => {
                           const active = themeKey === k;
