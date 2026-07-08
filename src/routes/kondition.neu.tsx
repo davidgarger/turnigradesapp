@@ -1,12 +1,12 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { ArrowLeft, Plus, X, Upload, Save, Eye } from "lucide-react";
-import { useMemo, useState, useRef } from "react";
+import { ArrowLeft, Plus, X, Upload, Save, Eye, Info, Loader2 } from "lucide-react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { toast } from "sonner";
 import {
   SUBCATEGORIES, DIFFICULTIES,
   type Subcategory, type Difficulty, type Exercise,
-  konditionActions,
 } from "@/lib/kondition-store";
+import { submitCommunityExercise, uploadExerciseImage, useCurrentUserId } from "@/lib/community-store";
 import { ExercisePosterModal } from "@/components/ExercisePosterModal";
 
 export const Route = createFileRoute("/kondition/neu")({
@@ -16,6 +16,7 @@ export const Route = createFileRoute("/kondition/neu")({
 
 function NewExercise() {
   const navigate = useNavigate();
+  const uid = useCurrentUserId();
   const [title, setTitle] = useState("");
   const [subcategory, setSubcategory] = useState<Subcategory>("Ausdauer");
   const [shortDescription, setShortDescription] = useState("");
@@ -30,10 +31,21 @@ function NewExercise() {
   const [ageMax, setAgeMax] = useState(14);
   const [difficulty, setDifficulty] = useState<Difficulty>("Mittel");
   const [images, setImages] = useState<string[]>([]);
+  const [uploadingImages, setUploadingImages] = useState(false);
   const [videoUrl, setVideoUrl] = useState("");
+  const [authorName, setAuthorName] = useState("");
   const [showPreview, setShowPreview] = useState(false);
+  const [saving, setSaving] = useState(false);
   const imgRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLInputElement>(null);
+
+  // Wenn nicht eingeloggt → Login-Hinweis + Redirect
+  useEffect(() => {
+    if (uid === null) {
+      // uid ist initial null (unbekannt) und bleibt null wenn nicht eingeloggt.
+      // Wir warten kurz, damit Auth-Session initialisieren kann.
+    }
+  }, [uid]);
 
   const canAddStep = steps.length < 5;
   const canRemoveStep = steps.length > 3;
@@ -44,17 +56,24 @@ function NewExercise() {
 
   const onPickImages = async (files: FileList | null) => {
     if (!files) return;
-    const arr = await Promise.all(
-      Array.from(files).slice(0, 5).map(
-        (f) => new Promise<string>((res, rej) => {
-          const r = new FileReader();
-          r.onload = () => res(String(r.result));
-          r.onerror = rej;
-          r.readAsDataURL(f);
-        })
-      )
-    );
-    setImages((prev) => [...prev, ...arr].slice(0, 6));
+    if (!uid) {
+      toast.error("Bitte zuerst einloggen, um Bilder hochzuladen.");
+      return;
+    }
+    setUploadingImages(true);
+    try {
+      const uploaded: string[] = [];
+      for (const f of Array.from(files).slice(0, 5)) {
+        const url = await uploadExerciseImage(f);
+        uploaded.push(url);
+      }
+      setImages((prev) => [...prev, ...uploaded].slice(0, 6));
+    } catch (err) {
+      console.error(err);
+      toast.error("Bild-Upload fehlgeschlagen");
+    } finally {
+      setUploadingImages(false);
+    }
   };
 
   const onPickVideo = (f: File | null) => {
@@ -83,31 +102,45 @@ function NewExercise() {
     createdAt: Date.now(),
   }), [title, subcategory, shortDescription, goal, steps, duration, durationMinutes, groupSize, material, ageGroup, ageMin, ageMax, difficulty, images, videoUrl]);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!uid) {
+      toast.error("Bitte zuerst einloggen.");
+      navigate({ to: "/login" });
+      return;
+    }
     const cleanSteps = steps.map((s) => s.trim()).filter(Boolean);
     if (!title.trim() || !shortDescription.trim() || !goal.trim() || cleanSteps.length < 3) {
       toast.error("Bitte alle Pflichtfelder ausfüllen (mind. 3 Schritte).");
       return;
     }
-    const ex = konditionActions.add({
-      title: title.trim(),
-      subcategory,
-      shortDescription: shortDescription.trim(),
-      goal: goal.trim(),
-      steps: cleanSteps,
-      duration: duration.trim() || `${durationMinutes} Min`,
-      durationMinutes,
-      groupSize: groupSize.trim() || "ganze Klasse",
-      material: material.trim(),
-      ageGroup: ageGroup.trim() || `${ageMin}–${ageMax} Jahre`,
-      ageMin, ageMax,
-      difficulty,
-      images,
-      videoUrl: videoUrl || undefined,
-    });
-    toast.success("Übung gespeichert");
-    navigate({ to: "/kondition/$exerciseId", params: { exerciseId: ex.id } });
+    setSaving(true);
+    try {
+      await submitCommunityExercise({
+        title: title.trim(),
+        subcategory,
+        shortDescription: shortDescription.trim(),
+        goal: goal.trim(),
+        steps: cleanSteps,
+        duration: duration.trim() || `${durationMinutes} Min`,
+        durationMinutes,
+        groupSize: groupSize.trim() || "ganze Klasse",
+        material: material.trim(),
+        ageGroup: ageGroup.trim() || `${ageMin}–${ageMax} Jahre`,
+        ageMin, ageMax,
+        difficulty,
+        images,
+        videoUrl: videoUrl || undefined,
+        authorName: authorName.trim() || undefined,
+      });
+      toast.success("Übung eingereicht — wird nach Freigabe für alle sichtbar.");
+      navigate({ to: "/kondition" });
+    } catch (err) {
+      console.error(err);
+      toast.error("Speichern fehlgeschlagen");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -129,6 +162,20 @@ function NewExercise() {
       </header>
 
       <main className="mx-auto max-w-3xl px-4 py-6">
+        {!uid && (
+          <div className="mb-4 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+            <Info className="mt-0.5 h-4 w-4 shrink-0" />
+            <span>
+              Du bist nicht eingeloggt. <Link to="/login" className="font-semibold underline">Jetzt einloggen</Link>, um eine Übung einzureichen.
+            </span>
+          </div>
+        )}
+        <div className="mb-4 flex items-start gap-2 rounded-lg border border-teal-200 bg-teal-50 px-3 py-2 text-sm text-teal-900">
+          <Info className="mt-0.5 h-4 w-4 shrink-0" />
+          <span>
+            Deine Übung wird nach kurzer Freigabe durch einen Admin für alle Nutzer sichtbar.
+          </span>
+        </div>
         <form onSubmit={submit} className="space-y-6">
           {/* Titel — großer, schlichter Header-Input */}
           <div>
@@ -256,10 +303,15 @@ function NewExercise() {
                 </div>
               )}
               <input ref={imgRef} type="file" accept="image/*" multiple hidden onChange={(e) => onPickImages(e.target.files)} />
-              <button type="button" onClick={() => imgRef.current?.click()} className="inline-flex items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50">
-                <Upload className="h-4 w-4" /> Bilder auswählen
+              <button type="button" disabled={uploadingImages || !uid} onClick={() => imgRef.current?.click()} className="inline-flex items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-60">
+                {uploadingImages ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                {uploadingImages ? "Lädt hoch…" : "Bilder auswählen"}
               </button>
             </div>
+          </Row>
+
+          <Row label="Autor:in" hint="wird bei der Übung angezeigt (optional)">
+            <input value={authorName} onChange={(e) => setAuthorName(e.target.value)} placeholder="Dein Name / Kürzel" className={plainInput} />
           </Row>
 
           <Row label="Video" hint="Link oder Upload">
@@ -291,8 +343,9 @@ function NewExercise() {
             <Link to="/kondition" className="rounded-md px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100">
               Abbrechen
             </Link>
-            <button type="submit" className="inline-flex items-center gap-2 rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800">
-              <Save className="h-4 w-4" /> Speichern
+            <button type="submit" disabled={saving || !uid} className="inline-flex items-center gap-2 rounded-md bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 disabled:opacity-60">
+              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+              {saving ? "Speichert…" : "Einreichen"}
             </button>
           </div>
         </form>

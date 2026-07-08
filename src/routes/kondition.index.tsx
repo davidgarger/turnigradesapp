@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, Clock, Users, Package, Search, Plus, Heart, Filter, X, Activity } from "lucide-react";
+import { ArrowLeft, Clock, Users, Package, Search, Plus, Heart, Filter, X, Activity, ShieldCheck, Sparkles, Clock3 } from "lucide-react";
 import { useMemo, useState } from "react";
-import { SUBCATEGORIES, type Subcategory, konditionActions, useExercises, useFavorites } from "@/lib/kondition-store";
+import { SUBCATEGORIES, type Subcategory, konditionActions, useExercises, useFavorites, type Exercise } from "@/lib/kondition-store";
+import { useCommunityExercises, useIsAdmin, useCloudFavorites, useCurrentUserId } from "@/lib/community-store";
 
 export const Route = createFileRoute("/kondition/")({
   component: KonditionOverview,
@@ -37,13 +38,47 @@ const AGE_FILTERS = [
 ] as const;
 
 export default function KonditionOverview() {
-  const exercises = useExercises();
-  const favs = useFavorites();
+  const localExercises = useExercises();
+  const { list: communityAll } = useCommunityExercises();
+  const localFavs = useFavorites();
+  const { favs: cloudFavs, toggle: toggleCloudFav } = useCloudFavorites();
+  const isAdmin = useIsAdmin();
+  const uid = useCurrentUserId();
+
   const [q, setQ] = useState("");
   const [sub, setSub] = useState<Subcategory | "all">("all");
   const [duration, setDuration] = useState<(typeof DURATION_FILTERS)[number]["key"]>("all");
   const [age, setAge] = useState<(typeof AGE_FILTERS)[number]["key"]>("all");
   const [onlyFavs, setOnlyFavs] = useState(false);
+  const [source, setSource] = useState<"all" | "official" | "community">("all");
+
+  const pendingCount = useMemo(
+    () => communityAll.filter((e) => e.status === "pending").length,
+    [communityAll],
+  );
+
+  // Vereinigte Liste: lokale (offizielle) + freigegebene Community-Übungen
+  const exercises = useMemo(() => {
+    const approvedCommunity = communityAll.filter((e) => e.status === "approved");
+    const combined: (Exercise & { isCommunity?: boolean; authorName?: string | null })[] = [
+      ...localExercises,
+      ...approvedCommunity,
+    ];
+    return combined;
+  }, [localExercises, communityAll]);
+
+  // Favoriten aus beiden Quellen zusammenführen (Cloud, wenn eingeloggt; sonst nur lokal)
+  const favs = useMemo(() => {
+    const s = new Set<string>();
+    localFavs.forEach((f) => s.add(f));
+    cloudFavs.forEach((f) => s.add(f));
+    return s;
+  }, [localFavs, cloudFavs]);
+
+  const toggleFav = (id: string) => {
+    konditionActions.toggleFav(id);
+    if (uid) void toggleCloudFav(id);
+  };
 
   const filtered = useMemo(() => {
     const dur = DURATION_FILTERS.find((d) => d.key === duration)!;
@@ -51,14 +86,15 @@ export default function KonditionOverview() {
     const needle = q.trim().toLowerCase();
     return exercises.filter((e) => {
       if (sub !== "all" && e.subcategory !== sub) return false;
+      if (source === "official" && (e as { isCommunity?: boolean }).isCommunity) return false;
+      if (source === "community" && !(e as { isCommunity?: boolean }).isCommunity) return false;
       if (e.durationMinutes < dur.min || e.durationMinutes > dur.max) return false;
-      // Übung passt, wenn Altersbereich überlappt
       if (e.ageMax < ag.min || e.ageMin > ag.max) return false;
       if (onlyFavs && !favs.has(e.id)) return false;
       if (needle && !e.title.toLowerCase().includes(needle)) return false;
       return true;
     });
-  }, [exercises, sub, duration, age, q, onlyFavs, favs]);
+  }, [exercises, sub, duration, age, q, onlyFavs, favs, source]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-slate-50">
@@ -79,13 +115,27 @@ export default function KonditionOverview() {
               <p className="hidden text-xs text-muted-foreground sm:block">Übungsbibliothek – Testversion</p>
             </div>
           </div>
-          <Link
-            to="/kondition/neu"
-            className="inline-flex items-center gap-2 rounded-md bg-gradient-to-r from-emerald-500 to-teal-600 px-3 py-2 text-sm font-semibold text-white shadow-md shadow-teal-500/30 transition hover:opacity-95"
-          >
-            <Plus className="h-4 w-4" />
-            <span className="hidden sm:inline">Neue Übung</span>
-          </Link>
+          <div className="flex items-center gap-2">
+            {isAdmin && (
+              <Link
+                to="/admin/uebungen"
+                className="relative inline-flex items-center gap-1.5 rounded-md border border-input bg-background px-3 py-2 text-sm font-medium text-foreground hover:bg-accent"
+              >
+                <ShieldCheck className="h-4 w-4" />
+                <span className="hidden sm:inline">Admin</span>
+                {pendingCount > 0 && (
+                  <span className="ml-1 grid h-5 min-w-5 place-items-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white">{pendingCount}</span>
+                )}
+              </Link>
+            )}
+            <Link
+              to="/kondition/neu"
+              className="inline-flex items-center gap-2 rounded-md bg-gradient-to-r from-emerald-500 to-teal-600 px-3 py-2 text-sm font-semibold text-white shadow-md shadow-teal-500/30 transition hover:opacity-95"
+            >
+              <Plus className="h-4 w-4" />
+              <span className="hidden sm:inline">Neue Übung</span>
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -138,6 +188,15 @@ export default function KonditionOverview() {
                 <option key={a.key} value={a.key}>{a.label}</option>
               ))}
             </select>
+            <select
+              value={source}
+              onChange={(e) => setSource(e.target.value as typeof source)}
+              className="h-8 rounded-md border border-input bg-background px-2 text-xs font-medium"
+            >
+              <option value="all">Alle Quellen</option>
+              <option value="official">Nur offiziell</option>
+              <option value="community">Nur Community</option>
+            </select>
             <button
               type="button"
               onClick={() => setOnlyFavs((v) => !v)}
@@ -164,6 +223,8 @@ export default function KonditionOverview() {
             {filtered.map((e) => {
               const isFav = favs.has(e.id);
               const gradient = SUB_COLORS[e.subcategory];
+              const isCom = !!(e as { isCommunity?: boolean }).isCommunity;
+              const author = (e as { authorName?: string | null }).authorName;
               return (
                 <div key={e.id} className="relative">
                   <Link
@@ -171,14 +232,18 @@ export default function KonditionOverview() {
                     params={{ exerciseId: e.id }}
                     className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm ring-1 ring-black/[0.02] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-xl"
                   >
-                    {/* Farbiger Header-Streifen */}
                     <div className={`relative h-24 bg-gradient-to-br ${gradient} p-4 text-white`}>
                       <div className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full bg-white/20 blur-2xl" />
                       <div className="pointer-events-none absolute -bottom-8 -left-6 h-20 w-20 rounded-full bg-black/10 blur-2xl" />
-                      <div className="relative flex items-start justify-between">
+                      <div className="relative flex items-start justify-between gap-2">
                         <span className="rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider backdrop-blur-sm">
                           {e.subcategory}
                         </span>
+                        {isCom && (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-white/25 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider backdrop-blur-sm">
+                            <Sparkles className="h-3 w-3" /> Community
+                          </span>
+                        )}
                       </div>
                       <div className="relative mt-3 text-lg font-bold leading-tight drop-shadow-sm line-clamp-2">
                         {e.title}
@@ -190,18 +255,20 @@ export default function KonditionOverview() {
                       <div className="mt-auto flex flex-wrap gap-2 text-[11px] font-medium text-foreground/80">
                         <Chip icon={<Clock className="h-3 w-3" />}>{e.duration}</Chip>
                         <Chip icon={<Users className="h-3 w-3" />}>{e.groupSize}</Chip>
-                        <Chip icon={<Package className="h-3 w-3" />}>{truncate(e.material, 22)}</Chip>
+                        {e.material && <Chip icon={<Package className="h-3 w-3" />}>{truncate(e.material, 22)}</Chip>}
                       </div>
+                      {isCom && author && (
+                        <div className="text-[11px] text-muted-foreground">von {author}</div>
+                      )}
                     </div>
                   </Link>
 
-                  {/* Favoriten-Button */}
                   <button
                     type="button"
                     onClick={(ev) => {
                       ev.preventDefault();
                       ev.stopPropagation();
-                      konditionActions.toggleFav(e.id);
+                      toggleFav(e.id);
                     }}
                     aria-label={isFav ? "Favorit entfernen" : "Als Favorit speichern"}
                     className="absolute right-3 top-3 z-10 inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/25 text-white backdrop-blur-sm transition hover:bg-white/40"

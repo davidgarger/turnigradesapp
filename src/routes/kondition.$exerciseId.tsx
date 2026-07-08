@@ -3,6 +3,7 @@ import { createFileRoute, useParams, useNavigate } from "@tanstack/react-router"
 import { Heart, Trash2, Download, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { konditionActions, useExercises, useFavorites } from "@/lib/kondition-store";
+import { useCommunityExercises, useCloudFavorites, useCurrentUserId, deleteCommunityExercise } from "@/lib/community-store";
 import { downloadExercisePdf } from "@/lib/pdf-exercise";
 import { ExercisePosterModal } from "@/components/ExercisePosterModal";
 import KonditionOverview from "./kondition.index";
@@ -14,9 +15,13 @@ export const Route = createFileRoute("/kondition/$exerciseId")({
 function ExerciseDetail() {
   const { exerciseId } = useParams({ from: "/kondition/$exerciseId" });
   const navigate = useNavigate();
-  const exercises = useExercises();
-  const favs = useFavorites();
-  const ex = exercises.find((e) => e.id === exerciseId);
+  const localExercises = useExercises();
+  const { list: community } = useCommunityExercises();
+  const localFavs = useFavorites();
+  const { favs: cloudFavs, toggle: toggleCloudFav } = useCloudFavorites();
+  const uid = useCurrentUserId();
+  const ex = localExercises.find((e) => e.id === exerciseId) ?? community.find((e) => e.id === exerciseId);
+  const isCommunity = !!community.find((e) => e.id === exerciseId);
 
   const [pdfBusy, setPdfBusy] = useState(false);
 
@@ -50,7 +55,30 @@ function ExerciseDetail() {
     );
   }
 
+  const favs = new Set<string>([...localFavs, ...cloudFavs]);
   const isFav = favs.has(ex.id);
+
+
+  const handleFav = () => {
+    konditionActions.toggleFav(ex.id);
+    if (uid) void toggleCloudFav(ex.id);
+  };
+
+  const handleDelete = async () => {
+    if (!confirm(`„${ex.title}" wirklich löschen?`)) return;
+    try {
+      if (isCommunity) {
+        await deleteCommunityExercise(ex.id);
+      } else {
+        konditionActions.remove(ex.id);
+      }
+      toast.success("Übung gelöscht");
+      navigate({ to: "/kondition" });
+    } catch (err) {
+      console.error(err);
+      toast.error("Löschen fehlgeschlagen");
+    }
+  };
 
   return (
     <>
@@ -73,7 +101,7 @@ function ExerciseDetail() {
             </button>
             <button
               type="button"
-              onClick={() => konditionActions.toggleFav(ex.id)}
+              onClick={handleFav}
               className={`inline-flex h-9 w-9 items-center justify-center rounded-full shadow ${
                 isFav ? "bg-rose-100 text-rose-600" : "bg-white/95 text-slate-700 hover:bg-white"
               }`}
@@ -83,13 +111,7 @@ function ExerciseDetail() {
             </button>
             <button
               type="button"
-              onClick={() => {
-                if (confirm(`„${ex.title}" wirklich löschen?`)) {
-                  konditionActions.remove(ex.id);
-                  toast.success("Übung gelöscht");
-                  navigate({ to: "/kondition" });
-                }
-              }}
+              onClick={handleDelete}
               className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/95 text-rose-600 shadow hover:bg-white"
               aria-label="Löschen"
             >

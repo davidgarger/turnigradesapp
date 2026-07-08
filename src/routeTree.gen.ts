@@ -24,6 +24,7 @@ import { Route as KonditionIndexRouteImport } from './routes/kondition.index'
 import { Route as KonditionNeuRouteImport } from './routes/kondition.neu'
 import { Route as KonditionExerciseIdRouteImport } from './routes/kondition.$exerciseId'
 import { Route as KlasseClassIdRouteImport } from './routes/klasse.$classId'
+import { Route as AdminUebungenRouteImport } from './routes/admin.uebungen'
 import { Route as KlasseClassIdQuickRouteImport } from './routes/klasse.$classId.quick'
 import { Route as KlasseClassIdDisziplinenRouteImport } from './routes/klasse.$classId.disziplinen'
 
@@ -102,6 +103,11 @@ const KlasseClassIdRoute = KlasseClassIdRouteImport.update({
   path: '/klasse/$classId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminUebungenRoute = AdminUebungenRouteImport.update({
+  id: '/admin/uebungen',
+  path: '/admin/uebungen',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const KlasseClassIdQuickRoute = KlasseClassIdQuickRouteImport.update({
   id: '/quick',
   path: '/quick',
@@ -126,6 +132,7 @@ export interface FileRoutesByFullPath {
   '/notenuebersicht': typeof NotenuebersichtRoute
   '/stationenkarten': typeof StationenkartenRoute
   '/uebungssammlungen': typeof UebungssammlungenRoute
+  '/admin/uebungen': typeof AdminUebungenRoute
   '/klasse/$classId': typeof KlasseClassIdRouteWithChildren
   '/kondition/$exerciseId': typeof KonditionExerciseIdRoute
   '/kondition/neu': typeof KonditionNeuRoute
@@ -144,6 +151,7 @@ export interface FileRoutesByTo {
   '/notenuebersicht': typeof NotenuebersichtRoute
   '/stationenkarten': typeof StationenkartenRoute
   '/uebungssammlungen': typeof UebungssammlungenRoute
+  '/admin/uebungen': typeof AdminUebungenRoute
   '/klasse/$classId': typeof KlasseClassIdRouteWithChildren
   '/kondition/$exerciseId': typeof KonditionExerciseIdRoute
   '/kondition/neu': typeof KonditionNeuRoute
@@ -164,6 +172,7 @@ export interface FileRoutesById {
   '/notenuebersicht': typeof NotenuebersichtRoute
   '/stationenkarten': typeof StationenkartenRoute
   '/uebungssammlungen': typeof UebungssammlungenRoute
+  '/admin/uebungen': typeof AdminUebungenRoute
   '/klasse/$classId': typeof KlasseClassIdRouteWithChildren
   '/kondition/$exerciseId': typeof KonditionExerciseIdRoute
   '/kondition/neu': typeof KonditionNeuRoute
@@ -185,6 +194,7 @@ export interface FileRouteTypes {
     | '/notenuebersicht'
     | '/stationenkarten'
     | '/uebungssammlungen'
+    | '/admin/uebungen'
     | '/klasse/$classId'
     | '/kondition/$exerciseId'
     | '/kondition/neu'
@@ -203,6 +213,7 @@ export interface FileRouteTypes {
     | '/notenuebersicht'
     | '/stationenkarten'
     | '/uebungssammlungen'
+    | '/admin/uebungen'
     | '/klasse/$classId'
     | '/kondition/$exerciseId'
     | '/kondition/neu'
@@ -222,6 +233,7 @@ export interface FileRouteTypes {
     | '/notenuebersicht'
     | '/stationenkarten'
     | '/uebungssammlungen'
+    | '/admin/uebungen'
     | '/klasse/$classId'
     | '/kondition/$exerciseId'
     | '/kondition/neu'
@@ -242,6 +254,7 @@ export interface RootRouteChildren {
   NotenuebersichtRoute: typeof NotenuebersichtRoute
   StationenkartenRoute: typeof StationenkartenRoute
   UebungssammlungenRoute: typeof UebungssammlungenRoute
+  AdminUebungenRoute: typeof AdminUebungenRoute
   KlasseClassIdRoute: typeof KlasseClassIdRouteWithChildren
 }
 
@@ -352,6 +365,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof KlasseClassIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/uebungen': {
+      id: '/admin/uebungen'
+      path: '/admin/uebungen'
+      fullPath: '/admin/uebungen'
+      preLoaderRoute: typeof AdminUebungenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/klasse/$classId/quick': {
       id: '/klasse/$classId/quick'
       path: '/quick'
@@ -411,18 +431,9 @@ const rootRouteChildren: RootRouteChildren = {
   NotenuebersichtRoute: NotenuebersichtRoute,
   StationenkartenRoute: StationenkartenRoute,
   UebungssammlungenRoute: UebungssammlungenRoute,
+  AdminUebungenRoute: AdminUebungenRoute,
   KlasseClassIdRoute: KlasseClassIdRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
