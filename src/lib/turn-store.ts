@@ -273,6 +273,7 @@ function defaultState(): TurnState {
   return {
     classes,
     settings: defaultSettings,
+    classOrder: [...ALL_CLASS_IDS],
   };
 }
 
