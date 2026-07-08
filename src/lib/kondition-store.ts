@@ -54,12 +54,24 @@ function readAll(): Exercise[] {
     if (raw) {
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed)) {
-        // Migration: Vorschaubild für Gedächtnislauf ergänzen, falls noch leer
+        // Migration: Gedächtnislauf auf neue Version (Bild + korrekter Ablauf) bringen
         let changed = false;
+        const demo = DEMO_EXERCISES.find((d) => d.id === "demo_gedaechtnislauf");
         const migrated = parsed.map((e: Exercise) => {
-          if (e.id === "demo_gedaechtnislauf" && (!e.images || e.images.length === 0)) {
-            changed = true;
-            return { ...e, images: [gedaechtnislaufVorschau] };
+          if (e.id === "demo_gedaechtnislauf" && demo) {
+            const needsImage = !e.images || e.images.length === 0;
+            const needsSteps = !e.steps?.[0]?.startsWith("Klasse in Gruppen einteilen");
+            if (needsImage || needsSteps) {
+              changed = true;
+              return {
+                ...e,
+                images: needsImage ? [gedaechtnislaufVorschau] : e.images,
+                steps: needsSteps ? demo.steps : e.steps,
+                shortDescription: needsSteps ? demo.shortDescription : e.shortDescription,
+                goal: needsSteps ? demo.goal : e.goal,
+                material: needsSteps ? demo.material : e.material,
+              };
+            }
           }
           return e;
         });
@@ -153,20 +165,20 @@ export const DEMO_EXERCISES: Exercise[] = [
     title: "Gedächtnislauf",
     subcategory: "Aufwärm-Laufspiele",
     shortDescription:
-      "Kinder laufen zu einem Merkbereich, prägen sich Symbole oder Karten ein und ordnen sie im Team richtig zu.",
+      "Vorne liegt ein Blatt mit allen Symbolen, hinten ein leeres Blatt. Die Kinder laufen los, merken sich pro Lauf ein Symbol und übertragen es am Startpunkt an die richtige Stelle.",
     goal:
-      "Kondition, Konzentration und Zusammenarbeit verbinden – laufen, merken, richtig zuordnen.",
+      "Kondition, Konzentration und Zusammenarbeit verbinden – laufen, ein Symbol merken und korrekt übertragen.",
     steps: [
-      "Merkbereich auf der einen Hallenseite aufbauen: dort liegen frei wählbare Symbole, Bilder oder Karten (Platzhalter – später beliebig austauschbar).",
-      "Auf der anderen Seite arbeiten die Gruppen an einer Ablagefläche, wo die Informationen richtig zugeordnet werden.",
-      "Immer ein Kind pro Gruppe läuft los, merkt sich ein Element und läuft zurück.",
-      "In der Gruppe wird das Element benannt, zugeordnet oder passend abgelegt.",
-      "Danach startet das nächste Kind – bis alle Elemente korrekt zugeordnet sind.",
+      "Klasse in Gruppen einteilen. Jede Gruppe erhält vorne (am Merkbereich) ein Blatt mit allen Symbolen und hinten (am Startpunkt) ein leeres Blatt mit denselben Feldern.",
+      "Immer ein Kind pro Gruppe läuft nach vorne und merkt sich genau ein Symbol – nicht mehr.",
+      "Zurück am Startpunkt trägt das Kind das gemerkte Symbol an der richtigen Stelle im leeren Blatt ein bzw. zeichnet es auf.",
+      "Danach startet das nächste Kind – pro Lauf nur ein Symbol.",
+      "Das Spiel läuft, bis alle Symbole korrekt vom vorderen auf das hintere Blatt übertragen sind.",
     ],
     duration: "15 Min",
     durationMinutes: 15,
     groupSize: "3er-/4er-Teams",
-    material: "Merkkarten oder Symbole (frei wählbar), Ablagefläche pro Gruppe",
+    material: "Pro Gruppe: 1 Blatt mit Symbolen (vorne) + 1 leeres Blatt mit denselben Feldern (hinten), Stift",
     ageGroup: "8–14 Jahre",
     ageMin: 8,
     ageMax: 14,

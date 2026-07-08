@@ -1,7 +1,8 @@
 import { createFileRoute, useParams, useNavigate } from "@tanstack/react-router";
-import { Heart, Trash2 } from "lucide-react";
+import { Heart, Trash2, Printer } from "lucide-react";
 import { toast } from "sonner";
 import { konditionActions, useExercises, useFavorites } from "@/lib/kondition-store";
+import { printExercise } from "@/lib/print-exercise";
 import { ExercisePosterModal } from "@/components/ExercisePosterModal";
 import KonditionOverview from "./kondition.index";
 
@@ -42,6 +43,16 @@ function ExerciseDetail() {
         onClose={close}
         actions={
           <>
+            <button
+              type="button"
+              onClick={() => printExercise(ex)}
+              className="inline-flex h-9 items-center gap-1.5 rounded-full bg-white/95 px-3 text-sm font-medium text-slate-700 shadow hover:bg-white"
+              aria-label="Als PDF drucken"
+              title="Als PDF drucken"
+            >
+              <Printer className="h-4 w-4" />
+              PDF
+            </button>
             <button
               type="button"
               onClick={() => konditionActions.toggleFav(ex.id)}
