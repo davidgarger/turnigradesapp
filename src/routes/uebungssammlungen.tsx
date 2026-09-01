@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, LayoutGrid, Activity, ShieldCheck } from "lucide-react";
+import { ArrowLeft, LayoutGrid, Activity, ShieldCheck, Gamepad2 } from "lucide-react";
 import { TurniLogo } from "@/components/TurniLogo";
 import { useCommunityExercises, useIsAdmin } from "@/lib/community-store";
 
