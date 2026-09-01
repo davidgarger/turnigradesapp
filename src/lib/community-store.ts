@@ -8,11 +8,12 @@ import type {
 } from "@/lib/kondition-store";
 
 export type CommunityStatus = "pending" | "approved" | "rejected";
-export type CommunityCategory = "kondition" | "stationenkarten";
+export type CommunityCategory = "kondition" | "stationenkarten" | "spiele";
 
 export const COMMUNITY_CATEGORIES: { value: CommunityCategory; label: string }[] = [
   { value: "kondition", label: "Kondition" },
   { value: "stationenkarten", label: "Stationenkarten" },
+  { value: "spiele", label: "Spiele" },
 ];
 
 export type CommunityExercise = Exercise & {

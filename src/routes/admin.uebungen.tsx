@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, ShieldCheck, Check, X, Trash2, Loader2, Activity, LayoutGrid } from "lucide-react";
+import { ArrowLeft, ShieldCheck, Check, X, Trash2, Loader2, Activity, LayoutGrid, Gamepad2 } from "lucide-react";
 import { toast } from "sonner";
 import {
   useCommunityExercises,
@@ -208,6 +208,13 @@ function FilterChip({ active, onClick, count, children }: { active: boolean; onC
 }
 
 function CategoryBadge({ category }: { category: CommunityCategory | null }) {
+  if (category === "spiele") {
+    return (
+      <span className="inline-flex items-center gap-1 rounded-full bg-fuchsia-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-fuchsia-700 ring-1 ring-fuchsia-200">
+        <Gamepad2 className="h-3 w-3" /> Spiele
+      </span>
+    );
+  }
   if (category === "stationenkarten") {
     return (
       <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-emerald-700 ring-1 ring-emerald-200">

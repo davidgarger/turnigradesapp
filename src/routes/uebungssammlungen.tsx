@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, LayoutGrid, Activity, ShieldCheck } from "lucide-react";
+import { ArrowLeft, LayoutGrid, Activity, ShieldCheck, Gamepad2 } from "lucide-react";
 import { TurniLogo } from "@/components/TurniLogo";
 import { useCommunityExercises, useIsAdmin } from "@/lib/community-store";
 
@@ -14,7 +14,7 @@ export const Route = createFileRoute("/uebungssammlungen")({
 });
 
 type Card = {
-  to: "/stationenkarten" | "/kondition";
+  to: "/stationenkarten" | "/kondition" | "/spiele";
   title: string;
   description: string;
   gradient: string;
@@ -38,6 +38,14 @@ const CARDS: Card[] = [
     gradient: "from-lime-400 via-green-500 to-emerald-600",
     glow: "shadow-emerald-500/30",
     icon: <Activity className="h-6 w-6" />,
+  },
+  {
+    to: "/spiele",
+    title: "Spiele",
+    description: "Aufwärm-, Fang-, Ball- und Kooperationsspiele.",
+    gradient: "from-fuchsia-500 via-purple-500 to-indigo-600",
+    glow: "shadow-fuchsia-500/30",
+    icon: <Gamepad2 className="h-6 w-6" />,
   },
 ];
 
