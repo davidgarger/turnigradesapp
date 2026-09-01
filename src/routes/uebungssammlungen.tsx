@@ -39,6 +39,14 @@ const CARDS: Card[] = [
     glow: "shadow-emerald-500/30",
     icon: <Activity className="h-6 w-6" />,
   },
+  {
+    to: "/spiele",
+    title: "Spiele",
+    description: "Aufwärm-, Fang-, Ball- und Kooperationsspiele.",
+    gradient: "from-fuchsia-500 via-purple-500 to-indigo-600",
+    glow: "shadow-fuchsia-500/30",
+    icon: <Gamepad2 className="h-6 w-6" />,
+  },
 ];
 
 function UebungssammlungenIndex() {
