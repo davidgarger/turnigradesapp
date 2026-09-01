@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, ShieldCheck, Check, X, Trash2, Loader2, Activity, LayoutGrid } from "lucide-react";
+import { ArrowLeft, ShieldCheck, Check, X, Trash2, Loader2, Activity, LayoutGrid, Gamepad2 } from "lucide-react";
 import { toast } from "sonner";
 import {
   useCommunityExercises,
