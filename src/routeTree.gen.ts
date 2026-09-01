@@ -21,6 +21,7 @@ import { Route as DatenschutzRouteImport } from './routes/datenschutz'
 import { Route as ArchivRouteImport } from './routes/archiv'
 import { Route as ArbeitsauftragRouteImport } from './routes/arbeitsauftrag'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SpieleIndexRouteImport } from './routes/spiele.index'
 import { Route as KonditionIndexRouteImport } from './routes/kondition.index'
 import { Route as SpieleNeuRouteImport } from './routes/spiele.neu'
 import { Route as KonditionNeuRouteImport } from './routes/kondition.neu'
@@ -90,6 +91,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SpieleIndexRoute = SpieleIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SpieleRoute,
+} as any)
 const KonditionIndexRoute = KonditionIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -151,6 +157,7 @@ export interface FileRoutesByFullPath {
   '/kondition/neu': typeof KonditionNeuRoute
   '/spiele/neu': typeof SpieleNeuRoute
   '/kondition/': typeof KonditionIndexRoute
+  '/spiele/': typeof SpieleIndexRoute
   '/klasse/$classId/disziplinen': typeof KlasseClassIdDisziplinenRoute
   '/klasse/$classId/quick': typeof KlasseClassIdQuickRoute
 }
@@ -163,7 +170,6 @@ export interface FileRoutesByTo {
   '/impressum': typeof ImpressumRoute
   '/login': typeof LoginRoute
   '/notenuebersicht': typeof NotenuebersichtRoute
-  '/spiele': typeof SpieleRouteWithChildren
   '/stationenkarten': typeof StationenkartenRoute
   '/uebungssammlungen': typeof UebungssammlungenRoute
   '/admin/uebungen': typeof AdminUebungenRoute
@@ -172,6 +178,7 @@ export interface FileRoutesByTo {
   '/kondition/neu': typeof KonditionNeuRoute
   '/spiele/neu': typeof SpieleNeuRoute
   '/kondition': typeof KonditionIndexRoute
+  '/spiele': typeof SpieleIndexRoute
   '/klasse/$classId/disziplinen': typeof KlasseClassIdDisziplinenRoute
   '/klasse/$classId/quick': typeof KlasseClassIdQuickRoute
 }
@@ -195,6 +202,7 @@ export interface FileRoutesById {
   '/kondition/neu': typeof KonditionNeuRoute
   '/spiele/neu': typeof SpieleNeuRoute
   '/kondition/': typeof KonditionIndexRoute
+  '/spiele/': typeof SpieleIndexRoute
   '/klasse/$classId/disziplinen': typeof KlasseClassIdDisziplinenRoute
   '/klasse/$classId/quick': typeof KlasseClassIdQuickRoute
 }
@@ -219,6 +227,7 @@ export interface FileRouteTypes {
     | '/kondition/neu'
     | '/spiele/neu'
     | '/kondition/'
+    | '/spiele/'
     | '/klasse/$classId/disziplinen'
     | '/klasse/$classId/quick'
   fileRoutesByTo: FileRoutesByTo
@@ -231,7 +240,6 @@ export interface FileRouteTypes {
     | '/impressum'
     | '/login'
     | '/notenuebersicht'
-    | '/spiele'
     | '/stationenkarten'
     | '/uebungssammlungen'
     | '/admin/uebungen'
@@ -240,6 +248,7 @@ export interface FileRouteTypes {
     | '/kondition/neu'
     | '/spiele/neu'
     | '/kondition'
+    | '/spiele'
     | '/klasse/$classId/disziplinen'
     | '/klasse/$classId/quick'
   id:
@@ -262,6 +271,7 @@ export interface FileRouteTypes {
     | '/kondition/neu'
     | '/spiele/neu'
     | '/kondition/'
+    | '/spiele/'
     | '/klasse/$classId/disziplinen'
     | '/klasse/$classId/quick'
   fileRoutesById: FileRoutesById
@@ -369,6 +379,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/spiele/': {
+      id: '/spiele/'
+      path: '/'
+      fullPath: '/spiele/'
+      preLoaderRoute: typeof SpieleIndexRouteImport
+      parentRoute: typeof SpieleRoute
+    }
     '/kondition/': {
       id: '/kondition/'
       path: '/'
@@ -446,10 +463,12 @@ const KonditionRouteWithChildren = KonditionRoute._addFileChildren(
 
 interface SpieleRouteChildren {
   SpieleNeuRoute: typeof SpieleNeuRoute
+  SpieleIndexRoute: typeof SpieleIndexRoute
 }
 
 const SpieleRouteChildren: SpieleRouteChildren = {
   SpieleNeuRoute: SpieleNeuRoute,
+  SpieleIndexRoute: SpieleIndexRoute,
 }
 
 const SpieleRouteWithChildren =
