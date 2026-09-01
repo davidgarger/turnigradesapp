@@ -14,7 +14,7 @@ export const Route = createFileRoute("/uebungssammlungen")({
 });
 
 type Card = {
-  to: "/stationenkarten" | "/kondition";
+  to: "/stationenkarten" | "/kondition" | "/spiele";
   title: string;
   description: string;
   gradient: string;
