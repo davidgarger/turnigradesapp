@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UebungssammlungenRouteImport } from './routes/uebungssammlungen'
 import { Route as StationenkartenRouteImport } from './routes/stationenkarten'
+import { Route as SpieleRouteImport } from './routes/spiele'
 import { Route as NotenuebersichtRouteImport } from './routes/notenuebersicht'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as KonditionRouteImport } from './routes/kondition'
@@ -21,6 +22,7 @@ import { Route as ArchivRouteImport } from './routes/archiv'
 import { Route as ArbeitsauftragRouteImport } from './routes/arbeitsauftrag'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as KonditionIndexRouteImport } from './routes/kondition.index'
+import { Route as SpieleNeuRouteImport } from './routes/spiele.neu'
 import { Route as KonditionNeuRouteImport } from './routes/kondition.neu'
 import { Route as KonditionExerciseIdRouteImport } from './routes/kondition.$exerciseId'
 import { Route as KlasseClassIdRouteImport } from './routes/klasse.$classId'
@@ -36,6 +38,11 @@ const UebungssammlungenRoute = UebungssammlungenRouteImport.update({
 const StationenkartenRoute = StationenkartenRouteImport.update({
   id: '/stationenkarten',
   path: '/stationenkarten',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SpieleRoute = SpieleRouteImport.update({
+  id: '/spiele',
+  path: '/spiele',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NotenuebersichtRoute = NotenuebersichtRouteImport.update({
@@ -88,6 +95,11 @@ const KonditionIndexRoute = KonditionIndexRouteImport.update({
   path: '/',
   getParentRoute: () => KonditionRoute,
 } as any)
+const SpieleNeuRoute = SpieleNeuRouteImport.update({
+  id: '/neu',
+  path: '/neu',
+  getParentRoute: () => SpieleRoute,
+} as any)
 const KonditionNeuRoute = KonditionNeuRouteImport.update({
   id: '/neu',
   path: '/neu',
@@ -130,12 +142,14 @@ export interface FileRoutesByFullPath {
   '/kondition': typeof KonditionRouteWithChildren
   '/login': typeof LoginRoute
   '/notenuebersicht': typeof NotenuebersichtRoute
+  '/spiele': typeof SpieleRouteWithChildren
   '/stationenkarten': typeof StationenkartenRoute
   '/uebungssammlungen': typeof UebungssammlungenRoute
   '/admin/uebungen': typeof AdminUebungenRoute
   '/klasse/$classId': typeof KlasseClassIdRouteWithChildren
   '/kondition/$exerciseId': typeof KonditionExerciseIdRoute
   '/kondition/neu': typeof KonditionNeuRoute
+  '/spiele/neu': typeof SpieleNeuRoute
   '/kondition/': typeof KonditionIndexRoute
   '/klasse/$classId/disziplinen': typeof KlasseClassIdDisziplinenRoute
   '/klasse/$classId/quick': typeof KlasseClassIdQuickRoute
@@ -149,12 +163,14 @@ export interface FileRoutesByTo {
   '/impressum': typeof ImpressumRoute
   '/login': typeof LoginRoute
   '/notenuebersicht': typeof NotenuebersichtRoute
+  '/spiele': typeof SpieleRouteWithChildren
   '/stationenkarten': typeof StationenkartenRoute
   '/uebungssammlungen': typeof UebungssammlungenRoute
   '/admin/uebungen': typeof AdminUebungenRoute
   '/klasse/$classId': typeof KlasseClassIdRouteWithChildren
   '/kondition/$exerciseId': typeof KonditionExerciseIdRoute
   '/kondition/neu': typeof KonditionNeuRoute
+  '/spiele/neu': typeof SpieleNeuRoute
   '/kondition': typeof KonditionIndexRoute
   '/klasse/$classId/disziplinen': typeof KlasseClassIdDisziplinenRoute
   '/klasse/$classId/quick': typeof KlasseClassIdQuickRoute
@@ -170,12 +186,14 @@ export interface FileRoutesById {
   '/kondition': typeof KonditionRouteWithChildren
   '/login': typeof LoginRoute
   '/notenuebersicht': typeof NotenuebersichtRoute
+  '/spiele': typeof SpieleRouteWithChildren
   '/stationenkarten': typeof StationenkartenRoute
   '/uebungssammlungen': typeof UebungssammlungenRoute
   '/admin/uebungen': typeof AdminUebungenRoute
   '/klasse/$classId': typeof KlasseClassIdRouteWithChildren
   '/kondition/$exerciseId': typeof KonditionExerciseIdRoute
   '/kondition/neu': typeof KonditionNeuRoute
+  '/spiele/neu': typeof SpieleNeuRoute
   '/kondition/': typeof KonditionIndexRoute
   '/klasse/$classId/disziplinen': typeof KlasseClassIdDisziplinenRoute
   '/klasse/$classId/quick': typeof KlasseClassIdQuickRoute
@@ -192,12 +210,14 @@ export interface FileRouteTypes {
     | '/kondition'
     | '/login'
     | '/notenuebersicht'
+    | '/spiele'
     | '/stationenkarten'
     | '/uebungssammlungen'
     | '/admin/uebungen'
     | '/klasse/$classId'
     | '/kondition/$exerciseId'
     | '/kondition/neu'
+    | '/spiele/neu'
     | '/kondition/'
     | '/klasse/$classId/disziplinen'
     | '/klasse/$classId/quick'
@@ -211,12 +231,14 @@ export interface FileRouteTypes {
     | '/impressum'
     | '/login'
     | '/notenuebersicht'
+    | '/spiele'
     | '/stationenkarten'
     | '/uebungssammlungen'
     | '/admin/uebungen'
     | '/klasse/$classId'
     | '/kondition/$exerciseId'
     | '/kondition/neu'
+    | '/spiele/neu'
     | '/kondition'
     | '/klasse/$classId/disziplinen'
     | '/klasse/$classId/quick'
@@ -231,12 +253,14 @@ export interface FileRouteTypes {
     | '/kondition'
     | '/login'
     | '/notenuebersicht'
+    | '/spiele'
     | '/stationenkarten'
     | '/uebungssammlungen'
     | '/admin/uebungen'
     | '/klasse/$classId'
     | '/kondition/$exerciseId'
     | '/kondition/neu'
+    | '/spiele/neu'
     | '/kondition/'
     | '/klasse/$classId/disziplinen'
     | '/klasse/$classId/quick'
@@ -252,6 +276,7 @@ export interface RootRouteChildren {
   KonditionRoute: typeof KonditionRouteWithChildren
   LoginRoute: typeof LoginRoute
   NotenuebersichtRoute: typeof NotenuebersichtRoute
+  SpieleRoute: typeof SpieleRouteWithChildren
   StationenkartenRoute: typeof StationenkartenRoute
   UebungssammlungenRoute: typeof UebungssammlungenRoute
   AdminUebungenRoute: typeof AdminUebungenRoute
@@ -272,6 +297,13 @@ declare module '@tanstack/react-router' {
       path: '/stationenkarten'
       fullPath: '/stationenkarten'
       preLoaderRoute: typeof StationenkartenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/spiele': {
+      id: '/spiele'
+      path: '/spiele'
+      fullPath: '/spiele'
+      preLoaderRoute: typeof SpieleRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/notenuebersicht': {
@@ -344,6 +376,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof KonditionIndexRouteImport
       parentRoute: typeof KonditionRoute
     }
+    '/spiele/neu': {
+      id: '/spiele/neu'
+      path: '/neu'
+      fullPath: '/spiele/neu'
+      preLoaderRoute: typeof SpieleNeuRouteImport
+      parentRoute: typeof SpieleRoute
+    }
     '/kondition/neu': {
       id: '/kondition/neu'
       path: '/neu'
@@ -405,6 +444,17 @@ const KonditionRouteWithChildren = KonditionRoute._addFileChildren(
   KonditionRouteChildren,
 )
 
+interface SpieleRouteChildren {
+  SpieleNeuRoute: typeof SpieleNeuRoute
+}
+
+const SpieleRouteChildren: SpieleRouteChildren = {
+  SpieleNeuRoute: SpieleNeuRoute,
+}
+
+const SpieleRouteWithChildren =
+  SpieleRoute._addFileChildren(SpieleRouteChildren)
+
 interface KlasseClassIdRouteChildren {
   KlasseClassIdDisziplinenRoute: typeof KlasseClassIdDisziplinenRoute
   KlasseClassIdQuickRoute: typeof KlasseClassIdQuickRoute
@@ -429,6 +479,7 @@ const rootRouteChildren: RootRouteChildren = {
   KonditionRoute: KonditionRouteWithChildren,
   LoginRoute: LoginRoute,
   NotenuebersichtRoute: NotenuebersichtRoute,
+  SpieleRoute: SpieleRouteWithChildren,
   StationenkartenRoute: StationenkartenRoute,
   UebungssammlungenRoute: UebungssammlungenRoute,
   AdminUebungenRoute: AdminUebungenRoute,
