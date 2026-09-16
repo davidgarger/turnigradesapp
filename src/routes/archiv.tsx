@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, Archive as ArchiveIcon, Trash2, GraduationCap, Users } from "lucide-react";
-import { turnActions, useTurnState, type ArchivedClass } from "@/lib/turn-store";
+import { turnActions, useTurnState, getDisciplineUnit, type ArchivedClass } from "@/lib/turn-store";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
@@ -117,7 +117,7 @@ function ArchivPage() {
                           {isOpen ? "Details ausblenden" : "Schüler & Disziplinen anzeigen"}
                         </button>
                         {isOpen && (
-                          <div className="max-h-60 overflow-y-auto border-t border-border bg-background p-3">
+                          <div className="max-h-72 overflow-y-auto border-t border-border bg-background p-3">
                             {a.data.disciplines.length > 0 && (
                               <div className="mb-3">
                                 <p className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
@@ -136,10 +136,47 @@ function ArchivPage() {
                               </div>
                             )}
                             <p className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                              Schüler
+                              {a.data.disciplines.length > 0 ? "Schüler & Werte" : "Schüler"}
                             </p>
                             {a.data.students.length === 0 ? (
                               <p className="text-center text-xs text-muted-foreground">Keine Schüler</p>
+                            ) : a.data.disciplines.length > 0 ? (
+                              <div className="-mx-1 overflow-x-auto px-1">
+                                <table className="w-full min-w-max text-left text-xs">
+                                  <thead>
+                                    <tr className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                                      <th className="py-1 pr-3 font-semibold">Schüler</th>
+                                      {a.data.disciplines.map((d) => (
+                                        <th key={d.id} className="px-2 py-1 text-center font-semibold">
+                                          {d.name}
+                                          <span className="block text-[9px] font-normal normal-case text-muted-foreground">
+                                            {getDisciplineUnit(d)}
+                                          </span>
+                                        </th>
+                                      ))}
+                                      <th className="px-2 py-1 text-center font-semibold">Anw.</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {a.data.students.map((st) => (
+                                      <tr key={st.id} className="border-t border-border/60">
+                                        <td className="py-1 pr-3 whitespace-nowrap">
+                                          {st.firstName} {st.lastName}
+                                        </td>
+                                        {a.data.disciplines.map((d) => {
+                                          const v = st.scores?.[d.id];
+                                          return (
+                                            <td key={d.id} className="px-2 py-1 text-center font-mono tabular-nums">
+                                              {typeof v === "number" && !Number.isNaN(v) ? v : <span className="text-muted-foreground">–</span>}
+                                            </td>
+                                          );
+                                        })}
+                                        <td className="px-2 py-1 text-center text-muted-foreground">{st.attended ?? 0}</td>
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </div>
                             ) : (
                               <ul className="space-y-1 text-xs">
                                 {a.data.students.map((st) => (
