@@ -114,7 +114,7 @@ function ArchivPage() {
                           onClick={() => setOpenId(isOpen ? null : a.id)}
                           className="flex w-full items-center justify-center gap-1 border-t border-border bg-muted/40 px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-muted"
                         >
-                          {isOpen ? "Schüler ausblenden" : "Schüler anzeigen"}
+                          {isOpen ? "Details ausblenden" : "Schüler & Disziplinen anzeigen"}
                         </button>
                         {isOpen && (
                           <div className="max-h-60 overflow-y-auto border-t border-border bg-background p-3">
