@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, Archive as ArchiveIcon, Trash2, GraduationCap, Users } from "lucide-react";
-import { turnActions, useTurnState, type ArchivedClass } from "@/lib/turn-store";
+import { turnActions, useTurnState, getDisciplineUnit, type ArchivedClass } from "@/lib/turn-store";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
