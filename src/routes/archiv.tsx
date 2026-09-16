@@ -114,10 +114,30 @@ function ArchivPage() {
                           onClick={() => setOpenId(isOpen ? null : a.id)}
                           className="flex w-full items-center justify-center gap-1 border-t border-border bg-muted/40 px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-muted"
                         >
-                          {isOpen ? "Schüler ausblenden" : "Schüler anzeigen"}
+                          {isOpen ? "Details ausblenden" : "Schüler & Disziplinen anzeigen"}
                         </button>
                         {isOpen && (
                           <div className="max-h-60 overflow-y-auto border-t border-border bg-background p-3">
+                            {a.data.disciplines.length > 0 && (
+                              <div className="mb-3">
+                                <p className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                                  Disziplinen
+                                </p>
+                                <div className="flex flex-wrap gap-1.5">
+                                  {a.data.disciplines.map((d) => (
+                                    <span
+                                      key={d.id}
+                                      className="rounded-full bg-muted px-2 py-0.5 text-[11px] text-foreground"
+                                    >
+                                      {d.name}
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                            <p className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                              Schüler
+                            </p>
                             {a.data.students.length === 0 ? (
                               <p className="text-center text-xs text-muted-foreground">Keine Schüler</p>
                             ) : (
