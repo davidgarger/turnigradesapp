@@ -661,6 +661,7 @@ function StudentRow({
       <td className="px-2 py-2 text-center">
         <div className="inline-flex items-center gap-1">
           <StudentHistoryDialog student={student} classId={classId} />
+          <MoveStudentDialog classId={classId} studentId={student.id} name={`${student.firstName} ${student.lastName}`} />
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <button
