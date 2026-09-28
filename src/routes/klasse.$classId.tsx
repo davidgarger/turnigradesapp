@@ -9,6 +9,7 @@ import {
   Search,
   Settings,
   Trash2,
+  ArrowRightLeft,
   ArrowUpDown,
   Zap,
   Undo2,
@@ -1509,5 +1510,56 @@ function DisciplinesManager({ cls }: { cls: ReturnType<typeof useTurnState>["cla
         </ul>
       )}
     </section>
+  );
+}
+
+function MoveStudentDialog({ classId, studentId, name }: { classId: ClassId; studentId: string; name: string }) {
+  const state = useTurnState();
+  const order = (state.classOrder ?? Object.keys(state.classes)) as ClassId[];
+  const targets = order.filter((id) => id !== classId && state.classes[id]);
+  const [target, setTarget] = useState<string>("");
+  return (
+    <AlertDialog onOpenChange={(o) => o && setTarget(targets[0] ?? "")}>
+      <AlertDialogTrigger asChild>
+        <button
+          className="inline-flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-primary/10 hover:text-primary"
+          aria-label="In andere Klasse verschieben"
+          title="In andere Klasse verschieben"
+        >
+          <ArrowRightLeft className="h-4 w-4" />
+        </button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Schüler verschieben</AlertDialogTitle>
+          <AlertDialogDescription>
+            {name} mit allen Werten in eine andere Klasse verschieben.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <select
+          value={target}
+          onChange={(e) => setTarget(e.target.value)}
+          className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+        >
+          {targets.map((id) => (
+            <option key={id} value={id}>
+              {state.classes[id].name}
+            </option>
+          ))}
+        </select>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Abbrechen</AlertDialogCancel>
+          <AlertDialogAction
+            disabled={!target}
+            onClick={() => {
+              turnActions.moveStudent(classId, target as ClassId, studentId);
+              toast.success(`Verschoben nach ${state.classes[target as ClassId]?.name}`);
+            }}
+          >
+            Verschieben
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }
