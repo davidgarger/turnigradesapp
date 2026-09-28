@@ -780,6 +780,23 @@ export const turnActions = {
       };
     });
   },
+  moveStudent(fromId: ClassId, toId: ClassId, studentId: string) {
+    if (fromId === toId) return;
+    setState((s) => {
+      const from = s.classes[fromId];
+      const to = s.classes[toId];
+      const st = from?.students.find((x) => x.id === studentId);
+      if (!st || !to) return s;
+      return {
+        ...s,
+        classes: {
+          ...s.classes,
+          [fromId]: { ...from, students: from.students.filter((x) => x.id !== studentId) },
+          [toId]: { ...to, students: [...to.students, st] },
+        },
+      };
+    });
+  },
   addExcuse(classId: ClassId, studentId: string, excuse: Omit<Excuse, "id"> & { id?: string }) {
     setState((s) => {
       const cls = s.classes[classId];
