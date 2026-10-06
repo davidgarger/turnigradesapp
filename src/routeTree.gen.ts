@@ -9,76 +9,31 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as UebungssammlungenRouteImport } from './routes/uebungssammlungen'
-import { Route as StationenkartenRouteImport } from './routes/stationenkarten'
-import { Route as SpieleRouteImport } from './routes/spiele'
-import { Route as NotenuebersichtRouteImport } from './routes/notenuebersicht'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as KonditionRouteImport } from './routes/kondition'
-import { Route as ImpressumRouteImport } from './routes/impressum'
-import { Route as EinstellungenRouteImport } from './routes/einstellungen'
-import { Route as DatenschutzRouteImport } from './routes/datenschutz'
-import { Route as ArchivRouteImport } from './routes/archiv'
-import { Route as ArbeitsauftragRouteImport } from './routes/arbeitsauftrag'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as SpieleIndexRouteImport } from './routes/spiele.index'
-import { Route as KonditionIndexRouteImport } from './routes/kondition.index'
-import { Route as SpieleNeuRouteImport } from './routes/spiele.neu'
-import { Route as KonditionNeuRouteImport } from './routes/kondition.neu'
-import { Route as KonditionExerciseIdRouteImport } from './routes/kondition.$exerciseId'
-import { Route as KlasseClassIdRouteImport } from './routes/klasse.$classId'
+import { Route as ArbeitsauftragRouteImport } from './routes/arbeitsauftrag'
+import { Route as ArchivRouteImport } from './routes/archiv'
+import { Route as DatenschutzRouteImport } from './routes/datenschutz'
+import { Route as EinstellungenRouteImport } from './routes/einstellungen'
+import { Route as ImpressumRouteImport } from './routes/impressum'
+import { Route as KonditionRouteImport } from './routes/kondition'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as NotenuebersichtRouteImport } from './routes/notenuebersicht'
+import { Route as SpieleRouteImport } from './routes/spiele'
+import { Route as StationenkartenRouteImport } from './routes/stationenkarten'
+import { Route as UebungssammlungenRouteImport } from './routes/uebungssammlungen'
 import { Route as AdminUebungenRouteImport } from './routes/admin.uebungen'
-import { Route as KlasseClassIdQuickRouteImport } from './routes/klasse.$classId.quick'
+import { Route as KlasseClassIdRouteImport } from './routes/klasse.$classId'
+import { Route as KonditionIndexRouteImport } from './routes/kondition.index'
+import { Route as KonditionExerciseIdRouteImport } from './routes/kondition.$exerciseId'
+import { Route as KonditionNeuRouteImport } from './routes/kondition.neu'
+import { Route as SpieleIndexRouteImport } from './routes/spiele.index'
+import { Route as SpieleNeuRouteImport } from './routes/spiele.neu'
 import { Route as KlasseClassIdDisziplinenRouteImport } from './routes/klasse.$classId.disziplinen'
+import { Route as KlasseClassIdQuickRouteImport } from './routes/klasse.$classId.quick'
 
-const UebungssammlungenRoute = UebungssammlungenRouteImport.update({
-  id: '/uebungssammlungen',
-  path: '/uebungssammlungen',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const StationenkartenRoute = StationenkartenRouteImport.update({
-  id: '/stationenkarten',
-  path: '/stationenkarten',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SpieleRoute = SpieleRouteImport.update({
-  id: '/spiele',
-  path: '/spiele',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NotenuebersichtRoute = NotenuebersichtRouteImport.update({
-  id: '/notenuebersicht',
-  path: '/notenuebersicht',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const KonditionRoute = KonditionRouteImport.update({
-  id: '/kondition',
-  path: '/kondition',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ImpressumRoute = ImpressumRouteImport.update({
-  id: '/impressum',
-  path: '/impressum',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EinstellungenRoute = EinstellungenRouteImport.update({
-  id: '/einstellungen',
-  path: '/einstellungen',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DatenschutzRoute = DatenschutzRouteImport.update({
-  id: '/datenschutz',
-  path: '/datenschutz',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ArchivRoute = ArchivRouteImport.update({
-  id: '/archiv',
-  path: '/archiv',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ArbeitsauftragRoute = ArbeitsauftragRouteImport.update({
@@ -86,39 +41,54 @@ const ArbeitsauftragRoute = ArbeitsauftragRouteImport.update({
   path: '/arbeitsauftrag',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const ArchivRoute = ArchivRouteImport.update({
+  id: '/archiv',
+  path: '/archiv',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SpieleIndexRoute = SpieleIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => SpieleRoute,
+const DatenschutzRoute = DatenschutzRouteImport.update({
+  id: '/datenschutz',
+  path: '/datenschutz',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const KonditionIndexRoute = KonditionIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => KonditionRoute,
+const EinstellungenRoute = EinstellungenRouteImport.update({
+  id: '/einstellungen',
+  path: '/einstellungen',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const SpieleNeuRoute = SpieleNeuRouteImport.update({
-  id: '/neu',
-  path: '/neu',
-  getParentRoute: () => SpieleRoute,
+const ImpressumRoute = ImpressumRouteImport.update({
+  id: '/impressum',
+  path: '/impressum',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const KonditionNeuRoute = KonditionNeuRouteImport.update({
-  id: '/neu',
-  path: '/neu',
-  getParentRoute: () => KonditionRoute,
+const KonditionRoute = KonditionRouteImport.update({
+  id: '/kondition',
+  path: '/kondition',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const KonditionExerciseIdRoute = KonditionExerciseIdRouteImport.update({
-  id: '/$exerciseId',
-  path: '/$exerciseId',
-  getParentRoute: () => KonditionRoute,
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const KlasseClassIdRoute = KlasseClassIdRouteImport.update({
-  id: '/klasse/$classId',
-  path: '/klasse/$classId',
+const NotenuebersichtRoute = NotenuebersichtRouteImport.update({
+  id: '/notenuebersicht',
+  path: '/notenuebersicht',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SpieleRoute = SpieleRouteImport.update({
+  id: '/spiele',
+  path: '/spiele',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StationenkartenRoute = StationenkartenRouteImport.update({
+  id: '/stationenkarten',
+  path: '/stationenkarten',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UebungssammlungenRoute = UebungssammlungenRouteImport.update({
+  id: '/uebungssammlungen',
+  path: '/uebungssammlungen',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminUebungenRoute = AdminUebungenRouteImport.update({
@@ -126,10 +96,35 @@ const AdminUebungenRoute = AdminUebungenRouteImport.update({
   path: '/admin/uebungen',
   getParentRoute: () => rootRouteImport,
 } as any)
-const KlasseClassIdQuickRoute = KlasseClassIdQuickRouteImport.update({
-  id: '/quick',
-  path: '/quick',
-  getParentRoute: () => KlasseClassIdRoute,
+const KlasseClassIdRoute = KlasseClassIdRouteImport.update({
+  id: '/klasse/$classId',
+  path: '/klasse/$classId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KonditionIndexRoute = KonditionIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => KonditionRoute,
+} as any)
+const KonditionExerciseIdRoute = KonditionExerciseIdRouteImport.update({
+  id: '/$exerciseId',
+  path: '/$exerciseId',
+  getParentRoute: () => KonditionRoute,
+} as any)
+const KonditionNeuRoute = KonditionNeuRouteImport.update({
+  id: '/neu',
+  path: '/neu',
+  getParentRoute: () => KonditionRoute,
+} as any)
+const SpieleIndexRoute = SpieleIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SpieleRoute,
+} as any)
+const SpieleNeuRoute = SpieleNeuRouteImport.update({
+  id: '/neu',
+  path: '/neu',
+  getParentRoute: () => SpieleRoute,
 } as any)
 const KlasseClassIdDisziplinenRoute =
   KlasseClassIdDisziplinenRouteImport.update({
@@ -137,6 +132,11 @@ const KlasseClassIdDisziplinenRoute =
     path: '/disziplinen',
     getParentRoute: () => KlasseClassIdRoute,
   } as any)
+const KlasseClassIdQuickRoute = KlasseClassIdQuickRouteImport.update({
+  id: '/quick',
+  path: '/quick',
+  getParentRoute: () => KlasseClassIdRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -295,74 +295,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/uebungssammlungen': {
-      id: '/uebungssammlungen'
-      path: '/uebungssammlungen'
-      fullPath: '/uebungssammlungen'
-      preLoaderRoute: typeof UebungssammlungenRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/stationenkarten': {
-      id: '/stationenkarten'
-      path: '/stationenkarten'
-      fullPath: '/stationenkarten'
-      preLoaderRoute: typeof StationenkartenRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/spiele': {
-      id: '/spiele'
-      path: '/spiele'
-      fullPath: '/spiele'
-      preLoaderRoute: typeof SpieleRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/notenuebersicht': {
-      id: '/notenuebersicht'
-      path: '/notenuebersicht'
-      fullPath: '/notenuebersicht'
-      preLoaderRoute: typeof NotenuebersichtRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/kondition': {
-      id: '/kondition'
-      path: '/kondition'
-      fullPath: '/kondition'
-      preLoaderRoute: typeof KonditionRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/impressum': {
-      id: '/impressum'
-      path: '/impressum'
-      fullPath: '/impressum'
-      preLoaderRoute: typeof ImpressumRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/einstellungen': {
-      id: '/einstellungen'
-      path: '/einstellungen'
-      fullPath: '/einstellungen'
-      preLoaderRoute: typeof EinstellungenRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/datenschutz': {
-      id: '/datenschutz'
-      path: '/datenschutz'
-      fullPath: '/datenschutz'
-      preLoaderRoute: typeof DatenschutzRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/archiv': {
-      id: '/archiv'
-      path: '/archiv'
-      fullPath: '/archiv'
-      preLoaderRoute: typeof ArchivRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/arbeitsauftrag': {
@@ -372,53 +309,74 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ArbeitsauftragRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/archiv': {
+      id: '/archiv'
+      path: '/archiv'
+      fullPath: '/archiv'
+      preLoaderRoute: typeof ArchivRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/spiele/': {
-      id: '/spiele/'
-      path: '/'
-      fullPath: '/spiele/'
-      preLoaderRoute: typeof SpieleIndexRouteImport
-      parentRoute: typeof SpieleRoute
+    '/datenschutz': {
+      id: '/datenschutz'
+      path: '/datenschutz'
+      fullPath: '/datenschutz'
+      preLoaderRoute: typeof DatenschutzRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/kondition/': {
-      id: '/kondition/'
-      path: '/'
-      fullPath: '/kondition/'
-      preLoaderRoute: typeof KonditionIndexRouteImport
-      parentRoute: typeof KonditionRoute
+    '/einstellungen': {
+      id: '/einstellungen'
+      path: '/einstellungen'
+      fullPath: '/einstellungen'
+      preLoaderRoute: typeof EinstellungenRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/spiele/neu': {
-      id: '/spiele/neu'
-      path: '/neu'
-      fullPath: '/spiele/neu'
-      preLoaderRoute: typeof SpieleNeuRouteImport
-      parentRoute: typeof SpieleRoute
+    '/impressum': {
+      id: '/impressum'
+      path: '/impressum'
+      fullPath: '/impressum'
+      preLoaderRoute: typeof ImpressumRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/kondition/neu': {
-      id: '/kondition/neu'
-      path: '/neu'
-      fullPath: '/kondition/neu'
-      preLoaderRoute: typeof KonditionNeuRouteImport
-      parentRoute: typeof KonditionRoute
+    '/kondition': {
+      id: '/kondition'
+      path: '/kondition'
+      fullPath: '/kondition'
+      preLoaderRoute: typeof KonditionRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/kondition/$exerciseId': {
-      id: '/kondition/$exerciseId'
-      path: '/$exerciseId'
-      fullPath: '/kondition/$exerciseId'
-      preLoaderRoute: typeof KonditionExerciseIdRouteImport
-      parentRoute: typeof KonditionRoute
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/klasse/$classId': {
-      id: '/klasse/$classId'
-      path: '/klasse/$classId'
-      fullPath: '/klasse/$classId'
-      preLoaderRoute: typeof KlasseClassIdRouteImport
+    '/notenuebersicht': {
+      id: '/notenuebersicht'
+      path: '/notenuebersicht'
+      fullPath: '/notenuebersicht'
+      preLoaderRoute: typeof NotenuebersichtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/spiele': {
+      id: '/spiele'
+      path: '/spiele'
+      fullPath: '/spiele'
+      preLoaderRoute: typeof SpieleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stationenkarten': {
+      id: '/stationenkarten'
+      path: '/stationenkarten'
+      fullPath: '/stationenkarten'
+      preLoaderRoute: typeof StationenkartenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/uebungssammlungen': {
+      id: '/uebungssammlungen'
+      path: '/uebungssammlungen'
+      fullPath: '/uebungssammlungen'
+      preLoaderRoute: typeof UebungssammlungenRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/uebungen': {
@@ -428,18 +386,60 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminUebungenRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/klasse/$classId/quick': {
-      id: '/klasse/$classId/quick'
-      path: '/quick'
-      fullPath: '/klasse/$classId/quick'
-      preLoaderRoute: typeof KlasseClassIdQuickRouteImport
-      parentRoute: typeof KlasseClassIdRoute
+    '/klasse/$classId': {
+      id: '/klasse/$classId'
+      path: '/klasse/$classId'
+      fullPath: '/klasse/$classId'
+      preLoaderRoute: typeof KlasseClassIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kondition/': {
+      id: '/kondition/'
+      path: '/'
+      fullPath: '/kondition/'
+      preLoaderRoute: typeof KonditionIndexRouteImport
+      parentRoute: typeof KonditionRoute
+    }
+    '/kondition/$exerciseId': {
+      id: '/kondition/$exerciseId'
+      path: '/$exerciseId'
+      fullPath: '/kondition/$exerciseId'
+      preLoaderRoute: typeof KonditionExerciseIdRouteImport
+      parentRoute: typeof KonditionRoute
+    }
+    '/kondition/neu': {
+      id: '/kondition/neu'
+      path: '/neu'
+      fullPath: '/kondition/neu'
+      preLoaderRoute: typeof KonditionNeuRouteImport
+      parentRoute: typeof KonditionRoute
+    }
+    '/spiele/': {
+      id: '/spiele/'
+      path: '/'
+      fullPath: '/spiele/'
+      preLoaderRoute: typeof SpieleIndexRouteImport
+      parentRoute: typeof SpieleRoute
+    }
+    '/spiele/neu': {
+      id: '/spiele/neu'
+      path: '/neu'
+      fullPath: '/spiele/neu'
+      preLoaderRoute: typeof SpieleNeuRouteImport
+      parentRoute: typeof SpieleRoute
     }
     '/klasse/$classId/disziplinen': {
       id: '/klasse/$classId/disziplinen'
       path: '/disziplinen'
       fullPath: '/klasse/$classId/disziplinen'
       preLoaderRoute: typeof KlasseClassIdDisziplinenRouteImport
+      parentRoute: typeof KlasseClassIdRoute
+    }
+    '/klasse/$classId/quick': {
+      id: '/klasse/$classId/quick'
+      path: '/quick'
+      fullPath: '/klasse/$classId/quick'
+      preLoaderRoute: typeof KlasseClassIdQuickRouteImport
       parentRoute: typeof KlasseClassIdRoute
     }
   }
