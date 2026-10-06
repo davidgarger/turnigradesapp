@@ -44,6 +44,7 @@ import { supabase } from "@/integrations/supabase/client";
 import QuickSession from "@/components/QuickSession";
 import ImportStudentsDialog, { type ParsedStudent } from "@/components/ImportStudentsDialog";
 import TeamGenerator from "@/components/TeamGenerator";
+import ScoreCounter from "@/components/ScoreCounter";
 import ExcusesDialog from "@/components/ExcusesDialog";
 import { useScrollLock } from "@/hooks/use-scroll-lock";
 import { Camera } from "lucide-react";
@@ -313,6 +314,7 @@ function ClassPage() {
           </Button>
 
           <TeamGenerator cls={cls} />
+          <ScoreCounter />
         </div>
 
         <ImportStudentsDialog
