@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, Check, X, Backpack, Slash, FileCheck, FileX, Undo2 } from "lucide-react";
+import { ArrowLeft, Check, CheckCheck, X, Backpack, Slash, FileCheck, FileX, Undo2 } from "lucide-react";
 import { turnActions, useTurnState, type ClassId, type Student, undo, canUndo } from "@/lib/turn-store";
 import { StudentAvatar } from "@/components/StudentAvatar";
 import { toast } from "sonner";
@@ -118,6 +118,35 @@ export default function QuickSession({ classId, onClose }: Props) {
     : `translateX(${dragX}px) rotate(${rotation}deg)`;
 
   const nextStudent = students[index + 1];
+
+  // Noch nicht erfasste Schüler ab der aktuellen Position – für "Restliche auf 1×"
+  const lesson = useMemo(
+    () => (lessonId ? (cls?.lessons ?? []).find((l) => l.id === lessonId) : undefined),
+    [cls, lessonId],
+  );
+  const recorded = useMemo(
+    () => new Set((lesson?.entries ?? []).map((e) => e.studentId)),
+    [lesson],
+  );
+  const remaining = useMemo(
+    () => students.slice(index).filter((s) => !recorded.has(s.id)),
+    [students, index, recorded],
+  );
+  const remainingCount = lessonId ? remaining.length : 0;
+
+  const markAllRemaining = () => {
+    if (!lessonId || remaining.length === 0) return;
+    turnActions.recordLessonEntries(
+      classId,
+      lessonId,
+      remaining.map((s) => s.id),
+      "attended",
+    );
+    toast.success(`${remaining.length} Schüler als mitgeturnt bestätigt`, {
+      duration: 1600,
+    });
+    setIndex(students.length);
+  };
 
   return (
     <div className="fixed inset-0 z-[100] flex flex-col bg-gradient-to-b from-slate-50 to-white">
@@ -292,6 +321,8 @@ export default function QuickSession({ classId, onClose }: Props) {
                 onPointerCancel={onPointerUp}
                 classId={classId}
                 lessonId={lessonId}
+                remainingCount={remainingCount}
+                onMarkAllRemaining={markAllRemaining}
                 onAfterMark={() => {
                   setAnimating("right");
                   setTimeout(() => {
