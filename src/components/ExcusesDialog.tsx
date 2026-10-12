@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const BUCKET = "excuses";
 
@@ -177,16 +178,25 @@ export default function ExcusesDialog({
                     {newFile ? "Foto ändern" : "Foto aufnehmen / wählen"}
                   </Button>
                   {!newFile && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleAdd()}
-                      disabled={busy}
-                    >
-                      <Plus className="h-4 w-4" />
-                      Ohne Foto hinzufügen
-                    </Button>
+                    <TooltipProvider delayDuration={200}>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() => handleAdd()}
+                            disabled={busy}
+                            aria-label="Ohne Foto hinzufügen"
+                            title="Ohne Foto hinzufügen"
+                          >
+                            <Plus className="h-4 w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Ohne Foto hinzufügen</TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   )}
                   {newFile && (
                     <span className="inline-flex items-center gap-1 rounded-md bg-background px-2 py-1 text-xs text-muted-foreground">
