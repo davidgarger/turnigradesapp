@@ -729,6 +729,78 @@ export const turnActions = {
       };
     });
   },
+  // Mehrere Schüler in einem einzigen Schritt erfassen (z. B. "Restliche auf 1×
+  // mitgeturnt"). Bereits erfasste Schüler werden überschrieben und ihre alten
+  // Werte korrekt zurückgerechnet.
+  recordLessonEntries(
+    classId: ClassId,
+    lessonId: string,
+    studentIds: string[],
+    type: LessonEntryType,
+  ) {
+    const ids = new Set(studentIds);
+    if (ids.size === 0) return;
+    setState((s) => {
+      const cls = s.classes[classId];
+      if (!cls) return s;
+      const lessons = cls.lessons ?? [];
+      const lesson = lessons.find((l) => l.id === lessonId);
+      if (!lesson) return s;
+
+      const oldType = new Map<string, LessonEntryType>();
+      for (const e of lesson.entries) {
+        if (ids.has(e.studentId)) oldType.set(e.studentId, e.type);
+      }
+
+      const nextLesson: Lesson = {
+        ...lesson,
+        entries: [
+          ...lesson.entries.filter((e) => !ids.has(e.studentId)),
+          ...[...ids].map((studentId) => ({
+            studentId,
+            type,
+            at: new Date().toISOString(),
+          })),
+        ],
+      };
+
+      const bump = (st: Student, t: LessonEntryType, dir: 1 | -1): Student => {
+        const next = { ...st };
+        if (t === "attended") next.attended = Math.max(0, next.attended + dir);
+        else if (t === "forgottenKit")
+          next.forgottenKit = Math.max(0, next.forgottenKit + dir);
+        else if (t === "excused")
+          next.excusedNotParticipating = Math.max(0, next.excusedNotParticipating + dir);
+        else
+          next.unexcusedNotParticipating = Math.max(
+            0,
+            next.unexcusedNotParticipating + dir,
+          );
+        return next;
+      };
+
+      const students = cls.students.map((st) => {
+        if (!ids.has(st.id)) return st;
+        const from = oldType.get(st.id);
+        let next = st;
+        if (from && from !== type) next = bump(next, from, -1);
+        if (!from || from !== type) next = bump(next, type, 1);
+        return next;
+      });
+
+      return {
+        ...s,
+        classes: {
+          ...s.classes,
+          [classId]: {
+            ...cls,
+            lessons: lessons.map((l) => (l.id === lessonId ? nextLesson : l)),
+            students,
+          },
+        },
+      };
+    });
+  },
   updateStudent(classId: ClassId, studentId: string, patch: Partial<Student>) {
     setState((s) => {
       const cls = s.classes[classId];
