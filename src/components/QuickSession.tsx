@@ -366,6 +366,7 @@ interface StudentCardProps {
   student: Student;
   classId: ClassId;
   lessonId: string | null;
+  remainingCount: number;
   transform: string;
   animating: boolean;
   onPointerDown: (e: React.PointerEvent) => void;
@@ -373,12 +374,14 @@ interface StudentCardProps {
   onPointerUp: () => void;
   onPointerCancel: () => void;
   onAfterMark: () => void;
+  onMarkAllRemaining: () => void;
 }
 
 function StudentCard({
   student,
   classId,
   lessonId,
+  remainingCount,
   transform,
   animating,
   onPointerDown,
@@ -386,7 +389,10 @@ function StudentCard({
   onPointerUp,
   onPointerCancel,
   onAfterMark,
+  onMarkAllRemaining,
 }: StudentCardProps) {
+  const [confirmAll, setConfirmAll] = useState(false);
+
   const initials = useMemo(
     () => `${student.firstName.charAt(0)}${student.lastName.charAt(0)}`.toUpperCase(),
     [student.firstName, student.lastName],
