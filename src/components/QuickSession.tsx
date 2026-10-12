@@ -497,6 +497,34 @@ function StudentCard({
           >
             <Check className="h-5 w-5" /> Mitgeturnt → nächster
           </button>
+          {remainingCount > 0 && (
+            <button
+              type="button"
+              onClick={() => {
+                if (confirmAll) onMarkAllRemaining();
+                else setConfirmAll(true);
+              }}
+              className={`mt-2 inline-flex w-full items-center justify-center gap-2 rounded-xl border-2 px-4 py-3 text-sm font-bold transition active:scale-95 ${
+                confirmAll
+                  ? "border-emerald-500 bg-emerald-500 text-white shadow-md"
+                  : "border-dashed border-emerald-400 bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+              }`}
+            >
+              <CheckCheck className="h-4 w-4" />
+              {confirmAll
+                ? `Wirklich alle ${remainingCount} als mitgeturnt bestätigen?`
+                : `Restliche ${remainingCount} auf 1× mitgeturnt`}
+            </button>
+          )}
+          {remainingCount > 0 && confirmAll && (
+            <button
+              type="button"
+              onClick={() => setConfirmAll(false)}
+              className="mt-1 w-full text-center text-[11px] font-medium text-muted-foreground underline"
+            >
+              Doch nicht
+            </button>
+          )}
           <p className="mt-2 text-center text-[11px] text-muted-foreground">
             Tipp: nach rechts wischen = mitgeturnt
           </p>
