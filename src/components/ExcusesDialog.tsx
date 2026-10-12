@@ -176,6 +176,18 @@ export default function ExcusesDialog({
                     <Camera className="h-4 w-4" />
                     {newFile ? "Foto ändern" : "Foto aufnehmen / wählen"}
                   </Button>
+                  {!newFile && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleAdd()}
+                      disabled={busy}
+                    >
+                      <Plus className="h-4 w-4" />
+                      Ohne Foto hinzufügen
+                    </Button>
+                  )}
                   {newFile && (
                     <span className="inline-flex items-center gap-1 rounded-md bg-background px-2 py-1 text-xs text-muted-foreground">
                       <ImageIcon className="h-3 w-3" />
