@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, Check, X, Backpack, Slash, FileCheck, FileX, Undo2 } from "lucide-react";
+import { ArrowLeft, Check, CheckCheck, X, Backpack, Slash, FileCheck, FileX, Undo2 } from "lucide-react";
 import { turnActions, useTurnState, type ClassId, type Student, undo, canUndo } from "@/lib/turn-store";
 import { StudentAvatar } from "@/components/StudentAvatar";
 import { toast } from "sonner";
@@ -118,6 +118,35 @@ export default function QuickSession({ classId, onClose }: Props) {
     : `translateX(${dragX}px) rotate(${rotation}deg)`;
 
   const nextStudent = students[index + 1];
+
+  // Noch nicht erfasste Schüler ab der aktuellen Position – für "Restliche auf 1×"
+  const lesson = useMemo(
+    () => (lessonId ? (cls?.lessons ?? []).find((l) => l.id === lessonId) : undefined),
+    [cls, lessonId],
+  );
+  const recorded = useMemo(
+    () => new Set((lesson?.entries ?? []).map((e) => e.studentId)),
+    [lesson],
+  );
+  const remaining = useMemo(
+    () => students.slice(index).filter((s) => !recorded.has(s.id)),
+    [students, index, recorded],
+  );
+  const remainingCount = lessonId ? remaining.length : 0;
+
+  const markAllRemaining = () => {
+    if (!lessonId || remaining.length === 0) return;
+    turnActions.recordLessonEntries(
+      classId,
+      lessonId,
+      remaining.map((s) => s.id),
+      "attended",
+    );
+    toast.success(`${remaining.length} Schüler als mitgeturnt bestätigt`, {
+      duration: 1600,
+    });
+    setIndex(students.length);
+  };
 
   return (
     <div className="fixed inset-0 z-[100] flex flex-col bg-gradient-to-b from-slate-50 to-white">
@@ -292,6 +321,8 @@ export default function QuickSession({ classId, onClose }: Props) {
                 onPointerCancel={onPointerUp}
                 classId={classId}
                 lessonId={lessonId}
+                remainingCount={remainingCount}
+                onMarkAllRemaining={markAllRemaining}
                 onAfterMark={() => {
                   setAnimating("right");
                   setTimeout(() => {
@@ -335,6 +366,7 @@ interface StudentCardProps {
   student: Student;
   classId: ClassId;
   lessonId: string | null;
+  remainingCount: number;
   transform: string;
   animating: boolean;
   onPointerDown: (e: React.PointerEvent) => void;
@@ -342,12 +374,14 @@ interface StudentCardProps {
   onPointerUp: () => void;
   onPointerCancel: () => void;
   onAfterMark: () => void;
+  onMarkAllRemaining: () => void;
 }
 
 function StudentCard({
   student,
   classId,
   lessonId,
+  remainingCount,
   transform,
   animating,
   onPointerDown,
@@ -355,7 +389,10 @@ function StudentCard({
   onPointerUp,
   onPointerCancel,
   onAfterMark,
+  onMarkAllRemaining,
 }: StudentCardProps) {
+  const [confirmAll, setConfirmAll] = useState(false);
+
   const initials = useMemo(
     () => `${student.firstName.charAt(0)}${student.lastName.charAt(0)}`.toUpperCase(),
     [student.firstName, student.lastName],
@@ -460,6 +497,34 @@ function StudentCard({
           >
             <Check className="h-5 w-5" /> Mitgeturnt → nächster
           </button>
+          {remainingCount > 0 && (
+            <button
+              type="button"
+              onClick={() => {
+                if (confirmAll) onMarkAllRemaining();
+                else setConfirmAll(true);
+              }}
+              className={`mt-2 inline-flex w-full items-center justify-center gap-2 rounded-xl border-2 px-4 py-3 text-sm font-bold transition active:scale-95 ${
+                confirmAll
+                  ? "border-emerald-500 bg-emerald-500 text-white shadow-md"
+                  : "border-dashed border-emerald-400 bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
+              }`}
+            >
+              <CheckCheck className="h-4 w-4" />
+              {confirmAll
+                ? `Wirklich alle ${remainingCount} als mitgeturnt bestätigen?`
+                : `Restliche ${remainingCount} auf 1× mitgeturnt`}
+            </button>
+          )}
+          {remainingCount > 0 && confirmAll && (
+            <button
+              type="button"
+              onClick={() => setConfirmAll(false)}
+              className="mt-1 w-full text-center text-[11px] font-medium text-muted-foreground underline"
+            >
+              Doch nicht
+            </button>
+          )}
           <p className="mt-2 text-center text-[11px] text-muted-foreground">
             Tipp: nach rechts wischen = mitgeturnt
           </p>
