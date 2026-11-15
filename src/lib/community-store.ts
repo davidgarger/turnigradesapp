@@ -1,6 +1,7 @@
 // Community-Übungen — sync mit Lovable Cloud
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { exerciseImagePath } from './exercise-image-access';
 import type {
   Exercise,
   Subcategory,
@@ -99,13 +100,25 @@ export function useCommunityExercises(): {
       console.error("community_exercises load", error);
       setList([]);
     } else {
-      setList((data as Row[]).map(rowToExercise));
+      const exercises = await Promise.all((data as Row[]).map(async row => {
+        const exercise = rowToExercise(row);
+        exercise.images = await Promise.all(exercise.images.map(async image => {
+          const path = exerciseImagePath(image, import.meta.env.VITE_SUPABASE_URL);
+          if (!path) return image;
+          const { data: signed, error } = await supabase.storage.from('exercise-uploads').createSignedUrl(path, 3600);
+          return error ? '' : signed.signedUrl;
+        }));
+        exercise.images = exercise.images.filter(Boolean);
+        return exercise;
+      }));
+      setList(exercises);
     }
     setLoading(false);
   }, []);
 
   useEffect(() => {
     refresh();
+    const refreshImages = setInterval(() => void refresh(), 45 * 60 * 1000);
     const chName = `community_exercises_changes_${Math.random().toString(36).slice(2, 10)}`;
     const ch = supabase
       .channel(chName)
@@ -117,6 +130,7 @@ export function useCommunityExercises(): {
       .subscribe();
 
     return () => {
+      clearInterval(refreshImages);
       supabase.removeChannel(ch);
     };
   }, [refresh]);
@@ -243,8 +257,9 @@ export async function uploadExerciseImage(file: File): Promise<string> {
     .from("exercise-uploads")
     .upload(path, file, { contentType: file.type, upsert: false });
   if (error) throw error;
-  const { data } = supabase.storage.from("exercise-uploads").getPublicUrl(path);
-  return data.publicUrl;
+  const { data, error: signError } = await supabase.storage.from("exercise-uploads").createSignedUrl(path, 3600);
+  if (signError) throw signError;
+  return data.signedUrl;
 }
 
 export type SubmitCommunityInput = {
@@ -290,7 +305,7 @@ export async function submitCommunityExercise(input: SubmitCommunityInput): Prom
       age_min: input.ageMin,
       age_max: input.ageMax,
       difficulty: input.difficulty,
-      images: input.images,
+      images: input.images.map(image => exerciseImagePath(image, import.meta.env.VITE_SUPABASE_URL) ?? image),
       video_url: input.videoUrl ?? null,
       author_name: input.authorName ?? null,
     })
