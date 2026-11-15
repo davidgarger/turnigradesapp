@@ -67,6 +67,11 @@
   --color-status-danger-bg: var(--status-danger-bg);
   --color-status-danger-strong: var(--status-danger-strong);
   --color-status-danger-strong-bg: var(--status-danger-strong-bg);
+  /* Rollenfarben für die Anmeldeseite */
+  --color-role-teacher: var(--role-teacher);
+  --color-role-teacher-strong: var(--role-teacher-strong);
+  --color-role-student: var(--role-student);
+  --color-role-student-strong: var(--role-student-strong);
 }
 
 :root {
@@ -88,6 +93,11 @@
   --status-danger-bg: oklch(0.95 0.06 25);
   --status-danger-strong: oklch(0.45 0.22 25);
   --status-danger-strong-bg: oklch(0.92 0.08 25);
+  /* Rollenfarben für die Anmeldeseite: Lehrer blau, Schüler orange */
+  --role-teacher: oklch(0.52 0.19 255);
+  --role-teacher-strong: oklch(0.42 0.17 258);
+  --role-student: oklch(0.68 0.19 55);
+  --role-student-strong: oklch(0.56 0.18 48);
   --secondary: oklch(0.968 0.007 247.896);
   --secondary-foreground: oklch(0.208 0.042 265.755);
   --muted: oklch(0.968 0.007 247.896);
