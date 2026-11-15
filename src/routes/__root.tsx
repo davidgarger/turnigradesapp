@@ -120,22 +120,6 @@ function RootShell({ children }: { children: React.ReactNode }) {
   );
 }
 
-function hasStoredSupabaseSession(): boolean {
-  if (typeof window === "undefined") return false;
-  try {
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key && key.startsWith("sb-") && key.endsWith("-auth-token")) {
-        const v = localStorage.getItem(key);
-        if (v && v.length > 10) return true;
-      }
-    }
-  } catch {
-    /* ignore */
-  }
-  return false;
-}
-
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
