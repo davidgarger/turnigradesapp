@@ -7,14 +7,14 @@ const anna: Student = { id: 'anna', firstName: 'Anna', lastName: 'Privat', class
 const cls: ClassData = { id: '1', name: '1A', students: [anna, { ...anna, id: 'other', firstName: 'Other' }], disciplines: [{ id: 'sprint', name: 'Sprint', weight: 1, scoreMode: 'points', scoreMax: 10, unit: 's' }], totalLessons: 5, turniPass: { aktiv: true, disciplineId: 'pass', geraete: defaultPassDevices() } };
 const settings: GradingSettings = { forgottenKitPenalty: 3, excusedPenalty: 0, unexcusedPenalty: 8, gradeThresholds: [{ grade: 1, min: 90 }, { grade: 2, min: 75 }, { grade: 3, min: 60 }, { grade: 4, min: 45 }, { grade: 5, min: 0 }] };
 describe('student access', () => {
-  it('creates a longer random personal code rather than four digits', () => {
+  it('creates a random personal code of eight digits', () => {
     const a = normalizeStudentCode(makeStudentCode());
-    expect(a).toMatch(/^[A-HJ-NP-Z2-9]{20}$/);
+    expect(a).toMatch(/^\d{8}$/);
     expect(a).not.toBe(normalizeStudentCode(makeStudentCode()));
   });
-  it('allows first-name case and grouped code input', () => {
+  it('allows first-name case and spaced code input', () => {
     expect(normalizeStudentName(' ANNA ')).toBe('anna');
-    expect(normalizeStudentCode('abcd-efgh ijkl-mnpq-rstu')).toBe('ABCDEFGHIJKLMNPQRSTU');
+    expect(normalizeStudentCode('1234 5678')).toBe('12345678');
   });
   it('exposes only the individual student and no private notes or photos', () => {
     const view = projectStudent(cls, anna, settings, '2026-11-15T17:00:00Z');

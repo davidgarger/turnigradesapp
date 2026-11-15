@@ -5,10 +5,8 @@ import { buildPassPayload } from './turni-pass';
 export function normalizeStudentName(name: string) { return name.trim().normalize('NFKC').toLocaleLowerCase('de-AT'); }
 export function normalizeStudentCode(code: string) { return code.toUpperCase().replace(/[\s-]/g, ''); }
 export function makeStudentCode() {
-  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  const bytes = crypto.getRandomValues(new Uint8Array(20));
-  const raw = Array.from(bytes, b => alphabet[b % 32]).join('');
-  return raw.match(/.{1,4}/g)?.join('-') ?? raw;
+  const bytes = crypto.getRandomValues(new Uint8Array(8));
+  return Array.from(bytes, b => String(b % 10)).join('');
 }
 export function projectStudent(cls: ClassData, student: Student, settings: GradingSettings, updatedAt: string) {
   return {

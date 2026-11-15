@@ -73,7 +73,7 @@ export const studentLogin = createServerFn({ method: 'POST' })
     const { data: allowed, error: limitError } = await supabaseAdmin.rpc('take_student_login_attempt', { p_key: await hash(ip) });
     if (limitError || !allowed) return { ok: false, error: 'Zu viele Anmeldeversuche. Bitte in 15 Minuten erneut versuchen.' };
     const code = normalizeStudentCode(data.code);
-    if (!/^[A-HJ-NP-Z2-9]{20}$/.test(code)) return { ok: false, error: 'Vorname oder Zugangscode ist falsch.' };
+    if (!/^\d{8}$/.test(code)) return { ok: false, error: 'Vorname oder Zugangscode ist falsch.' };
     const { data: access, error } = await supabaseAdmin.from('student_access').select('id,user_id,class_id,student_id').eq('code_hash', await hash(code)).maybeSingle();
     if (error) throw new Error('Anmeldung ist gerade nicht möglich.');
     if (!access) return { ok: false, error: 'Vorname oder Zugangscode ist falsch.' };

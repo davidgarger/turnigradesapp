@@ -9,7 +9,7 @@ import { readStudentView, studentLogin, studentLogout } from '@/lib/student-acce
 import { toast } from 'sonner';
 import turnhalleBg from '@/assets/turnhalle-bg.webp';
 
-const CODE_LENGTH = 20;
+const CODE_LENGTH = 8;
 
 const studentQuery = queryOptions({ queryKey: ['student-view'], queryFn: () => readStudentView(), staleTime: 0, refetchInterval: 30000, retry: false });
 export const Route = createFileRoute('/schueler')({
@@ -45,7 +45,7 @@ function StudentLogin() {
   const canSubmit = firstName.trim().length > 0 && codeReady && !busy;
 
   function onCodeChange(raw: string) {
-    const clean = raw.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, CODE_LENGTH);
+    const clean = raw.replace(/\D/g, '').slice(0, CODE_LENGTH);
     setCode(clean);
     if (error) setError('');
   }
@@ -183,9 +183,8 @@ function StudentLogin() {
                 ref={codeRef}
                 id="student-code"
                 type="text"
-                inputMode="text"
+                inputMode="numeric"
                 autoComplete="off"
-                autoCapitalize="characters"
                 spellCheck={false}
                 value={code}
                 onChange={(e) => onCodeChange(e.target.value)}
@@ -193,7 +192,7 @@ function StudentLogin() {
                 aria-describedby={error ? 'student-code-error' : undefined}
                 className="absolute inset-0 h-full w-full cursor-text opacity-0"
               />
-              <div aria-hidden className="grid grid-cols-5 gap-1.5 sm:gap-2">
+              <div aria-hidden className="grid grid-cols-4 gap-2 sm:gap-2.5">
                 {Array.from({ length: CODE_LENGTH }, (_, i) => {
                   const ch = code[i] ?? '';
                   const isNext = i === code.length;
