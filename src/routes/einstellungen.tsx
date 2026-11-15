@@ -21,6 +21,10 @@ export const Route = createFileRoute("/einstellungen")({
   component: SettingsPage,
   head: () => ({
     meta: [
+      { property: "og:title", content: "Bewertungseinstellungen — Turnnoten" },
+      { property: "og:description", content: "Gewichtungen, Abzüge und Notenschlüssel anpassen." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Bewertungseinstellungen — Turnnoten" },
       { name: "description", content: "Gewichtungen, Abzüge und Notenschlüssel anpassen." },
     ],

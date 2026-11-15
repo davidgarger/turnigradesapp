@@ -140,10 +140,7 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  // Synchron aus localStorage vorab-entscheiden, damit kein „Lädt…"-Flash entsteht
-  const [authState, setAuthState] = useState<"loading" | "in" | "out">(() =>
-    typeof window === "undefined" ? "loading" : hasStoredSupabaseSession() ? "in" : "out",
-  );
+  const [authState, setAuthState] = useState<"loading" | "in" | "out">('loading');
 
   useEffect(() => {
     const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {

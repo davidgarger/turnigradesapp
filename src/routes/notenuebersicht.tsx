@@ -23,6 +23,10 @@ export const Route = createFileRoute("/notenuebersicht")({
   },
   head: () => ({
     meta: [
+      { property: "og:title", content: "Notenübersicht — Turni" },
+      { property: "og:description", content: "Grafische Notenübersicht pro Schüler oder als Liste." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Notenübersicht — Turni" },
       { name: "description", content: "Grafische Notenübersicht pro Schüler oder als Liste." },
     ],

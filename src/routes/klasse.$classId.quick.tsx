@@ -4,9 +4,7 @@ import type { ClassId } from "@/lib/turn-store";
 
 export const Route = createFileRoute("/klasse/$classId/quick")({
   component: QuickEntry,
-  head: () => ({
-    meta: [{ title: "Stunde — Turnnoten" }],
-  }),
+  head: () => ({ meta: [{ title: "Stunde — Turnnoten" }, { name: "description", content: "Anwesenheit für die aktuelle Turnstunde erfassen." }, { property: "og:title", content: "Stunde — Turnnoten" }, { property: "og:description", content: "Anwesenheit für die aktuelle Turnstunde erfassen." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
 });
 
 function QuickEntry() {

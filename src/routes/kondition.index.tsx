@@ -8,6 +8,10 @@ export const Route = createFileRoute("/kondition/")({
   component: KonditionOverview,
   head: () => ({
     meta: [
+      { property: "og:title", content: "Kondition & Laufspiele — Turni" },
+      { property: "og:description", content: "Übungsbibliothek für Kondition und Laufspiele im Sportunterricht." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Kondition & Laufspiele — Turni" },
       { name: "description", content: "Übungsbibliothek für Kondition und Laufspiele im Sportunterricht." },
     ],

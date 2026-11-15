@@ -6,6 +6,10 @@ export const Route = createFileRoute("/stationenkarten")({
   component: StationenkartenSoonPage,
   head: () => ({
     meta: [
+      { property: "og:title", content: "Stationenkarten · bald verfügbar · turni.live" },
+      { property: "og:description", content: "Die Stationenkarten für Leichtathletik und Geräteturnen sind bald wieder verfügbar." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Stationenkarten · bald verfügbar · turni.live" },
       {
         name: "description",

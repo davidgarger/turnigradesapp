@@ -12,7 +12,11 @@ import { ExercisePosterModal } from "@/components/ExercisePosterModal";
 
 export const Route = createFileRoute("/spiele/neu")({
   component: NewSpiel,
-  head: () => ({ meta: [{ title: "Neues Spiel — Spiele" }] }),
+  head: () => ({ meta: [
+      { property: "og:title", content: "Neues Spiel — Spiele" },
+      { property: "og:description", content: "Ein neues Spiel für die Turni-Spielesammlung einreichen." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },{ name: "description", content: "Ein neues Spiel für die Turni-Spielesammlung einreichen." }, { title: "Neues Spiel — Spiele" }] }),
 });
 
 function NewSpiel() {

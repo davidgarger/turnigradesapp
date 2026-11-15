@@ -6,6 +6,10 @@ export const Route = createFileRoute("/datenschutz")({
   component: DatenschutzPage,
   head: () => ({
     meta: [
+      { property: "og:title", content: "Datenschutzerklärung — Turni" },
+      { property: "og:description", content: "Datenschutzerklärung für turni.live. Informationen zur Verarbeitung personenbezogener Daten." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Datenschutzerklärung — Turni" },
       { name: "description", content: "Datenschutzerklärung für turni.live. Informationen zur Verarbeitung personenbezogener Daten." },
     ],

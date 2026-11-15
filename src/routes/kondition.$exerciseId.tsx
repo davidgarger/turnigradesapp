@@ -10,6 +10,13 @@ import KonditionOverview from "./kondition.index";
 
 export const Route = createFileRoute("/kondition/$exerciseId")({
   component: ExerciseDetail,
+  head: ({ params }) => ({ meta: [
+    { title: `Konditionsübung ${params.exerciseId} — Turni` },
+    { name: "description", content: "Übungsblatt mit Ablauf, Material und Anleitung für den Sportunterricht." },
+    { property: "og:title", content: `Konditionsübung ${params.exerciseId} — Turni` },
+    { property: "og:description", content: "Übungsblatt mit Ablauf, Material und Anleitung für den Sportunterricht." },
+    { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },
+  ] }),
 });
 
 function ExerciseDetail() {

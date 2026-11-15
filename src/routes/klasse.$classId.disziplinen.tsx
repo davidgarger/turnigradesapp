@@ -28,6 +28,10 @@ export const Route = createFileRoute("/klasse/$classId/disziplinen")({
   component: DisziplinenPage,
   head: ({ params }) => ({
     meta: [
+      { property: "og:title", content: `Disziplinen — ${params.classId}. Klasse` },
+      { property: "og:description", content: "Disziplinen dieser Klasse verwalten." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: `Disziplinen — ${params.classId}. Klasse` },
       { name: "description", content: "Disziplinen dieser Klasse verwalten." },
     ],

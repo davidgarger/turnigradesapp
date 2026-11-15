@@ -39,6 +39,10 @@ export const Route = createFileRoute("/arbeitsauftrag")({
   component: ArbeitsauftragPage,
   head: () => ({
     meta: [
+      { property: "og:title", content: "Arbeitsauftrag — Turni" },
+      { property: "og:description", content: "Erstelle in Sekunden einen Alternativ-Arbeitsauftrag für Schülerinnen und Schüler, die im Sportunterricht nicht mitturnen." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Arbeitsauftrag — Turni" },
       {
         name: "description",

@@ -6,6 +6,10 @@ export const Route = createFileRoute("/impressum")({
   component: ImpressumPage,
   head: () => ({
     meta: [
+      { property: "og:title", content: "Impressum — Turni" },
+      { property: "og:description", content: "Impressum und Kontaktinformationen für turni.live." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Impressum — Turni" },
       { name: "description", content: "Impressum und Kontaktinformationen für turni.live." },
     ],

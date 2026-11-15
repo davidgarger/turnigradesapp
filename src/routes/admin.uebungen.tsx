@@ -16,7 +16,7 @@ import {
 
 export const Route = createFileRoute("/admin/uebungen")({
   component: AdminExercises,
-  head: () => ({ meta: [{ title: "Admin — Community-Übungen" }] }),
+  head: () => ({ meta: [{ title: "Admin — Community-Übungen" }, { name: "description", content: "Eingereichte Übungen prüfen und für die Übungssammlungen freigeben." }, { property: "og:title", content: "Admin — Community-Übungen" }, { property: "og:description", content: "Eingereichte Übungen prüfen und für die Übungssammlungen freigeben." }, { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" }] }),
 });
 
 function AdminExercises() {

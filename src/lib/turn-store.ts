@@ -1018,6 +1018,7 @@ export const turnActions = {
   updateDiscipline(classId: ClassId, disciplineId: string, patch: Partial<Discipline>) {
     setState((s) => {
       const cls = s.classes[classId];
+      if (cls.turniPass?.disciplineId === disciplineId) return s;
       return {
         ...s,
         classes: {
@@ -1035,6 +1036,7 @@ export const turnActions = {
   deleteDiscipline(classId: ClassId, disciplineId: string) {
     setState((s) => {
       const cls = s.classes[classId];
+      if (cls.turniPass?.disciplineId === disciplineId) return s;
       return {
         ...s,
         classes: {

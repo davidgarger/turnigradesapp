@@ -7,6 +7,10 @@ export const Route = createFileRoute("/uebungssammlungen")({
   component: UebungssammlungenIndex,
   head: () => ({
     meta: [
+      { property: "og:title", content: "Übungssammlungen — Turni" },
+      { property: "og:description", content: "Sammlungen von Übungen: Stationenkarten und Kondition." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Übungssammlungen — Turni" },
       { name: "description", content: "Sammlungen von Übungen: Stationenkarten und Kondition." },
     ],

@@ -86,6 +86,10 @@ export const Route = createFileRoute("/klasse/$classId")({
   component: ClassPage,
   head: ({ params }) => ({
     meta: [
+      { property: "og:title", content: `${params.classId}. Klasse — Turnnoten` },
+      { property: "og:description", content: `Schülerliste und Noten der ${params.classId}. Klasse.` },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: `${params.classId}. Klasse — Turnnoten` },
       { name: "description", content: `Schülerliste und Noten der ${params.classId}. Klasse.` },
     ],
@@ -269,7 +273,7 @@ function ClassPage() {
       <main className="mx-auto max-w-7xl px-2 py-6 sm:px-4">
         {/* Action bar */}
         <div className="mb-4 flex flex-wrap items-center gap-2">
-          <Button asChild variant="outline"><Link to="/klasse/$classId_/turnipass" params={{ classId: cls.id }}>Turni-Pass</Link></Button>
+          <Button asChild variant="outline"><Link to="/klasse/$classId/turnipass" params={{ classId: cls.id }}>Turni-Pass</Link></Button>
           <div className="relative flex-1 min-w-[200px]">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input

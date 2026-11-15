@@ -8,6 +8,10 @@ export const Route = createFileRoute("/archiv")({
   component: ArchivPage,
   head: () => ({
     meta: [
+      { property: "og:title", content: "Archiv — Turnnoten" },
+      { property: "og:description", content: "Archivierte Klassen aus früheren Schuljahren." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Archiv — Turnnoten" },
       { name: "description", content: "Archivierte Klassen aus früheren Schuljahren." },
     ],

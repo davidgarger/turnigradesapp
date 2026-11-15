@@ -11,7 +11,11 @@ import { ExercisePosterModal } from "@/components/ExercisePosterModal";
 
 export const Route = createFileRoute("/kondition/neu")({
   component: NewExercise,
-  head: () => ({ meta: [{ title: "Neue Übung — Kondition" }] }),
+  head: () => ({ meta: [
+      { property: "og:title", content: "Neue Übung — Kondition" },
+      { property: "og:description", content: "Eine neue Konditionsübung für die Turni-Übungssammlung einreichen." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },{ name: "description", content: "Eine neue Konditionsübung für die Turni-Übungssammlung einreichen." }, { title: "Neue Übung — Kondition" }] }),
 });
 
 function NewExercise() {

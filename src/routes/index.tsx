@@ -12,6 +12,10 @@ export const Route = createFileRoute("/")({
   component: Index,
   head: () => ({
     meta: [
+      { property: "og:title", content: "Turnnoten — Startseite" },
+      { property: "og:description", content: "Wähle eine Klasse zur Verwaltung von Schülern und Noten." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Turnnoten — Startseite" },
       { name: "description", content: "Wähle eine Klasse zur Verwaltung von Schülern und Noten." },
     ],

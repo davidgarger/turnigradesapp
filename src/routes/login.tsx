@@ -23,6 +23,10 @@ export const Route = createFileRoute("/login")({
   component: LoginPage,
   head: () => ({
     meta: [
+      { property: "og:title", content: "Turni — Sportunterricht organisieren mit Klarheit" },
+      { property: "og:description", content: "turni.live hilft Sportlehrkräften, Anwesenheit, Leistungen, faire Teams und Arbeitsaufträge an einem Ort zu verwalten." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Turni — Sportunterricht organisieren mit Klarheit" },
       {
         name: "description",
