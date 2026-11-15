@@ -3,3 +3,5 @@
 - Rebuild existing pass-share snapshots transactionally from app_state with a database trigger; revoke disabled or orphaned shares so resets, transfers and cloud writes cannot leave stale public data.
 - Public pass access requires an exact cryptographic token through a server function; never grant anonymous table access or expose private student fields.
 - Reuse the same pass-sheet component for teacher and read-only public views; pure pass rules and payload projection live in a browser-safe module.
+- Keep grading calculations in the browser-safe grading module, re-exported by TurnState, so student server reads use exactly the teacher formula without importing the client store.
+- Student access uses hashed random codes and revocable database sessions in HttpOnly cookies; server reads project only the authenticated student's live app_state data, keeping student sessions separate from teacher authentication.

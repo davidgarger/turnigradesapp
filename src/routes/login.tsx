@@ -18,6 +18,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { TurniLogo } from "@/components/TurniLogo";
 import { toast } from "sonner";
+import { Button } from '@/components/ui/button';
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
@@ -149,6 +150,10 @@ function LoginPage() {
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-[#f6faf7] text-slate-900">
+      <nav aria-label="Zugang wählen" className="relative z-10 mx-auto flex max-w-md justify-center gap-3 px-5 pt-6">
+        <Button className="h-12 flex-1" onClick={() => document.getElementById('login-form')?.scrollIntoView({ behavior: 'smooth', block: 'center' })}><LogIn />Lehrer</Button>
+        <Button asChild variant="outline" className="h-12 flex-1"><Link to="/schueler"><Users />Schüler</Link></Button>
+      </nav>
       {/* Background decoration — brand greens */}
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div

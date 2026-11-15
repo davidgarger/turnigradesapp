@@ -18,6 +18,7 @@ import { Route as ImpressumRouteImport } from './routes/impressum'
 import { Route as KonditionRouteImport } from './routes/kondition'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as NotenuebersichtRouteImport } from './routes/notenuebersicht'
+import { Route as SchuelerRouteImport } from './routes/schueler'
 import { Route as SpieleRouteImport } from './routes/spiele'
 import { Route as StationenkartenRouteImport } from './routes/stationenkarten'
 import { Route as UebungssammlungenRouteImport } from './routes/uebungssammlungen'
@@ -76,6 +77,11 @@ const LoginRoute = LoginRouteImport.update({
 const NotenuebersichtRoute = NotenuebersichtRouteImport.update({
   id: '/notenuebersicht',
   path: '/notenuebersicht',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SchuelerRoute = SchuelerRouteImport.update({
+  id: '/schueler',
+  path: '/schueler',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SpieleRoute = SpieleRouteImport.update({
@@ -160,6 +166,7 @@ export interface FileRoutesByFullPath {
   '/kondition': typeof KonditionRouteWithChildren
   '/login': typeof LoginRoute
   '/notenuebersicht': typeof NotenuebersichtRoute
+  '/schueler': typeof SchuelerRoute
   '/spiele': typeof SpieleRouteWithChildren
   '/stationenkarten': typeof StationenkartenRoute
   '/uebungssammlungen': typeof UebungssammlungenRoute
@@ -184,6 +191,7 @@ export interface FileRoutesByTo {
   '/impressum': typeof ImpressumRoute
   '/login': typeof LoginRoute
   '/notenuebersicht': typeof NotenuebersichtRoute
+  '/schueler': typeof SchuelerRoute
   '/stationenkarten': typeof StationenkartenRoute
   '/uebungssammlungen': typeof UebungssammlungenRoute
   '/admin/uebungen': typeof AdminUebungenRoute
@@ -209,6 +217,7 @@ export interface FileRoutesById {
   '/kondition': typeof KonditionRouteWithChildren
   '/login': typeof LoginRoute
   '/notenuebersicht': typeof NotenuebersichtRoute
+  '/schueler': typeof SchuelerRoute
   '/spiele': typeof SpieleRouteWithChildren
   '/stationenkarten': typeof StationenkartenRoute
   '/uebungssammlungen': typeof UebungssammlungenRoute
@@ -236,6 +245,7 @@ export interface FileRouteTypes {
     | '/kondition'
     | '/login'
     | '/notenuebersicht'
+    | '/schueler'
     | '/spiele'
     | '/stationenkarten'
     | '/uebungssammlungen'
@@ -260,6 +270,7 @@ export interface FileRouteTypes {
     | '/impressum'
     | '/login'
     | '/notenuebersicht'
+    | '/schueler'
     | '/stationenkarten'
     | '/uebungssammlungen'
     | '/admin/uebungen'
@@ -284,6 +295,7 @@ export interface FileRouteTypes {
     | '/kondition'
     | '/login'
     | '/notenuebersicht'
+    | '/schueler'
     | '/spiele'
     | '/stationenkarten'
     | '/uebungssammlungen'
@@ -310,6 +322,7 @@ export interface RootRouteChildren {
   KonditionRoute: typeof KonditionRouteWithChildren
   LoginRoute: typeof LoginRoute
   NotenuebersichtRoute: typeof NotenuebersichtRoute
+  SchuelerRoute: typeof SchuelerRoute
   SpieleRoute: typeof SpieleRouteWithChildren
   StationenkartenRoute: typeof StationenkartenRoute
   UebungssammlungenRoute: typeof UebungssammlungenRoute
@@ -382,6 +395,13 @@ declare module '@tanstack/react-router' {
       path: '/notenuebersicht'
       fullPath: '/notenuebersicht'
       preLoaderRoute: typeof NotenuebersichtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/schueler': {
+      id: '/schueler'
+      path: '/schueler'
+      fullPath: '/schueler'
+      preLoaderRoute: typeof SchuelerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/spiele': {
@@ -538,6 +558,7 @@ const rootRouteChildren: RootRouteChildren = {
   KonditionRoute: KonditionRouteWithChildren,
   LoginRoute: LoginRoute,
   NotenuebersichtRoute: NotenuebersichtRoute,
+  SchuelerRoute: SchuelerRoute,
   SpieleRoute: SpieleRouteWithChildren,
   StationenkartenRoute: StationenkartenRoute,
   UebungssammlungenRoute: UebungssammlungenRoute,

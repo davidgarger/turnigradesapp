@@ -185,6 +185,77 @@ export type Database = {
         }
         Relationships: []
       }
+      student_access: {
+        Row: {
+          class_id: string
+          code_hash: string
+          created_at: string
+          id: string
+          student_id: string
+          user_id: string
+        }
+        Insert: {
+          class_id: string
+          code_hash: string
+          created_at?: string
+          id?: string
+          student_id: string
+          user_id: string
+        }
+        Update: {
+          class_id?: string
+          code_hash?: string
+          created_at?: string
+          id?: string
+          student_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      student_login_limits: {
+        Row: {
+          attempts: number
+          key: string
+          window_start: string
+        }
+        Insert: {
+          attempts?: number
+          key: string
+          window_start?: string
+        }
+        Update: {
+          attempts?: number
+          key?: string
+          window_start?: string
+        }
+        Relationships: []
+      }
+      student_sessions: {
+        Row: {
+          access_id: string
+          expires_at: string
+          token_hash: string
+        }
+        Insert: {
+          access_id: string
+          expires_at: string
+          token_hash: string
+        }
+        Update: {
+          access_id?: string
+          expires_at?: string
+          token_hash?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_sessions_access_id_fkey"
+            columns: ["access_id"]
+            isOneToOne: false
+            referencedRelation: "student_access"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_prefs: {
         Row: {
           logo: string | null
@@ -243,6 +314,7 @@ export type Database = {
         Returns: boolean
       }
       project_turni_pass: { Args: { cls: Json; student: Json }; Returns: Json }
+      take_student_login_attempt: { Args: { p_key: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "user"

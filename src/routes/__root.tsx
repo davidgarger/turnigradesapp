@@ -141,7 +141,7 @@ function RootComponent() {
   }, []);
 
   // Öffentliche Seiten immer durchlassen – falls bereits eingeloggt, weiterleiten
-  const publicPaths = ["/login", "/impressum", "/datenschutz"];
+  const publicPaths = ["/login", "/impressum", "/datenschutz", "/schueler"];
   if (publicPaths.includes(pathname) || pathname.startsWith('/pass/')) {
     if (authState === "in" && pathname === "/login") {
       return <RedirectTo to="/" />;
