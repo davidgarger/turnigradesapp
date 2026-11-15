@@ -10,3 +10,8 @@
 - [x] Lehrerfenster zum Erstellen und Zurücksetzen in jeder Klasse
 - [x] Lehrer-/Schülerauswahl und persönliche Schülerübersicht
 - [x] Tests und vollständige Prüfung auf Handy / Desktop
+
+# Zugangskärtchen
+- [x] Geschützte Erstellung der Klassencodes und PDF-Kärtchen
+- [x] Sichtbarer Download mit Bestätigung bei Codewechsel
+- [x] Tests und Downloadprüfung

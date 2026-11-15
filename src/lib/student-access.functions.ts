@@ -4,12 +4,43 @@ import { z } from 'zod';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import type { TurnState } from './turn-store';
 import { makeStudentCode, normalizeStudentCode, normalizeStudentName, projectStudent } from './student-view';
+import { accessCardsComplete } from './student-access-cards';
 
 async function hash(value: string) {
   const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value));
   return Array.from(new Uint8Array(digest), b => b.toString(16).padStart(2, '0')).join('');
 }
 const classInput = z.object({ classId: z.string().regex(/^(?:[1-9]|10)$/) });
+export const prepareStudentCards = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth])
+  .inputValidator((input: { classId: string; codes: Record<string, string>; replaceCodes: boolean }) => classInput.extend({ codes: z.record(z.string().max(30)), replaceCodes: z.boolean() }).parse(input))
+  .handler(async ({ data, context }) => {
+    setResponseHeader('Cache-Control', 'no-store');
+    const { data: row, error } = await context.supabase.from('app_state').select('state').eq('user_id', context.userId).single();
+    if (error) throw new Error('Klasse konnte nicht geladen werden.');
+    const state = row.state as unknown as TurnState;
+    const cls = state.classes[data.classId as keyof TurnState['classes']];
+    if (!cls?.students.length) throw new Error('Keine Schüler in dieser Klasse.');
+    const codes: Record<string, string> = {};
+    if (data.replaceCodes) {
+      const rows = await Promise.all(cls.students.map(async s => {
+        const code = makeStudentCode(); codes[s.id] = code;
+        return { user_id: context.userId, class_id: cls.id, student_id: s.id, code_hash: await hash(normalizeStudentCode(code)) };
+      }));
+      const { error: writeError } = await context.supabase.from('student_access').upsert(rows, { onConflict: 'user_id,student_id' });
+      if (writeError) throw new Error('Codes konnten nicht erstellt werden.');
+    } else {
+      if (!accessCardsComplete(cls.students.map(s => s.id), data.codes)) throw new Error('Bitte zuerst Codes für die ganze Klasse erstellen.');
+      const { data: rows, error: readError } = await context.supabase.from('student_access').select('student_id,code_hash').eq('user_id', context.userId).eq('class_id', cls.id);
+      if (readError) throw new Error('Codes konnten nicht geprüft werden.');
+      for (const s of cls.students) {
+        const code = data.codes[s.id];
+        const expected = await hash(normalizeStudentCode(code));
+        if (!rows?.some(r => r.student_id === s.id && r.code_hash === expected)) throw new Error('Ein Code wurde geändert. Bitte PDF neu vorbereiten.');
+        codes[s.id] = code;
+      }
+    }
+    return { codes, className: cls.name, cards: cls.students.map(s => ({ firstName: s.firstName, lastName: s.lastName, code: codes[s.id] })) };
+  });
 export const listStudentAccess = createServerFn({ method: 'POST' }).middleware([requireSupabaseAuth])
   .inputValidator((input: { classId: string }) => classInput.parse(input))
   .handler(async ({ data, context }) => {
