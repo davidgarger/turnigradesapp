@@ -274,7 +274,7 @@ function ClassPage() {
       <main className="mx-auto max-w-7xl px-2 py-6 sm:px-4">
         {/* Action bar */}
         <div className="mb-4 flex flex-wrap items-center gap-2">
-          <Button asChild variant="outline"><Link to="/klasse/$classId/turnipass" params={{ classId: cls.id }}>Turni-Pass</Link></Button>
+          <Button asChild variant="destructive" size="lg" className="font-semibold shadow-md"><Link to="/klasse/$classId/turnipass" params={{ classId: cls.id }}><Dumbbell className="h-5 w-5" />Turni-Pass</Link></Button>
           <div className="relative flex-1 min-w-[200px]">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
