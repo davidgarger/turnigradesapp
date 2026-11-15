@@ -275,7 +275,6 @@ function ClassPage() {
         {/* Action bar */}
         <div className="mb-4 flex flex-wrap items-center gap-2">
           <Button asChild variant="outline"><Link to="/klasse/$classId/turnipass" params={{ classId: cls.id }}>Turni-Pass</Link></Button>
-          <StudentAccessDialog cls={cls} />
           <div className="relative flex-1 min-w-[200px]">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
@@ -322,6 +321,10 @@ function ClassPage() {
 
           <TeamGenerator cls={cls} />
           <ScoreCounter />
+        </div>
+
+        <div className="mb-5 border-b border-border pb-5">
+          <StudentAccessDialog cls={cls} />
         </div>
 
         <ImportStudentsDialog

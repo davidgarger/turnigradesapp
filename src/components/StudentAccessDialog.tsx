@@ -44,7 +44,7 @@ export function StudentAccessDialog({ cls }: { cls: ClassData }) {
     finally { setBusy(false); }
   }
   return <Dialog open={open} onOpenChange={value => { setOpen(value); if (!value) { setCodes({}); setConfirmId(null); } }}>
-    <DialogTrigger asChild><Button variant="outline"><KeyRound /> Schülerzugänge</Button></DialogTrigger>
+    <DialogTrigger asChild><Button className="h-auto min-h-12 w-full whitespace-normal px-5 py-3 text-base font-semibold sm:w-auto"><KeyRound /> Codes für Schülerseite erstellen</Button></DialogTrigger>
     <DialogContent className="max-h-[85svh] overflow-y-auto sm:max-w-2xl">
       <DialogHeader><DialogTitle>Schülerzugänge · {cls.name}</DialogTitle><DialogDescription>Persönliche Codes einmal sicher weitergeben. Sie werden nur hier nach dem Erstellen angezeigt. Schüler melden sich auf turni.live unter „Schüler“ an.</DialogDescription></DialogHeader>
       {!cls.students.length && <p className="py-6 text-muted-foreground">Noch keine Schüler in dieser Klasse.</p>}
