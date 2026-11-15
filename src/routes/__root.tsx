@@ -90,8 +90,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { name: "twitter:title", content: "Turnnoten — Bewertung im Turnunterricht" },
       { name: "twitter:description", content: "Verwalte Klassen, Disziplinen und Turnnoten für den Sportunterricht." },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/8heX0Zr3NrcPxK6yZ0PLc4wCFFI2/social-images/social-1779131148225-IMG_0434.webp" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/8heX0Zr3NrcPxK6yZ0PLc4wCFFI2/social-images/social-1779131148225-IMG_0434.webp" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
@@ -163,7 +161,7 @@ function RootComponent() {
 
   // Öffentliche Seiten immer durchlassen – falls bereits eingeloggt, weiterleiten
   const publicPaths = ["/login", "/impressum", "/datenschutz"];
-  if (publicPaths.includes(pathname)) {
+  if (publicPaths.includes(pathname) || pathname.startsWith('/pass/')) {
     if (authState === "in" && pathname === "/login") {
       return <RedirectTo to="/" />;
     }

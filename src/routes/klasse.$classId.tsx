@@ -269,6 +269,7 @@ function ClassPage() {
       <main className="mx-auto max-w-7xl px-2 py-6 sm:px-4">
         {/* Action bar */}
         <div className="mb-4 flex flex-wrap items-center gap-2">
+          <Button asChild variant="outline"><Link to="/klasse/$classId_/turnipass" params={{ classId: cls.id }}>Turni-Pass</Link></Button>
           <div className="relative flex-1 min-w-[200px]">
             <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
@@ -477,6 +478,7 @@ function StudentRow({
   expandNames: boolean;
 }) {
   const [warningOpen, setWarningOpen] = useState(false);
+  const passDisciplineId = useTurnState().classes[classId]?.turniPass?.disciplineId;
 
   const gradeColor =
     grade.grade <= 2
@@ -558,12 +560,12 @@ function StudentRow({
       </td>
       {disciplines.map((d) => (
         <td key={d.id} className="px-1 py-1 text-center">
-          <ScoreInput
+          {d.id === passDisciplineId ? <span title="Wird im Turni-Pass eingetragen" className="text-sm font-medium text-primary">{student.scores[d.id] ?? '–'} Pkt</span> : <ScoreInput
             value={student.scores[d.id]}
             max={getDisciplineMax(d)}
             unit={getDisciplineUnit(d)}
             onChange={(v) => turnActions.setScore(classId, student.id, d.id, v)}
-          />
+          />}
         </td>
 
       ))}

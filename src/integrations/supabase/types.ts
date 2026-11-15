@@ -158,6 +158,33 @@ export type Database = {
         }
         Relationships: []
       }
+      pass_shares: {
+        Row: {
+          class_id: string
+          payload: Json
+          student_id: string
+          token: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          class_id: string
+          payload?: Json
+          student_id: string
+          token?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          class_id?: string
+          payload?: Json
+          student_id?: string
+          token?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_prefs: {
         Row: {
           logo: string | null
@@ -215,6 +242,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      project_turni_pass: { Args: { cls: Json; student: Json }; Returns: Json }
     }
     Enums: {
       app_role: "admin" | "user"

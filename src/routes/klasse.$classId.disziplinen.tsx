@@ -210,6 +210,7 @@ function DisziplinenPage() {
         ) : (
           <div className="space-y-3">
             {cls.disciplines.map((d) => {
+              if (d.id === cls.turniPass?.disciplineId) return <div key={d.id} className="border-b border-border py-4"><h2 className="font-semibold">Turni-Pass · 20 Pkt</h2><p className="mt-1 text-sm text-muted-foreground">Wird im Turni-Pass eingetragen</p></div>;
               const mode = d.scoreMode ?? "percent";
               const max = getDisciplineMax(d);
               return (

@@ -1,5 +1,6 @@
 import { useSyncExternalStore } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { defaultPassDevices, canSelectChoice, passScore, type TurniPass, type PassStatus, type DeviceId } from './turni-pass';
 
 // ---------- Types ----------
 export type ClassId = "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10";
@@ -54,6 +55,9 @@ export interface Excuse {
 }
 
 export interface Student {
+  passVariante?: 'barren' | 'balken';
+  passEintraege?: Record<string, PassStatus>;
+  passWahl?: string[];
   id: string;
   firstName: string;
   lastName: string;
@@ -121,6 +125,7 @@ export interface DisciplineSnapshot {
 }
 
 export interface ClassData {
+  turniPass?: TurniPass;
   id: ClassId;
   name: string;
   disciplines: Discipline[];
@@ -362,6 +367,14 @@ function scheduleCloudSave() {
   }, 600);
 }
 
+export async function flushCloudSave() {
+  if (!currentUserId) throw new Error('Bitte anmelden.');
+  if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; }
+  const { data, error } = await supabase.from('app_state').upsert({ user_id: currentUserId, state: JSON.parse(JSON.stringify(state)) }).select('updated_at').single();
+  if (error) throw new Error('Speichern fehlgeschlagen. Bitte erneut versuchen.');
+  lastSavedAt = data.updated_at;
+}
+
 function setState(updater: (s: TurnState) => TurnState) {
   const prev = state;
   state = updater(state);
@@ -460,6 +473,48 @@ export function useTurnState(): TurnState {
 
 // ---------- Actions ----------
 export const turnActions = {
+  activatePass(classId: ClassId) {
+    setState(s => {
+      const cls = s.classes[classId];
+      if (cls.turniPass?.aktiv) return s;
+      const disciplineId = cls.turniPass?.disciplineId ?? `turnipass-${genId()}`;
+      const pass: TurniPass = { ...cls.turniPass, aktiv: true, disciplineId, geraete: cls.turniPass?.geraete ?? defaultPassDevices() };
+      const discipline: Discipline = { id: disciplineId, name: 'Turni-Pass', scoreMode: 'points', scoreMax: 20, unit: 'Pkt', weight: 1 };
+      return { ...s, classes: { ...s.classes, [classId]: { ...cls, turniPass: pass, disciplines: [...cls.disciplines.filter(d => d.id !== disciplineId), discipline] } } };
+    });
+  },
+  setPassLinks(classId: ClassId, enabled: boolean) {
+    setState(s => { const cls = s.classes[classId]; if (!cls.turniPass) return s; return { ...s, classes: { ...s.classes, [classId]: { ...cls, turniPass: { ...cls.turniPass, linksAktiv: enabled } } } }; });
+  },
+  setPassVariant(classId: ClassId, studentId: string, variant: 'barren' | 'balken') {
+    setState(s => { const cls = s.classes[classId]; if (!cls.turniPass) return s; const pass = cls.turniPass; return { ...s, classes: { ...s.classes, [classId]: { ...cls, students: cls.students.map(st => { if (st.id !== studentId) return st; const next = { ...st, passVariante: variant }; return { ...next, scores: { ...next.scores, [pass.disciplineId]: passScore(pass, next) } }; }) } } }; });
+  },
+  selectPassChoice(classId: ClassId, studentId: string, deviceId: DeviceId, exerciseId: string, remove = false) {
+    let error: string | undefined;
+    setState(s => { const cls = s.classes[classId]; const pass = cls.turniPass; const device = pass?.geraete.find(d => d.id === deviceId); const st = cls.students.find(st => st.id === studentId);
+      if (!pass || !device || !st || !device.wahl.some(e => e.id === exerciseId)) return s;
+      if (!remove && !canSelectChoice(device, st, exerciseId)) { error = 'Maximal 2 Wahlübungen pro Gerät'; return s; }
+      const entries = { ...st.passEintraege }; if (remove) delete entries[exerciseId];
+      const choice = (st.passWahl ?? []).filter(id => id !== exerciseId); if (!remove) choice.push(exerciseId);
+      const next = { ...st, passEintraege: entries, passWahl: choice };
+      return { ...s, classes: { ...s.classes, [classId]: { ...cls, students: cls.students.map(student => student.id === studentId ? { ...next, scores: { ...next.scores, [pass.disciplineId]: passScore(pass, next) } } : student) } } };
+    }); return error;
+  },
+  setPassEntry(classId: ClassId, studentId: string, deviceId: DeviceId, exerciseId: string, status: PassStatus) {
+    let error: string | undefined;
+    setState(s => { const cls = s.classes[classId]; const pass = cls.turniPass; const device = pass?.geraete.find(d => d.id === deviceId); const st = cls.students.find(st => st.id === studentId);
+      if (!pass || !device || !st || ![...device.pflicht, ...device.wahl].some(e => e.id === exerciseId)) return s;
+      const isChoice = device.wahl.some(e => e.id === exerciseId);
+      if (isChoice && !canSelectChoice(device, st, exerciseId)) { error = 'Maximal 2 Wahlübungen pro Gerät'; return s; }
+      const entries = { ...st.passEintraege }; if (entries[exerciseId] === status) delete entries[exerciseId]; else entries[exerciseId] = status;
+      const choice = isChoice ? [...new Set([...(st.passWahl ?? []), exerciseId])] : st.passWahl;
+      const next = { ...st, passEintraege: entries, passWahl: choice };
+      return { ...s, classes: { ...s.classes, [classId]: { ...cls, students: cls.students.map(student => student.id === studentId ? { ...next, scores: { ...next.scores, [pass.disciplineId]: passScore(pass, next) } } : student) } } };
+    }); return error;
+  },
+  renamePassExercise(classId: ClassId, exerciseId: string, name: string) {
+    setState(s => { const cls = s.classes[classId]; if (!cls.turniPass) return s; return { ...s, classes: { ...s.classes, [classId]: { ...cls, turniPass: { ...cls.turniPass, geraete: cls.turniPass.geraete.map(d => ({ ...d, pflicht: d.pflicht.map(e => e.id === exerciseId ? { ...e, name } : e), wahl: d.wahl.map(e => e.id === exerciseId ? { ...e, name } : e) })) } } } }; });
+  },
   reset() {
     setState(() => defaultState());
   },
@@ -483,6 +538,8 @@ export const turnActions = {
             students: cls.students.map((st) => ({
               ...st,
               scores: {},
+              passEintraege: {},
+              passWahl: [],
               forgottenKit: 0,
               excusedNotParticipating: 0,
               unexcusedNotParticipating: 0,
@@ -819,6 +876,7 @@ export const turnActions = {
   setScore(classId: ClassId, studentId: string, disciplineId: string, value: number | undefined) {
     setState((s) => {
       const cls = s.classes[classId];
+      if (cls.turniPass?.disciplineId === disciplineId) return s;
       return {
         ...s,
         classes: {
@@ -1094,6 +1152,8 @@ export const turnActions = {
             students: cls.students.map((st) => ({
               ...st,
               scores: {},
+              passEintraege: {},
+              passWahl: [],
               forgottenKit: 0,
               excusedNotParticipating: 0,
               unexcusedNotParticipating: 0,

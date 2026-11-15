@@ -26,10 +26,12 @@ import { Route as KlasseClassIdRouteImport } from './routes/klasse.$classId'
 import { Route as KonditionIndexRouteImport } from './routes/kondition.index'
 import { Route as KonditionExerciseIdRouteImport } from './routes/kondition.$exerciseId'
 import { Route as KonditionNeuRouteImport } from './routes/kondition.neu'
+import { Route as PassTokenRouteImport } from './routes/pass.$token'
 import { Route as SpieleIndexRouteImport } from './routes/spiele.index'
 import { Route as SpieleNeuRouteImport } from './routes/spiele.neu'
 import { Route as KlasseClassIdDisziplinenRouteImport } from './routes/klasse.$classId.disziplinen'
 import { Route as KlasseClassIdQuickRouteImport } from './routes/klasse.$classId.quick'
+import { Route as KlasseClassIdTurnipassRouteImport } from './routes/klasse.$classId_.turnipass'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -116,6 +118,11 @@ const KonditionNeuRoute = KonditionNeuRouteImport.update({
   path: '/neu',
   getParentRoute: () => KonditionRoute,
 } as any)
+const PassTokenRoute = PassTokenRouteImport.update({
+  id: '/pass/$token',
+  path: '/pass/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SpieleIndexRoute = SpieleIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -137,6 +144,11 @@ const KlasseClassIdQuickRoute = KlasseClassIdQuickRouteImport.update({
   path: '/quick',
   getParentRoute: () => KlasseClassIdRoute,
 } as any)
+const KlasseClassIdTurnipassRoute = KlasseClassIdTurnipassRouteImport.update({
+  id: '/klasse/$classId_/turnipass',
+  path: '/klasse/$classId/turnipass',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -155,11 +167,13 @@ export interface FileRoutesByFullPath {
   '/klasse/$classId': typeof KlasseClassIdRouteWithChildren
   '/kondition/$exerciseId': typeof KonditionExerciseIdRoute
   '/kondition/neu': typeof KonditionNeuRoute
+  '/pass/$token': typeof PassTokenRoute
   '/spiele/neu': typeof SpieleNeuRoute
   '/kondition/': typeof KonditionIndexRoute
   '/spiele/': typeof SpieleIndexRoute
   '/klasse/$classId/disziplinen': typeof KlasseClassIdDisziplinenRoute
   '/klasse/$classId/quick': typeof KlasseClassIdQuickRoute
+  '/klasse/$classId/turnipass': typeof KlasseClassIdTurnipassRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -176,11 +190,13 @@ export interface FileRoutesByTo {
   '/klasse/$classId': typeof KlasseClassIdRouteWithChildren
   '/kondition/$exerciseId': typeof KonditionExerciseIdRoute
   '/kondition/neu': typeof KonditionNeuRoute
+  '/pass/$token': typeof PassTokenRoute
   '/spiele/neu': typeof SpieleNeuRoute
   '/kondition': typeof KonditionIndexRoute
   '/spiele': typeof SpieleIndexRoute
   '/klasse/$classId/disziplinen': typeof KlasseClassIdDisziplinenRoute
   '/klasse/$classId/quick': typeof KlasseClassIdQuickRoute
+  '/klasse/$classId/turnipass': typeof KlasseClassIdTurnipassRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -200,11 +216,13 @@ export interface FileRoutesById {
   '/klasse/$classId': typeof KlasseClassIdRouteWithChildren
   '/kondition/$exerciseId': typeof KonditionExerciseIdRoute
   '/kondition/neu': typeof KonditionNeuRoute
+  '/pass/$token': typeof PassTokenRoute
   '/spiele/neu': typeof SpieleNeuRoute
   '/kondition/': typeof KonditionIndexRoute
   '/spiele/': typeof SpieleIndexRoute
   '/klasse/$classId/disziplinen': typeof KlasseClassIdDisziplinenRoute
   '/klasse/$classId/quick': typeof KlasseClassIdQuickRoute
+  '/klasse/$classId_/turnipass': typeof KlasseClassIdTurnipassRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -225,11 +243,13 @@ export interface FileRouteTypes {
     | '/klasse/$classId'
     | '/kondition/$exerciseId'
     | '/kondition/neu'
+    | '/pass/$token'
     | '/spiele/neu'
     | '/kondition/'
     | '/spiele/'
     | '/klasse/$classId/disziplinen'
     | '/klasse/$classId/quick'
+    | '/klasse/$classId/turnipass'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -246,11 +266,13 @@ export interface FileRouteTypes {
     | '/klasse/$classId'
     | '/kondition/$exerciseId'
     | '/kondition/neu'
+    | '/pass/$token'
     | '/spiele/neu'
     | '/kondition'
     | '/spiele'
     | '/klasse/$classId/disziplinen'
     | '/klasse/$classId/quick'
+    | '/klasse/$classId/turnipass'
   id:
     | '__root__'
     | '/'
@@ -269,11 +291,13 @@ export interface FileRouteTypes {
     | '/klasse/$classId'
     | '/kondition/$exerciseId'
     | '/kondition/neu'
+    | '/pass/$token'
     | '/spiele/neu'
     | '/kondition/'
     | '/spiele/'
     | '/klasse/$classId/disziplinen'
     | '/klasse/$classId/quick'
+    | '/klasse/$classId_/turnipass'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -291,6 +315,8 @@ export interface RootRouteChildren {
   UebungssammlungenRoute: typeof UebungssammlungenRoute
   AdminUebungenRoute: typeof AdminUebungenRoute
   KlasseClassIdRoute: typeof KlasseClassIdRouteWithChildren
+  PassTokenRoute: typeof PassTokenRoute
+  KlasseClassIdTurnipassRoute: typeof KlasseClassIdTurnipassRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -414,6 +440,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof KonditionNeuRouteImport
       parentRoute: typeof KonditionRoute
     }
+    '/pass/$token': {
+      id: '/pass/$token'
+      path: '/pass/$token'
+      fullPath: '/pass/$token'
+      preLoaderRoute: typeof PassTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/spiele/': {
       id: '/spiele/'
       path: '/'
@@ -441,6 +474,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/klasse/$classId/quick'
       preLoaderRoute: typeof KlasseClassIdQuickRouteImport
       parentRoute: typeof KlasseClassIdRoute
+    }
+    '/klasse/$classId_/turnipass': {
+      id: '/klasse/$classId_/turnipass'
+      path: '/klasse/$classId/turnipass'
+      fullPath: '/klasse/$classId/turnipass'
+      preLoaderRoute: typeof KlasseClassIdTurnipassRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -503,6 +543,8 @@ const rootRouteChildren: RootRouteChildren = {
   UebungssammlungenRoute: UebungssammlungenRoute,
   AdminUebungenRoute: AdminUebungenRoute,
   KlasseClassIdRoute: KlasseClassIdRouteWithChildren,
+  PassTokenRoute: PassTokenRoute,
+  KlasseClassIdTurnipassRoute: KlasseClassIdTurnipassRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
