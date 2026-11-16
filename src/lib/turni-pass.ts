@@ -4,7 +4,7 @@ export type DeviceId = 'reck' | 'barren' | 'balken' | 'boden' | 'kasten';
 export type PassStatus = 'ok' | 'nein';
 export interface PassExercise { id: string; name: string }
 export interface PassDevice { id: DeviceId; name: string; pflicht: PassExercise[]; wahl: PassExercise[] }
-export interface TurniPass { aktiv: boolean; disciplineId: string; geraete: PassDevice[]; linksAktiv?: boolean }
+export interface TurniPass { aktiv: boolean; disciplineId: string; geraete: PassDevice[]; linksAktiv?: boolean; templateVersion?: number }
 export interface PassPayload {
   firstName: string; className: string; variante: 'barren' | 'balken'; points: number;
   geraete: { name: string; pflicht: { name: string; status: 'ok' | 'nein' | 'offen' }[]; wahl: { name: string; status: 'ok' | 'nein' | 'offen' }[] }[];
@@ -21,6 +21,19 @@ export function defaultPassDevices(): PassDevice[] {
     ['kasten', 'Kasten', ['Aufhocken und Strecksprung ab', 'Hockwende', 'Sprunghocke über den Kasten quer'], wahl],
   ];
   return rows.map(([id, name, pflicht, wahl]) => ({ id, name, pflicht: pflicht.map((name, i) => ({ id: `${id}-p${i}`, name })), wahl: wahl.map((name, i) => ({ id: `${id}-w${i}`, name })) }));
+}
+
+// Apply the uploaded template once; retain IDs, marks and all custom optional exercises.
+export function upgradePassTemplate(pass: TurniPass): TurniPass {
+  if ((pass.templateVersion ?? 0) >= 1) return pass;
+  const defaults = defaultPassDevices();
+  return { ...pass, templateVersion: 1, geraete: pass.geraete.map(device => {
+    const template = defaults.find(d => d.id === device.id);
+    if (!template) return device;
+    return { ...device, pflicht: template.pflicht.map((exercise, index) => ({
+      ...exercise, id: device.pflicht[index]?.id ?? exercise.id,
+    })) };
+  }) };
 }
 export function studentDevices(pass: TurniPass, student: Pick<Student, 'passVariante'>) {
   return ['reck', student.passVariante ?? 'barren', 'boden', 'kasten'].flatMap(id => pass.geraete.filter(d => d.id === id));

@@ -15,3 +15,8 @@
 - [x] Geschützte Erstellung der Klassencodes und PDF-Kärtchen
 - [x] Sichtbarer Download mit Bestätigung bei Codewechsel
 - [x] Tests und Downloadprüfung
+
+# Pass-Vorlagen
+- [x] Fixe Übungen bestehender Pässe an die Originalvorlagen anpassen; Wahlübungen und Einträge erhalten
+- [x] Beide Originalvorlagen in den Übungssammlungen zum Download anbieten
+- [x] Übungen und Downloads prüfen

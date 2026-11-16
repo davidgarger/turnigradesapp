@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, LayoutGrid, Activity, ShieldCheck, Gamepad2 } from "lucide-react";
+import { ArrowLeft, LayoutGrid, Activity, ShieldCheck, Gamepad2, Dumbbell, Download, FilePenLine } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { TurniLogo } from "@/components/TurniLogo";
 import { useCommunityExercises, useIsAdmin } from "@/lib/community-store";
 
@@ -8,11 +9,11 @@ export const Route = createFileRoute("/uebungssammlungen")({
   head: () => ({
     meta: [
       { property: "og:title", content: "Übungssammlungen — Turni" },
-      { property: "og:description", content: "Sammlungen von Übungen: Stationenkarten und Kondition." },
+      { property: "og:description", content: "Stationenkarten, Kondition, Spiele und Turni-Pass-Vorlagen zum Herunterladen." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { title: "Übungssammlungen — Turni" },
-      { name: "description", content: "Sammlungen von Übungen: Stationenkarten und Kondition." },
+      { name: "description", content: "Stationenkarten, Kondition, Spiele und Turni-Pass-Vorlagen zum Herunterladen." },
     ],
   }),
 });
@@ -128,6 +129,30 @@ function UebungssammlungenIndex() {
             </Link>
           ))}
         </div>
+
+        <section className="mt-10 border-t border-border pt-8">
+          <h2 className="flex items-center gap-3 text-2xl font-bold text-foreground">
+            <Dumbbell className="h-7 w-7 text-destructive" />Turni-Pass
+          </h2>
+          <div className="mt-5 grid gap-5 sm:grid-cols-2">
+            {[
+              { title: 'Mädchen · Balken', filename: 'turni-pass-maedchen' },
+              { title: 'Burschen · Barren', filename: 'turni-pass-burschen' },
+            ].map(template => (
+              <article key={template.filename} className="rounded-lg border border-border bg-background p-5">
+                <h3 className="text-lg font-semibold text-foreground">{template.title}</h3>
+                <div className="mt-4 flex flex-wrap gap-3">
+                  <Button asChild variant="destructive" size="lg">
+                    <a href={`/downloads/${template.filename}.pdf`} download><Download />PDF herunterladen</a>
+                  </Button>
+                  <Button asChild variant="outline" size="lg">
+                    <a href={`/downloads/${template.filename}.docx`} download><FilePenLine />Word-Vorlage</a>
+                  </Button>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
       </main>
     </div>
   );

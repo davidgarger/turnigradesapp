@@ -7,3 +7,5 @@
 - Student access uses hashed random codes and revocable database sessions in HttpOnly cookies; server reads project only the authenticated student's live app_state data, keeping student sessions separate from teacher authentication.
 - Student login PDFs use owner-authenticated server validation and transient browser blobs; retain hash-only code storage, require explicit confirmation before regenerating unavailable codes, and never persist PDFs or plaintext credentials.
 - Store uploaded exercise images as storage paths and resolve short-lived signed URLs on reads; storage policies allow only owners, administrators, and authenticated readers of approved exercises so pending images remain private.
+- Version live pass-template upgrades once at store ingress, preserving exercise IDs, marks and optional exercises; leave archived passes unchanged to preserve historical records.
+- Serve fixed pass templates as same-origin static PDF and original DOCX downloads so visitors can download without client-side document generation.

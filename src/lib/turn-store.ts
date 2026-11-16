@@ -3,7 +3,7 @@ export { getDisciplineMax, getDisciplineUnit, scoreToPercent, computeScheduledLe
 export type { GradeResult } from './grading';
 import { useSyncExternalStore } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { defaultPassDevices, canSelectChoice, passScore, type TurniPass, type PassStatus, type DeviceId } from './turni-pass';
+import { defaultPassDevices, upgradePassTemplate, canSelectChoice, passScore, type TurniPass, type PassStatus, type DeviceId } from './turni-pass';
 
 // ---------- Types ----------
 export type ClassId = "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "10";
@@ -248,6 +248,19 @@ function defaultState(): TurnState {
 // ---------- Store ----------
 const STORAGE_KEY = "turn-app-state-v2";
 
+function upgradeLivePasses(next: TurnState): TurnState {
+  let changed = false;
+  const classes = { ...next.classes };
+  for (const cls of Object.values(classes)) {
+    if (!cls.turniPass) continue;
+    const pass = upgradePassTemplate(cls.turniPass);
+    if (pass === cls.turniPass) continue;
+    changed = true;
+    classes[cls.id] = { ...cls, turniPass: pass };
+  }
+  return changed ? { ...next, classes } : next;
+}
+
 function load(): TurnState {
   if (typeof window === "undefined") return defaultState();
   try {
@@ -258,7 +271,7 @@ function load(): TurnState {
     if (!parsed.classOrder || parsed.classOrder.length !== ALL_CLASS_IDS.length) {
       parsed.classOrder = [...ALL_CLASS_IDS];
     }
-    return parsed;
+    return upgradeLivePasses(parsed);
   } catch {
     return defaultState();
   }
@@ -289,7 +302,7 @@ export function canUndo() {
 export function undo(): boolean {
   const prev = history.pop();
   if (!prev) return false;
-  state = prev;
+  state = upgradeLivePasses(prev);
   persist();
   scheduleCloudSave();
   listeners.forEach((l) => l());
@@ -340,7 +353,7 @@ export async function flushCloudSave() {
 
 function setState(updater: (s: TurnState) => TurnState) {
   const prev = state;
-  state = updater(state);
+  state = upgradeLivePasses(updater(state));
   if (!isApplyingRemote) pushHistory(prev);
   persist();
   scheduleCloudSave();
@@ -349,7 +362,7 @@ function setState(updater: (s: TurnState) => TurnState) {
 
 function applyRemoteState(next: TurnState, updatedAt: string | null) {
   isApplyingRemote = true;
-  state = next;
+  state = upgradeLivePasses(next);
   lastSavedAt = updatedAt;
   persist();
   listeners.forEach((l) => l());
@@ -441,7 +454,7 @@ export const turnActions = {
       const cls = s.classes[classId];
       if (cls.turniPass?.aktiv) return s;
       const disciplineId = cls.turniPass?.disciplineId ?? `turnipass-${genId()}`;
-      const pass: TurniPass = { ...cls.turniPass, aktiv: true, disciplineId, geraete: cls.turniPass?.geraete ?? defaultPassDevices() };
+      const pass: TurniPass = upgradePassTemplate({ ...cls.turniPass, aktiv: true, disciplineId, geraete: cls.turniPass?.geraete ?? defaultPassDevices() });
       const discipline: Discipline = { id: disciplineId, name: 'Turni-Pass', scoreMode: 'points', scoreMax: 20, unit: 'Pkt', weight: 1 };
       return { ...s, classes: { ...s.classes, [classId]: { ...cls, turniPass: pass, disciplines: [...cls.disciplines.filter(d => d.id !== disciplineId), discipline] } } };
     });
