@@ -4,7 +4,7 @@ import type { Student, ClassData } from './turn-store';
 const pass: TurniPass = { aktiv: true, disciplineId: 'pass', geraete: defaultPassDevices() };
 const student = (patch: Partial<Student> = {}): Student => ({id:'s',classId:'1',firstName:'Anna',lastName:'Geheim',scores:{math:12},attended:8,forgottenKit:1,excusedNotParticipating:2,unexcusedNotParticipating:1,redPoints:0,greenPoints:0,...patch});
 describe('Turni-Pass Regeln',()=>{
-  it('has five devices with exactly three required and five optional exercises',()=>{ expect(pass.geraete).toHaveLength(5); for(const d of pass.geraete){expect(d.pflicht).toHaveLength(3);expect(d.wahl).toHaveLength(5);} });
+  it('has five devices with exactly three required and two optional exercises',()=>{ expect(pass.geraete).toHaveLength(5); for(const d of pass.geraete){expect(d.pflicht).toHaveLength(3);expect(d.wahl).toHaveLength(2);} });
   it('starts with Barren and counts four devices',()=>{expect(studentDevices(pass,student()).map(d=>d.id)).toEqual(['reck','barren','boden','kasten']);});
   it('rejects a third selected optional exercise even when failed',()=>{const d=pass.geraete[0];const s=student({passEintraege:{'reck-w0':'nein','reck-w1':'ok'}});expect(canSelectChoice(d,s,'reck-w2')).toBe(false);expect(canSelectChoice(d,s,'reck-w0')).toBe(true);});
   it('counts one point per success and at most 20 total',()=>{const entries:Record<string,'ok'>={};for(const d of pass.geraete)for(const e of [...d.pflicht,...d.wahl])entries[e.id]='ok';expect(passPoints(pass,student({passEintraege:entries}))).toBe(20);});

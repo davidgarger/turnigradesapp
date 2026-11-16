@@ -11,12 +11,14 @@ export interface PassPayload {
 }
 
 export function defaultPassDevices(): PassDevice[] {
+  // Vorlage: hochgeladene Turni-Pass-Dokumente (Mädchen/Burschen) – 3 Pflicht + 2 freie Wahl-Felder pro Gerät
+  const wahl: [string, string] = ['eigene Übung eintragen', 'eigene Übung eintragen'];
   const rows: [DeviceId, string, string[], string[]][] = [
-    ['reck', 'Reck', ['Sprung in den Stütz 5 Sekunden halten', 'Hüftaufschwung mit Hilfe', 'Unterschwung aus dem Stand'], ['Hüftaufschwung ohne Hilfe', 'Hüftumschwung rückwärts', 'Knieaufschwung', 'Unterschwung aus dem Stütz', 'Klimmzug']],
-    ['barren', 'Barren', ['Stütz 10 Sekunden halten', 'Schwingen im Stütz', 'Stützeln über eine Holmlänge'], ['Kehre', 'Wende', 'Außenquersitz mit Wechsel', 'Rolle vorwärts aus dem Grätschsitz', 'Oberarmstand mit Hilfe']],
-    ['balken', 'Balken', ['vorwärts über den ganzen Balken gehen', 'halbe Drehung im Ballenstand', 'Strecksprung als Abgang'], ['Standwaage 2 Sekunden', 'rückwärts gehen', 'Schrittsprung', 'Pferdchensprung', 'Rolle vorwärts mit Hilfe']],
-    ['boden', 'Boden', ['Rolle vorwärts', 'Rolle rückwärts', 'Standwaage'], ['Rad', 'Handstand an der Wand', 'Handstand abrollen', 'Kopfstand', 'Sprungrolle']],
-    ['kasten', 'Kasten', ['Aufhocken und Strecksprung ab', 'Hockwende', 'Sprunghocke über den Kasten quer'], ['Sprunggrätsche', 'Rolle vorwärts auf dem Kasten längs', 'Flanke', 'Hocke über den Kasten längs', 'Handstützüberschlag mit Hilfe']],
+    ['reck', 'Reck', ['Sprung in den Stütz', 'Sprung in den Stütz und abrollen', 'Hüftaufschwung'], wahl],
+    ['barren', 'Barren', ['Schwingen im Stütz', 'Abgang vorne', 'Abgang hinten'], wahl],
+    ['balken', 'Balken', ['Standwaage', 'Halbe Drehung im Ballenstand', 'Strecksprung als Abgang'], wahl],
+    ['boden', 'Boden', ['Rolle vorwärts', 'Handstand', 'Standwaage'], wahl],
+    ['kasten', 'Kasten', ['Aufhocken und Strecksprung ab', 'Hockwende', 'Sprunghocke über den Kasten quer'], wahl],
   ];
   return rows.map(([id, name, pflicht, wahl]) => ({ id, name, pflicht: pflicht.map((name, i) => ({ id: `${id}-p${i}`, name })), wahl: wahl.map((name, i) => ({ id: `${id}-w${i}`, name })) }));
 }
